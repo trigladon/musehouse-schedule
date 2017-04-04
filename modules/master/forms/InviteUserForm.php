@@ -6,10 +6,9 @@
  * Time: 13:08
  */
 
-namespace app\modules\master\models\forms;
+namespace app\modules\master\forms;
 
 
-use yii\base\Exception;
 use yii\base\Model;
 use Yii;
 use yii\helpers\Url;

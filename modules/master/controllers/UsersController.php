@@ -9,7 +9,7 @@
 namespace app\modules\master\controllers;
 
 use yii\web\Controller;
-use app\modules\master\models\forms\InviteUserForm;
+use app\modules\master\forms\InviteUserForm;
 use app\models\User;
 use Yii;
 

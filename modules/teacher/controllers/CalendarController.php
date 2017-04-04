@@ -10,7 +10,7 @@ namespace app\modules\teacher\controllers;
 
 use yii\web\Controller;
 use Yii;
-use app\modules\teacher\models\Calendar;
+use app\modules\teacher\helpers\Calendar;
 
 class CalendarController extends Controller
 {

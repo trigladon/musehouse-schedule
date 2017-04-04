@@ -6,13 +6,11 @@
  * Time: 14:19
  */
 
-namespace app\modules\teacher\models;
+namespace app\modules\teacher\helpers;
 
-
-use yii\base\Model;
 use DateTime;
 
-class Calendar extends Model
+class Calendar
 {
 
     public static function calendarArray($date = "now"){
