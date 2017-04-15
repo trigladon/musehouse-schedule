@@ -6,7 +6,7 @@ use app\models\AuthItemChild;
 use app\components\ActivationListWidget;
 
 /* @var $this yii\web\View */
-/* @var $model app\modules\master\models\forms\InviteUserForm */
+/* @var $model app\modules\master\forms\InviteUserForm */
 /* @var $form ActiveForm */
 
 $this->title = 'User Management';
@@ -42,7 +42,7 @@ $this->title = 'User Management';
         <?php ActiveForm::end(); ?>
 
     </div>
-    <div style="float: left; width: 350px; padding: 0 15px;">
+    <div style="float: left; width: 300px; padding: 0 15px;">
         <?php if (Yii::$app->session->hasFlash('error_host_connection')): ?>
             <div class="alert alert-warning alert-dismissable">
                 <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
@@ -63,9 +63,42 @@ $this->title = 'User Management';
             </div>
         <?php endif;?>
     </div>
-    <div style="float: right; width: 500px; padding: 0 15px">
-        sdfdfgdf
+    <div style="float: right; width: 550px; padding: 0 15px">
+        <table class="table">
+            <tr>
+                <td class="text-center col-md-2">
+                    <i class="fa fa-check fa-lg text-danger" style="margin-right:11px" aria-hidden="true"></i>
+                    <i class="fa fa-share text-warning" aria-hidden="true"></i>
+                    <i class="fa fa-envelope text-warning" aria-hidden="true"></i>
+                </td>
+                <td class="text-left">
+                    <em> - the registration letter <em class="text-danger">wasn't sent</em>. You can resend it by clicking on <i class="fa fa-share text-warning" aria-hidden="true"></i>
+                        <i class="fa fa-envelope text-warning" aria-hidden="true"></i> in the table.</em>
+                </td>
+            </tr>
+            <tr>
+                <td class="text-center">
+                    <i class="fa fa-check fa-lg text-success" style="margin-right:11px" aria-hidden="true"></i>
+                    <i class="fa fa-share text-warning" aria-hidden="true"></i>
+                    <i class="fa fa-envelope text-warning" aria-hidden="true"></i>
+                </td>
+                <td class="text-left">
+                    <em> - the registration letter <em class="text-success">was sent</em>.</em>
+                </td>
+            </tr>
+            <tr>
+                <td class="text-center">
+                    <i class="fa fa-user fa-lg text-success" aria-hidden="true"></i>
+                    <em style="padding: 0 5px">or</em>
+                    <i class="fa fa-user fa-lg text-danger" aria-hidden="true"></i>
+                </td>
+                <td class="text-left">
+                    <em> - the User is <em class="text-success">registered</em> or <em class="text-danger">not</em> after email receiving.</em>
+                </td>
+            </tr>
+        </table>
     </div>
+
 
     <div>
         <?php

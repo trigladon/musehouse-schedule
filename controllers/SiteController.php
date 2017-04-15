@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\RegForm;
 use app\models\User;
+use app\modules\master\models\Instrument;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -99,33 +100,35 @@ class SiteController extends Controller
     {
 
         $model = new RegForm();
+        $lesson_list = Instrument::lessonListReg();
+        $key = Yii::$app->request->get('key');
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            if ($user = $model->reg($_GET['key']))
+            if ($user = $model->reg($key))
             {
                 if (Yii::$app->getUser()->login($user))
                 {
-                    Yii::$app->session->setFlash('reg_succ', 'You where successfully registered. Please Login.');
+                    Yii::$app->session->setFlash('reg_succ', 'You where successfully registered.');
                     return $this->goHome();
                 }
             }else{
                 Yii::$app->session->setFlash('reg_error', 'The error appeared during registration');
                 return $this->refresh();
             }
-
         }
 
-        if (!isset($_GET['key'])) {
+        if (!isset($key)) {
             Yii::$app->session->setFlash('error_key', 'Please apply for a Registration letter first.');
             return $this->goHome();
-        }elseif (User::findBySecretKey($_GET['key'])==null){
+        }elseif (User::findBySecretKey($key)==null){
             Yii::$app->session->setFlash('error_key_not_found', 'Wrong key. Please, apply for a new Registration letter.');
             return $this->goHome();
         }else {
-            if (User::isSecretKeyExpire($_GET['key'])) {
+            if (User::isSecretKeyExpire($key)) {
                 return $this->render('registration', [
                     'model' => $model,
-                    'key' => $_GET['key'],
+//                    'key' => $key,
+                    'lesson_list' => $lesson_list,
                 ]);
             } else {
                 Yii::$app->session->setFlash('error_time_expired', 'Time for registration is expired. Please, apply for a new Registration letter.');
@@ -134,22 +137,6 @@ class SiteController extends Controller
         }
     }
 
-    public function actionAccountActivation($key)
-    {
-        try {
-            $user = new AccountActivation($key);
-        }catch (InvalidParamException $e){
-            throw new BadRequestHttpException($e->getMessage());
-        }
-
-        if ($user->activateAccount()){
-            Yii::$app->session->setFlash('success', 'Activation of user '.$user->getUsername().' passed successfully.');
-        }else{
-            Yii::$app->session->setFlash('error', 'Activation ERROR.');
-        }
-
-        return $this->redirect(Url::to(['site/login']));
-    }
 
     public function actionSendRecoveryEmail()
     {

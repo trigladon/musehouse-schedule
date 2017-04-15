@@ -27,13 +27,13 @@ class UsersController extends Controller
             }
         }
 
-        if (isset($_GET['deleteUser'])){
-            User::deleteUserById($_GET['deleteUser']);
+        if (null !== Yii::$app->request->get('deleteId')){
+            User::deleteUserById(Yii::$app->request->get('deleteId'));
             return $this->redirect('/master/users');
         }
 
-        if (isset($_GET['resendUserLetter'])){
-            InviteUserForm::resendInvitation($_GET['resendUserLetter']);
+        if (null !== Yii::$app->request->get('resendUserLetter')){
+            InviteUserForm::resendInvitation(Yii::$app->request->get('resendUserLetter'));
             return $this->redirect('/master/users');
         }
 

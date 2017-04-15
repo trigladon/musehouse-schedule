@@ -10,6 +10,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+//use yii\widgets\ActiveForm;
 use app\models\AuthItemChild;
 
 /* @var $this yii\web\View */
@@ -50,6 +51,22 @@ $this->title = 'User Registration';
     ]);
     ?>
 
+    <?= $form->field($model, 'password_repeat')->label(false)->passwordInput([
+        'placeholder' => 'Repeat the Password',
+    ]);
+    ?>
+
+    <?= $form->field($model, 'id_lesson', [
+        'template' => '{label}<div class="checkbox col-lg-12" style="margin-top: 0;">{input}{hint}</div>'
+    ])->label(false)->checkboxList($lesson_list, [
+        'multiple' => 'true',
+        'item' => function($index, $label, $name, $checked, $value) {
+            return "<label class='col-md-3' style='margin: 5px 0'><input style='vertical-align: middle' type='checkbox' {$checked} name='{$name}' value='{$value}' tabindex='3'>
+                                            {$label}
+                                    </label>";
+        },
+    ]);?>
+
 
 
     <div class="form-group">
@@ -62,8 +79,10 @@ $this->title = 'User Registration';
 
 </div>
 
+
 <?php
 //var_dump(AuthItemChild::role_list());
 //var_dump($_POST);
+var_dump($lesson_list);
 
 ?>

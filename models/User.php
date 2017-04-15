@@ -20,6 +20,7 @@ use yii\db\Query;
  * @property string $auth_key
  * @property string $created_at
  * @property string $updated_at
+ * @property string $date_secret_key
  * @property string $secret_key
  * @property integer $status
  * @property integer $letter_status
@@ -54,7 +55,7 @@ class User extends ActiveRecord implements IdentityInterface
             [['first_name', 'last_name', 'email', 'password'], 'filter', 'filter' => 'trim'],
             ['email', 'email'],
             ['email', 'unique', 'message' => 'User with this email has been registered already.'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['created_at', 'updated_at', 'date_secret_key'], 'safe'],
             [['first_name', 'last_name', 'email', 'password', 'auth_key'], 'string', 'max' => 255],
             ['secret_key', 'unique'],
         ];
@@ -126,8 +127,9 @@ class User extends ActiveRecord implements IdentityInterface
         }
 
         $expire = Yii::$app->params['secretKeyExpire'];
-        $parts = explode('_', $key);
-        $timestamp = (int)end($parts);
+        $user = self::findBySecretKey($key);
+
+        $timestamp = $user->date_secret_key;
 
         return $timestamp+$expire >= time();
     }
@@ -141,12 +143,14 @@ class User extends ActiveRecord implements IdentityInterface
 
     public static function deleteUserById($id){
         Yii::$app->db->createCommand()->delete('auth_assignment', 'user_id = '.$id)->execute();
-        Yii::$app->db->createCommand()->delete('user', 'id = \''.$id.'\'')->execute();
+        Yii::$app->db->createCommand()->delete('userinstr', 'user_id = '.$id.'')->execute();
+        Yii::$app->db->createCommand()->delete('user', 'id = '.$id.'')->execute();
     }
 
     public function generateSecretKey()
     {
-        $this->secret_key = Yii::$app->security->generateRandomString().'_'.time();
+        $this->secret_key = Yii::$app->security->generateRandomString();
+        $this->date_secret_key = time();
     }
 
     public function removeSecretKey()
@@ -190,7 +194,7 @@ class User extends ActiveRecord implements IdentityInterface
 
     public static function userActivationList(){
         $query = Yii::$app->db->createCommand(
-            'SELECT u.id, r.item_name, u.first_name, u.last_name, u.email, u.`status`, u.letter_status, u.secret_key 
+            'SELECT u.id, r.item_name, u.first_name, u.last_name, u.email, u.`status`, u.letter_status, u.secret_key, u.date_secret_key 
                 FROM `user` u, auth_assignment r
                 WHERE u.id = r.user_id'
         )->queryAll();

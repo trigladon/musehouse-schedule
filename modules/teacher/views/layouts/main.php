@@ -39,10 +39,11 @@ AppAsset::register($this);
             ['label' => 'Home', 'url' => ['/site/index']],
             ['label' => 'Calendar', 'url' => ['/teacher/calendar']],
             ['label' => 'Master Menu', 'items' =>[
-                ['label' => 'Instruments', 'url' => ['/master/instrument']],
+                ['label' => 'Lessons', 'url' => ['/master/instrument']],
                 ['label' => 'User Management', 'url' => ['/master/users']],
                 ['label' => 'User Registration', 'url' => ['/site/registration']],
             ]],
+            ['label' => 'Profile', 'url' => ['/teacher/profile']],
             Yii::$app->user->isGuest ? (
             ['label' => 'Login', 'url' => ['/site/login']]
             ) : (

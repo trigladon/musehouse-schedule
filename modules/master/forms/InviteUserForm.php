@@ -87,7 +87,7 @@ class InviteUserForm extends Model
 
             }catch (\Swift_TransportException $e){
 //                Yii::$app->session->setFlash('error_host_connection', $e->getMessage());
-                Yii::$app->session->setFlash('error_host_connection', 'Email wasn\'t sent. Please try one more time in a few seconds from the table of Users !');
+                Yii::$app->session->setFlash('error_host_connection', 'Email wasn\'t sent. Please try one more time in a few seconds from the table!');
                 Yii::$app->response->redirect(Url::to(['/master/users']))->send();
             }
             Yii::$app->session->setFlash('email_was_sent', 'Email was sent!');

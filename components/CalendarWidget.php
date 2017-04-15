@@ -16,6 +16,11 @@ class CalendarWidget extends Widget
 {
     public $calendarArray;
     public $monthToShow;
+    public $modelAddLesson;
+    public $listUserLessons;
+    public $status_list;
+    public $whtsh;
+    public $weekDaysToShow;
 
     public function init()
     {
@@ -28,6 +33,8 @@ class CalendarWidget extends Widget
         return $this->render('calendar', [
             'calendarArray' => $this->calendarArray,
             'monthToShow' => $this->monthToShow,
+            'whtsh' => $this->whtsh,
+            'weekDaysToShow' => $this->weekDaysToShow,
         ]);
     }
 }

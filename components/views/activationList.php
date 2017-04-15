@@ -8,9 +8,10 @@
 
 use yii\helpers\Html;
 use app\models\User;
+use yii\bootstrap\Modal;
 ?>
 <table class="table table-hover table-striped table-bordered">
-<?php if($user_list['master']):?>
+<?php if(isset($user_list['master'])):?>
     <tr><td colspan="7" style="color: #2e498b; font-size: 18px; border-bottom-width: 2px; border-bottom-color: #2e498b;">Masters (Admin users)</td></tr>
     <tr>
         <th class="text-center">#</th>
@@ -46,15 +47,20 @@ use app\models\User;
                         'resendUserLetter' => $value['id'],
                     ]), ['class' => 'linkaction']).'</td>';
             }
-            echo '<td class="text-center">'.Html::a('<i class="fa fa-trash-o fa-lg text-danger" aria-hidden="true"></i>', Yii::$app->urlManager->createAbsoluteUrl([
-            '/master/users',
-            'deleteUser' => $value['id'],
-        ]), ['class' => 'linkaction']).'</td>';
+        echo '<td class="text-center">'.Html::a('<i class="fa fa-trash-o fa-lg text-danger" aria-hidden="true"></i>', Yii::$app->urlManager->createAbsoluteUrl([
+                '/master/users',
+            ]), [
+                'class'       => 'popup-delete linkaction',
+                'data-toggle' => 'modal',
+                'data-target' => '#modal',
+                'data-id' => $value['id'],
+                'data-name' => $value['first_name'].' '.$value['last_name'],
+                'id'          => 'popupModal',]).'</td>';
         echo '</tr>';
     }
 ?>
 <?php endif;?>
-<?php if (count($user_list)==2):?>
+<?php if (isset($user_list['teacher'])):?>
 <!--</table>-->
 <!---->
 <!--    <table class="table table-hover table-striped table-bordered">-->
@@ -101,8 +107,13 @@ use app\models\User;
             }
             echo '<td class="text-center">'.Html::a('<i class="fa fa-trash-o fa-lg text-danger" aria-hidden="true"></i>', Yii::$app->urlManager->createAbsoluteUrl([
                     '/master/users',
-                    'deleteUser' => $value['id'],
-                ]), ['class' => 'linkaction']).'</td>';
+                ]), [
+                    'class'       => 'popup-delete linkaction',
+                    'data-toggle' => 'modal',
+                    'data-target' => '#modal',
+                    'data-id' => $value['id'],
+                    'data-name' => $value['first_name'].' '.$value['last_name'],
+                    'id'          => 'popupModal',]).'</td>';
             echo '</tr>';
         }
         ?>
@@ -110,4 +121,16 @@ use app\models\User;
     </table>
 <?php
     var_dump($user_list);
+
 ?>
+
+<?php Modal::begin([
+    'header' => '<h3 class="text-warning"><i class="icon fa fa-exclamation-triangle"></i> Warning!</h3>',
+    'id'     => 'modal-delete',
+    'size' => 'modal-sm',
+    'footer' => Html::a('Delete', '', ['class' => 'btn btn-danger', 'id' => 'delete-confirm']),
+]); ?>
+
+    <p class="modal-message">Do you really want to delete <strong class='text-danger modal-name'></strong>?</p>
+
+<?php Modal::end(); ?>
