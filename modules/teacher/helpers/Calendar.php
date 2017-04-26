@@ -71,7 +71,7 @@ class Calendar
                 $cur = $month->format('W');
                 $ch = $currentDate-$cur;
                 $month->modify('+'.$ch.'week');
-                if ($month->format('N') !== 1){
+                if ($month->format('N') != 1){
                     $month->modify('last Monday');
                 }
                 if ($changes){

@@ -24,13 +24,13 @@ class InstrumentController extends Controller
         $model = new LessonForm();
         $modelUpdate = new LessonUpdateForm();
 
-        $list = Instrument::lessonListUser();
-        $list2 = Instrument::lessonListUser2();
-
 
         if ($modelUpdate->load(Yii::$app->request->post()) && $modelUpdate->validate()){
+            $modelUpdate->icon = UploadedFile::getInstance($modelUpdate, 'icon');
             $modelUpdate->updateLesson();
             return $this->refresh();
+//            var_dump(Yii::$app->request->post());
+//            var_dump($modelUpdate);
         }
 
         $lessonsList = Instrument::lessonList();
@@ -53,8 +53,6 @@ class InstrumentController extends Controller
             'model' => $model,
             'lessonsList' => $lessonsList,
             'modelUpdate' => $modelUpdate,
-            'list' => $list,
-            'list2' => $list2,
         ]);
     }
 

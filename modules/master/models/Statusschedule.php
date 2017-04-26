@@ -67,7 +67,7 @@ class Statusschedule extends \yii\db\ActiveRecord
             ->all();
 
         foreach ($rows as $value){
-            $status_list[$value['id']] = '<div style="color:'.$value['color'].'">'.$value['name'].'</div>';
+            $status_list[$value['id']] = '<div style="display: inline-block"><div class="dropBoxStatus img-rounded pull-left" style="background-color:'.$value['color'].'"></div>'.$value['name'].'</div>';
         }
 
         return $status_list;

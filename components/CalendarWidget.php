@@ -17,10 +17,13 @@ class CalendarWidget extends Widget
     public $calendarArray;
     public $monthToShow;
     public $modelAddLesson;
-    public $listUserLessons;
+    public $userList;
     public $status_list;
     public $whtsh;
     public $weekDaysToShow;
+    public $filterForm;
+    public $lesson_list;
+    public $user_list;
 
     public function init()
     {
@@ -35,6 +38,10 @@ class CalendarWidget extends Widget
             'monthToShow' => $this->monthToShow,
             'whtsh' => $this->whtsh,
             'weekDaysToShow' => $this->weekDaysToShow,
+            'filterForm' => $this->filterForm,
+            'status_list' => $this->status_list,
+            'lesson_list' => $this->lesson_list,
+            'user_list' => $this->user_list,
         ]);
     }
 }

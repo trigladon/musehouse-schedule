@@ -18,8 +18,8 @@ use yii\bootstrap\Modal;
         <th class="text-center">First Name</th>
         <th class="text-center">Last Name</th>
         <th class="text-center">Email</th>
-        <th class="text-center">RegST</th>
-        <th class="text-center">LetterST</th>
+        <th class="text-center">Status</th>
+        <th class="text-center">Letter</th>
         <th class="text-center">Delete</th>
     </tr>
 <?php
@@ -76,8 +76,8 @@ use yii\bootstrap\Modal;
             <th class="text-center">First Name</th>
             <th class="text-center">Last Name</th>
             <th class="text-center">Email</th>
-            <th class="text-center">RegST</th>
-            <th class="text-center">LetterST</th>
+            <th class="text-center">Status</th>
+            <th class="text-center">Letter</th>
             <th class="text-center">Delete</th>
         </tr>
         <?php

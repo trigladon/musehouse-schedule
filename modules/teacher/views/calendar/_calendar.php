@@ -9,5 +9,9 @@ use app\components\CalendarWidget;
         'monthToShow' => $monthToShow,
         'whtsh' => $whtsh,
         'weekDaysToShow' => $weekDaysToShow,
+        'filterForm' => $filterForm,
+        'status_list' => $status_list,
+        'lesson_list' => $lesson_list,
+        'user_list' => $user_list,
     ])?>
 </div>

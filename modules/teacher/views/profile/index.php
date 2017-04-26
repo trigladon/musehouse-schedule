@@ -6,7 +6,13 @@
  * Time: 16:06
  */
 
+/* @var $this yii\web\View */
+/* @var $lesson_list app\modules\master\models\Instrument */
+
 use yii\helpers\Html;
+use yii\web\JsExpression;
+use kartik\select2\Select2;
+use yii\web\View;
 
 $this->title = 'Profile';
 ?>
@@ -14,31 +20,8 @@ $this->title = 'Profile';
 <div class="teacher-profile">
     <h1><?= Html::encode($this->title) ?></h1>
 
-</div>
-    <div class="container">
-        <div class='col-md-5'>
-            <div class="form-group">
-                <div class='input-group date' id='datetimepicker6'>
-                    <input type='text' class="form-control" />
-                    <span class="input-group-addon">
-                    <span class="glyphicon glyphicon-time"></span>
-                </span>
-                </div>
-            </div>
-        </div>
-        <div class='col-md-5'>
-            <div class="form-group">
-                <div class='input-group date' id='datetimepicker7'>
-                    <input type='text' class="form-control" />
-                    <span class="input-group-addon">
-                    <span class="glyphicon glyphicon-time"></span>
-                </span>
-                </div>
-            </div>
-        </div>
-        <div class="totalTime"></div>
-    </div>
-
 <?php
-
+var_dump($userInfo);
 ?>
+
+</div>

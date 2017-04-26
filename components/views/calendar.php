@@ -7,6 +7,10 @@
  */
 
 use yii\helpers\Html;
+use yii\bootstrap\ActiveForm;
+use kartik\select2\Select2;
+use yii\web\JsExpression;
+use yii\web\View;
 
 ini_set('xdebug.var_display_max_depth', 10);
 ini_set('xdebug.var_display_max_children', 256);
@@ -45,6 +49,92 @@ ini_set('xdebug.var_display_max_data', 1024);
                 <?php endforeach;?>
             </tr>
         </thead>
+        <tfoot>
+            <tr>
+                <td colspan="8">
+                    <?php
+$format = <<< SCRIPT
+function format(lesson) {
+    return lesson.text;
+}
+SCRIPT;
+                    $escape = new JsExpression("function(m) { return m; }");
+                    $this->registerJs($format, View::POS_HEAD);
+
+                    $filter = ActiveForm::begin([
+                        'id' => 'filter-form',
+//                        'layout' => 'horizontal',
+                        'enableClientValidation' => true,
+                        'enableAjaxValidation' => false,
+                        'action' => 'calendar',
+                        'fieldConfig' => [
+//                            'template' => "{label}\n<div class=\"col-lg-12\">{input}</div>",
+//                            'labelOptions' => ['class' => 'col-lg-1 control-label'],
+                        ],
+                    ]);?>
+                    <div>
+                        <div class="col-md-3">
+                            <?php $filterForm->statusFilter = Yii::$app->session->get('statusFilter');?>
+                            <?= $filter->field($filterForm, 'statusFilter')->widget(Select2::className(), [
+                                'name' => 'status_filter',
+                                'data' => $status_list,
+                                'theme' => Select2::THEME_BOOTSTRAP,
+                                'hideSearch' => true,
+                                'options' => ['placeholder' => 'Select a Status ...', 'multiple' => true],
+                                'pluginOptions' => [
+                                    'templateResult' => new JsExpression('format'),
+                                    'templateSelection' => new JsExpression('format'),
+                                    'escapeMarkup' => $escape,
+                                    'allowClear' => true,
+                                    'closeOnSelect' =>false,
+                                ],
+                            ])->label(false);?>
+                        </div>
+                        <div class="col-md-3">
+                            <?php $filterForm->lessonFilter = Yii::$app->session->get('lessonFilter');?>
+                            <?= $filter->field($filterForm, 'lessonFilter')->widget(Select2::className(), [
+                                'name' => 'lesson_filter',
+                                'data' => $lesson_list,
+                                'theme' => Select2::THEME_BOOTSTRAP,
+                                'hideSearch' => true,
+                                'options' => ['placeholder' => 'Select a Lesson ...', 'multiple' => true],
+                                'pluginOptions' => [
+                                    'templateResult' => new JsExpression('format'),
+                                    'templateSelection' => new JsExpression('format'),
+                                    'escapeMarkup' => $escape,
+                                    'allowClear' => true,
+                                    'closeOnSelect' =>false,
+                                ],
+                            ])->label(false);?>
+                        </div>
+                        <div class="col-md-3">
+                            <?php $filterForm->teacherFilter = Yii::$app->session->get('teacherFilter');?>
+                            <?= $filter->field($filterForm, 'teacherFilter')->widget(Select2::className(), [
+                                'name' => 'teacherFilter',
+                                'data' => $user_list,
+                                'theme' => Select2::THEME_BOOTSTRAP,
+                                'hideSearch' => true,
+                                'options' => ['placeholder' => 'Select a User ...', 'multiple' => true],
+                                'pluginOptions' => [
+                                    'templateResult' => new JsExpression('format'),
+                                    'templateSelection' => new JsExpression('format'),
+                                    'escapeMarkup' => $escape,
+                                    'allowClear' => true,
+                                    'closeOnSelect' =>false,
+                                ],
+                            ])->label(false);?>
+                        </div>
+                        <div class="form-group col-md-1">
+                            <?= Html::submitButton('Apply', ['class' => 'btn btn-success', 'id' => 'filter-confirm'])?>
+                        </div>
+                        <div class="col-md-1">
+                            <?= Html::a('Clear', 'profile', ['class' => 'btn btn-warning', 'id' => 'filter-clear'])?>
+                        </div>
+                    </div>
+                    <?php ActiveForm::end(); ?>
+                </td>
+            </tr>
+        </tfoot>
         <tbody>
             <?php
             $_year = '';
@@ -116,8 +206,8 @@ ini_set('xdebug.var_display_max_data', 1024);
 
 <td style="padding: 0; <?=$dayStyle?>" class="dayCell <?="$holiday $today $currentMonth"?>">
     <div style="width: 100%; height: 100%">
-        <div class="dayLine">
-            <div class="day" <?=$dayStyleToDate?> onclick="onClickMonth('<?=$_year?>-<?=$_month?>-<?=$_day?>', '', 'day')">
+        <div class="dayLineBar">
+            <div class="dayBar" <?=$dayStyleToDate?> onclick="onClickMonth('<?=$_year?>-<?=$_month?>-<?=$_day?>', '', 'day')">
                 <strong class="weekstyle"><?=$_day?></strong><?=$mothToDate?>
             </div>
             <div style="margin-right: 5px; float: right">
@@ -163,29 +253,59 @@ ini_set('xdebug.var_display_max_data', 1024);
         </div>
         <div>
         <?php if(isset($day['actionList'])):?>
+            <?php
+            $count = 0;
+            $qnt = count($day['actionList']);
+            ?>
             <?php foreach ($day['actionList'] as $actions):
+                $count++;
                 $dayActionStatus = ' style="background-color: '.$actions['color'].'"';
             ?>
-            <div class="dayAction img-rounded" <?=$dayActionStatus?>>
-                <div class="timeField">
-                    <div class="timeAction">
-                        <?=date('H:i', $actions['lesson_start'])?>
-                    </div>
-                    <div class="timeAction">
-                        <?=date('H:i', $actions['lesson_finish'])?>
-                    </div>
+            <?php if ($count === 4 && $whtsh == 'month' && $qnt > 3):?>
+                <div id="showMoreActions<?=$actions['lesson_id']?>" class="showMoreActions" onclick="showLayer('<?=$actions['lesson_id']?>')">
+                    <i id="iconChange<?=$actions['lesson_id']?>" class="fa fa-caret-down iconShowHide" aria-hidden="true"></i>
                 </div>
-                <div class="lessonIconAction">
-                    <?php if ($actions['icon'] == NULL):?>
-                    <i class="fa fa-question fa-lg icon_reg_action img-thumbnail" aria-hidden="true" style="width: 22px;height: 22px;vertical-align: middle;color: #78909c;padding-top: 3px"></i>
-                    <?php else:?>
-                    <img src="/images/icons/<?=$actions['icon']?>" class="icon_reg_action img-thumbnail" alt="<?=$actions['instr_name']?>" title="<?=$actions['instr_name']?>">
+            <?php endif;?>
+            <?php if($count == 4 && $whtsh == 'month'): ?>
+            <div class="hidenDiv" id = "<?=$actions['lesson_id']?>">
+            <?php endif; ?>
+                <div class="dayAction img-rounded" <?=$dayActionStatus?>>
+                    <div class="dropdown">
+                        <div class="timeField dropdown-toggle" data-toggle="dropdown">
+                            <div class="timeAction">
+                                <?=date('H:i', $actions['lesson_start'])?>
+                            </div>
+                            <div class="timeAction">
+                                <?=date('H:i', $actions['lesson_finish'])?>
+                            </div>
+                        </div>
+                        <ul class="dropdown-menu editIcons">
+                            <li><?= Html::a('<i class="fa fa-pencil-square-o fa-lg text-warning" aria-hidden="true"></i>', 'profile', ['lessonId' => $actions['lesson_id'], 'id' => 'lesson-edit'])?></li>
+                            <li><?= Html::a('<i class="fa fa-trash-o fa-lg text-danger" aria-hidden="true"></i>', 'profile', ['lessonId' => $actions['lesson_id'], 'id' => 'lesson-delete'])?></li>
+                            <li><button aria-hidden="true" data-dismiss="alert" class="close" type="button" style="line-height: 26px;margin-left: 4px;">×</button></li>
+                        </ul>
+                    </div>
+
+                    <div class="lessonIconAction">
+                        <?php if ($actions['icon'] == NULL):?>
+                        <i class="fa fa-question fa-lg icon_reg_action img-thumbnail" aria-hidden="true" style="width: 22px;height: 22px;vertical-align: middle;color: #78909c;padding-top: 3px"></i>
+                        <?php else:?>
+                        <img src="/images/icons/<?=$actions['icon']?>" class="icon_reg_action img-thumbnail" alt="<?=$actions['instr_name']?>" title="<?=$actions['instr_name']?>">
+                        <?php endif;?>
+                    </div>
+                    <div class="nameTeacherAction">
+                        <?=$actions['first_name'].' '.$actions['last_name']?>
+                    </div>
+                    <?php if ($whtsh == 'day'):?>
+                    <div class="divComment">
+                        <?=$actions['comment']?>
+                    </div>
                     <?php endif;?>
                 </div>
-                <div class="nameTeacherAction">
-                    <?=$actions['first_name'].' '.$actions['last_name']?>
-                </div>
+            <?php if($count == $qnt): ?>
             </div>
+            <?php endif; ?>
+
             <?php endforeach;?>
         <?php endif;?>
         </div>
@@ -215,7 +335,7 @@ ini_set('xdebug.var_display_max_data', 1024);
 <div>
 
     <?php
-
+var_dump(Yii::$app->session->get('lessonFilter'));
     var_dump($calendarArray);
 //    $month = new DateTime();
 //    $cur = $month->format('W');

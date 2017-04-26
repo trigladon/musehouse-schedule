@@ -115,6 +115,19 @@ class Instrument extends ActiveRecord
         return $lesson_list;
     }
 
+    public static function lessonListDropBox(){
+        $rows = (new Query())
+            ->select(['id', 'icon', 'instr_name'])
+            ->from('instricon')
+            ->all();
+
+        foreach ($rows as $value){
+            $lesson_list[$value['id']] = '<img src="/images/icons/'.$value['icon'].'" class="dropBoxIcon">'.$value['instr_name'];
+        }
+
+        return $lesson_list;
+    }
+
     public static function lessonListReg(){
         $rows = (new Query())
             ->select(['id', 'icon', 'instr_name'])
@@ -135,7 +148,11 @@ class Instrument extends ActiveRecord
             ->where(['id' => $id])
             ->one();
         $icon = $row['icon'];
-        unlink('images/icons/'.$icon);
+
+        if(file_exists('images/icons/'.$icon)){
+            unlink('images/icons/'.$icon);
+        }
+
         Yii::$app->db->createCommand()->delete('instricon', 'id = '.$id)->execute();
     }
 
@@ -154,19 +171,4 @@ class Instrument extends ActiveRecord
         return $lesson_list;
     }
 
-    public static function lessonListUser2(){
-        $rows = (new Query())
-            ->select(['ui.instricon_id', 'i.icon', 'i.instr_name'])
-            ->from('userinstr ui')
-            ->leftJoin('instricon i', 'ui.instricon_id = i.id')
-            ->where(['ui.user_id' => Yii::$app->user->identity->getId()])
-            ->all();
-
-        $lesson_list = ArrayHelper::map($rows, 'instricon_id', 'i.icon');
-//        foreach ($rows as $value){
-//            $lesson_list[$value['instricon_id']] = '<img src="/images/icons/'.$value['icon'].'" class="icon_reg">'.$value['instr_name'];
-//        }
-
-        return $lesson_list;
-    }
 }

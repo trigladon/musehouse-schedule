@@ -66,9 +66,15 @@ $config = [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-//            'rules' => [
-//                'site/index' => '',
-//            ],
+            'rules' => [
+                'index' => 'site/index',
+                'registration' => 'site/registration',
+                'calendar' => 'teacher/calendar',
+                'statistics' => 'teacher/statistics',
+                'lessons' => 'master/instrument',
+                'users' => 'master/users',
+                'profile' => 'teacher/profile',
+            ],
         ],
         'authManager' => [
             'class' => 'yii\rbac\DbManager',

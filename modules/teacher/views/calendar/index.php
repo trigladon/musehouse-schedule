@@ -12,6 +12,9 @@ use yii\helpers\Html;
 use app\components\CalendarWidget;
 use yii\bootstrap\Modal;
 use yii\bootstrap\ActiveForm;
+use kartik\select2\Select2;
+use yii\web\JsExpression;
+use yii\web\View;
 
 $this->title = 'Calendar';
 ?>
@@ -23,11 +26,19 @@ $this->title = 'Calendar';
             'monthToShow' => $monthToShow,
             'whtsh' => $whtsh,
             'weekDaysToShow' => $weekDaysToShow,
+            'filterForm' => $filterForm,
+            'status_list' => $status_list,
+            'lesson_list' => $lesson_list,
+            'user_list' => $user_list,
         ])?>
     </div>
 
-<?php Modal::begin([
-    'header' => '<h4 class="text-muted"><i class="fa fa-calendar-plus-o"></i> Add a new Lesson!</h4><div class="text-muted actionDateInput">Data</div>',
+<?php
+
+
+$escape2 = new JsExpression("function(m) { return m; }");
+Modal::begin([
+    'header' => '<h4 class="text-muted"><i class="fa fa-calendar-plus-o"></i> Add a new Lesson!</h4>',
     'id'     => 'modal-addLesson',
     'size' => 'modal-sm',
 //        'footer' => Html::a('Update', '', ['class' => 'btn btn-danger', 'id' => 'update-confirm']),
@@ -46,7 +57,12 @@ $form = ActiveForm::begin([
     ],
 ]); ?>
 
-<!--    public $statusschedule_id;-->
+    <?= $form->field($modelAddLesson, 'action_date')->label(false)->textInput([
+        'id' => 'datetimepicker5',
+        'placeholder' => 'Date',
+    ])?>
+
+
     <?= $form->field($modelAddLesson, 'lesson_start')->label(false)->textInput([
         'id' => 'datetimepicker6',
         'placeholder' => 'Start Time',
@@ -57,27 +73,57 @@ $form = ActiveForm::begin([
         'placeholder' => 'Finish Time',
     ])?>
 
-    <?= $form->field($modelAddLesson, 'instricon_id')->label(false)->radioList($listUserLessons)?>
+<!--    --><?php //$modelAddLesson->instricon_id = 3;?>
+    <?= $form->field($modelAddLesson, 'instricon_id')->widget(Select2::className(), [
+        'data' => $listUserLessons,
+        'theme' => Select2::THEME_BOOTSTRAP,
+        'hideSearch' => true,
+        'options' => ['placeholder' => 'Type of the Lesson'],
+        'pluginOptions' => [
+            'escapeMarkup' => $escape2,
+            'allowClear' => true,
+        ],
+    ])->label(false);?>
 
-    <?= $form->field($modelAddLesson, 'statusschedule_id')->label(false)->radioList($status_list)?>
+    <?= $form->field($modelAddLesson, 'statusschedule_id')->widget(Select2::className(), [
+        'data' => $status_list,
+        'theme' => Select2::THEME_BOOTSTRAP,
+        'hideSearch' => true,
+        'options' => ['placeholder' => 'Status'],
+        'pluginOptions' => [
+            'escapeMarkup' => $escape2,
+            'allowClear' => true,
+        ],
+    ])->label(false);?>
 
     <?= $form->field($modelAddLesson, 'comment')->label(false)->textarea([
         'placeholder' => 'Comments',
+        'id' => 'comment',
     ])?>
 
-    <?= Html::activeHiddenInput($modelAddLesson,'action_date', [
+    <?= Html::activeHiddenInput($modelAddLesson,'id', [
         'class' => 'action_date_form',
+        'id' => 'lessonIdToUpdate',
     ]);?>
 
-    <?= Html::HiddenInput('whtshModel', $whtsh);?>
-    <?= Html::HiddenInput('currentDateModel', $monthToShow['currentDate']);?>
 <div class="form-group">
     <div class="col-lg-11">
-        <?= Html::submitButton('Add Lesson', ['class' => 'btn btn-success', 'id' => 'addLesson-confirm'])?>
+        <?= Html::submitButton('Add Lesson', ['class' => 'btn', 'id' => 'addLesson-confirm'])?>
     </div>
 </div>
 
 <?php ActiveForm::end(); ?>
+
+<?php Modal::end(); ?>
+
+<?php Modal::begin([
+    'header' => '<h3 class="text-warning"><i class="icon fa fa-exclamation-triangle"></i> Warning!</h3>',
+    'id'     => 'modal-deleteLesson',
+    'size' => 'modal-sm',
+    'footer' => Html::a('Delete', '', ['class' => 'btn btn-danger', 'id' => 'delete-confirm']),
+]); ?>
+
+<p class="modal-message">Do you really want to delete this lesson?</p>
 
 <?php Modal::end(); ?>
 </div>

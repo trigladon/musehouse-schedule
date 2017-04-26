@@ -38,8 +38,9 @@ AppAsset::register($this);
         'items' => [
             ['label' => 'Home', 'url' => ['/site/index']],
             ['label' => 'Calendar', 'url' => ['/teacher/calendar']],
+            ['label' => 'Statistics', 'url' => ['/teacher/statistics']],
             ['label' => 'Master Menu', 'items' =>[
-                ['label' => 'Lessons', 'url' => ['/master/instrument']],
+                ['label' => 'Type of Lessons', 'url' => ['/master/instrument']],
                 ['label' => 'User Management', 'url' => ['/master/users']],
                 ['label' => 'User Registration', 'url' => ['/site/registration']],
             ]],

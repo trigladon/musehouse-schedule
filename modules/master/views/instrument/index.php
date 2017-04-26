@@ -32,7 +32,7 @@ $this->title = 'Lessons';
             ]); ?>
 
             <?= $form->field($model, 'icon')->label(false)->fileInput([
-                    'content' => 'Choose SVG icon'
+                    'content' => 'Choose PNG icon'
             ]) ?>
             <?= $form->field($model, 'lessonName')->label(false)->textInput([
                     'placeholder' => 'Enter the name of the lesson'
@@ -47,6 +47,22 @@ $this->title = 'Lessons';
 
             <?php ActiveForm::end(); ?>
             <p class="text-warning">Only files of <strong>PNG extension</strong> is possible to use for Icons!</p>
+
+            <div class="text-info" style="margin: 40px 5px 5px 5px; padding: 5px; border: solid 1px #a94442">
+                <div class="text-center"  style="color: #a94442; font-size: 20px; margin-bottom: 5px">
+                    <div>
+                        <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                        Warning!
+                    </div>
+                </div>
+                <p>Be very careful with lessons' deleting.</p>
+                <p>Consequences:</p>
+                <ul>
+                    <li>the teachers will not be able to add lessons of this type to Calendar;</li>
+                    <li>all lessons of this type will be deleted from the Calendar;</li>
+                    <li>this lesson will not be counted in the Statistics and all previously added data will be lost;</li>
+                </ul>
+            </div>
         </div>
         <div  class="col-md-9">
             <table class="table table-hover table-striped table-bordered">
@@ -98,10 +114,10 @@ $this->title = 'Lessons';
     <div>
         <?php
 
-        var_dump(Yii::$app->user->identity->getId());
-        var_dump($list);
-        var_dump($list2);
-        var_dump($lessonsList);
+//        var_dump(Yii::$app->user->identity->getId());
+//        var_dump($list);
+//        var_dump($list2);
+//        var_dump($lessonsList);
 
         ?>
 
@@ -131,12 +147,19 @@ $this->title = 'Lessons';
     $form = ActiveForm::begin([
     'id' => 'upinstr-form',
         'layout' => 'horizontal',
+        'options' => ['enctype' => 'multipart/form-data'],
         'fieldConfig' => [
             'template' => "{label}\n<div class=\"col-lg-12\">{input}</div>",
             'labelOptions' => ['class' => 'col-lg-1 control-label'],
         ],
     ]); ?>
-    <p>Enter the new name of the lesson:</p>
+    <p><strong>Choose the NEW icon if you'd like to:</strong></p>
+    <?= $form->field($modelUpdate, 'icon')->label(false)->fileInput([
+        'content' => 'Choose PNG icon'
+    ]) ?>
+    <p class="text-warning" style="font-size: smaller">Only files of <strong>PNG extension</strong> is possible to use for Icons!</p>
+
+    <p style="margin-top: 15px"><strong>Enter the new name of the lesson:</strong></p>
     <?= $form->field($modelUpdate, 'lessonUpName')->label(false)->textInput([
 //        'value' => 'Enter the name of the lesson',
         'class' => 'upfield form-control',

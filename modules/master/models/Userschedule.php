@@ -144,10 +144,10 @@ class Userschedule extends \yii\db\ActiveRecord
                 $startDay = 0;
                 $endDay = 0;
         }
-
+        $session = Yii::$app->session;
         $rows = (new Query())
-            ->select(['ussch.id', 'ussch.lesson_start', 'ussch.lesson_finish', 'ussch.`comment`',
-                'inst.icon', 'inst.instr_name',
+            ->select(['ussch.id as lesson_id', 'ussch.lesson_start', 'ussch.lesson_finish', 'ussch.`comment`',
+                'inst.icon', 'inst.instr_name', 'inst.id',
                 'stsch.name', 'stsch.color',
                 'u.id', 'u.first_name', 'u.last_name'])
             ->from('userschedule ussch')
@@ -155,8 +155,19 @@ class Userschedule extends \yii\db\ActiveRecord
             ->leftJoin('statusschedule stsch', 'ussch.statusschedule_id = stsch.id')
             ->leftJoin('user u', 'ussch.user_id = u.id')
             ->orderBy('ussch.lesson_start')
-            ->where(['between', 'ussch.lesson_start', $startDay, $endDay])
-            ->all();
+            ->where(['between', 'ussch.lesson_start', $startDay, $endDay]);
+
+        if($session->has('teacherFilter') && $session['teacherFilter'] != null){
+            $rows->andWhere(['u.id' => $session->get('teacherFilter')]);
+        }
+        if($session->has('lessonFilter') && $session['lessonFilter'] != null){
+            $rows->andWhere(['inst.id' => $session->get('lessonFilter')]);
+        }
+        if($session->has('statusFilter') && $session['statusFilter'] != null){
+            $rows->andWhere(['stsch.id' => $session->get('statusFilter')]);
+        }
+
+        $rows = $rows->all();
 
         if ($rows){
             foreach ($rows as $value){
@@ -167,5 +178,24 @@ class Userschedule extends \yii\db\ActiveRecord
         }
 
         return $scheduleList;
+    }
+
+    public static function deleteLessonById($id){
+
+        Yii::$app->db->createCommand()->delete('userschedule', 'id = '.$id)->execute();
+    }
+
+    public static function lessonToUpdate($id){
+
+        $rows = (new Query())
+            ->select(['id', 'lesson_start', 'lesson_finish', 'user_id', 'instricon_id', 'statusschedule_id', '`comment`'])
+            ->from('userschedule')
+            ->where(['id' => $id])
+            ->one();
+
+        $rows['action_date'] = date('d-m-Y', $rows['lesson_start']);
+        $rows['lesson_start'] = date('H:i', $rows['lesson_start']);
+        $rows['lesson_finish'] = date('H:i', $rows['lesson_finish']);
+        return $rows;
     }
 }

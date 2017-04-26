@@ -210,4 +210,17 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->username = "$this->first_name $this->last_name";
     }
 
+    public static function userListDropBox(){
+        $rows = (new Query())
+            ->select(['id', 'first_name', 'last_name'])
+            ->from('user')
+            ->where('status' == 10)
+            ->all();
+
+        foreach ($rows as $value){
+            $user_list[$value['id']] = $value['first_name'].' '.$value['last_name'];
+        }
+
+        return $user_list;
+    }
 }

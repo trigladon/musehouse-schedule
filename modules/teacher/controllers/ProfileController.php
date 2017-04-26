@@ -9,14 +9,19 @@
 namespace app\modules\teacher\controllers;
 
 
+use app\modules\master\models\Instrument;
 use yii\web\Controller;
 use Yii;
+use app\modules\teacher\helpers\Profile;
 
 class ProfileController extends Controller
 {
     public function actionIndex()
     {
+        $userInfo = Profile::userInfo();
 
-        return $this->render('index');
+        return $this->render('index', [
+            'userInfo' => $userInfo,
+        ]);
     }
 }
