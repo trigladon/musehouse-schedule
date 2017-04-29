@@ -9,8 +9,7 @@ ini_set('xdebug.var_display_max_depth', 15);
 ini_set('xdebug.var_display_max_children', 256);
 ini_set('xdebug.var_display_max_data', 1024);
 
-$userName = '';
-$yearGlobal = [];
+
 ?>
 <table  class="table">
 <thead>
@@ -46,7 +45,7 @@ $yearGlobal = [];
 <tbody>
 
 <?php foreach ($statisticsData as $name => $info1):?>
-    <?php global $userName;
+    <?php
     $userName = $name;
     $rowQnt = count($info1);
     $i=1; // to calculate row qnt
@@ -73,7 +72,7 @@ $yearGlobal = [];
             <?php if ($i == 1):?>
                 <td rowspan="<?=$rowQnt?>" style="vertical-align: middle"><?=$userName?></td>
             <?php endif;?>
-            <?php if ($lesson): // todo fail array key=>value; same data, but key works and value not?>
+            <?php if ($info2['name']): // todo fail array key=>value; same data, but key works and value not?>
                 <td class="text-right"><?=$info2['name']?><img src="/images/icons/<?=$info2['icon']?>" class="icon_reg" style="margin: 0 5px"></td>
             <?php else:?>
                 <td class="text-right">Free<i class="fa fa-question fa-lg icon_reg_action" aria-hidden="true" style="width: 20px;height: 20px;color: #78909c;margin: 0 5px; padding: 3px 5px 0 0"></i></td>

@@ -101,4 +101,9 @@ class Userinstr extends ActiveRecord
 
         return true;
     }
+
+    public static function deleteByUidIid($uId, $iId){
+        $userInstr = static::findOne(['user_id' => $uId, 'instricon_id' => $iId]);
+        $userInstr->delete();
+    }
 }

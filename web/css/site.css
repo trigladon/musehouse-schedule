@@ -252,7 +252,7 @@ td.today{
     margin: 1px 0;
 }
 
-.timeField:hover{
+.dayAction:hover{
     color: #ff7043;
     cursor: pointer;
 }

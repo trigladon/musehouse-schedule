@@ -30,6 +30,10 @@ use DateTime;
  */
 class Userschedule extends \yii\db\ActiveRecord
 {
+    const STATUS_OPEN = 1;
+    const STATUS_DONE = 2;
+    const STATUS_LOSE = 3;
+
     /**
      * @inheritdoc
      */
@@ -165,6 +169,9 @@ class Userschedule extends \yii\db\ActiveRecord
         }
         if($session->has('statusFilter') && $session['statusFilter'] != null){
             $rows->andWhere(['stsch.id' => $session->get('statusFilter')]);
+        }
+        if (!User::isMaster()){
+            $rows->andWhere(['ussch.user_id' => Yii::$app->user->id]);
         }
 
         $rows = $rows->all();

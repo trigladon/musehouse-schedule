@@ -8,6 +8,7 @@ use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
+use app\models\User;
 
 AppAsset::register($this);
 ?>
@@ -27,37 +28,39 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => 'MuseHouse Schedule',
+        'brandLabel' => Yii::$app->name,
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav navbar-right'],
-        'items' => [
-            ['label' => 'Home', 'url' => ['/site/index']],
+
+    if (Yii::$app->user->isGuest){
+        $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
+    }else{
+        $menuItems = [
             ['label' => 'Calendar', 'url' => ['/teacher/calendar']],
             ['label' => 'Statistics', 'url' => ['/teacher/statistics']],
-            ['label' => 'Master Menu', 'items' =>[
+
+            ['label' => 'Profile', 'url' => ['/teacher/profile']],
+        ];
+        if (User::isMaster()){
+            $menuItems[] = ['label' => 'Master Menu', 'items' =>[
                 ['label' => 'Type of Lessons', 'url' => ['/master/instrument']],
                 ['label' => 'User Management', 'url' => ['/master/users']],
-                ['label' => 'User Registration', 'url' => ['/site/registration']],
-            ]],
-            ['label' => 'Profile', 'url' => ['/teacher/profile']],
-            Yii::$app->user->isGuest ? (
-            ['label' => 'Login', 'url' => ['/site/login']]
-            ) : (
-                '<li>'
-                . Html::beginForm(['/site/logout'], 'post')
-                . Html::submitButton(
-                    'Logout (' . Yii::$app->user->identity->first_name . ')',
-                    ['class' => 'btn btn-link logout']
-                )
-                . Html::endForm()
-                . '</li>'
-            )
-        ],
+            ]];
+        }
+        $menuItems[] = [
+            'label' => 'Logout (' . Yii::$app->user->identity->first_name . ')',
+            'url' => ['/site/logout'],
+            'linkOptions' => ['data-method' => 'post'],
+        ];
+    }
+
+
+    echo Nav::widget([
+        'options' => ['class' => 'navbar-nav navbar-right'],
+        'items' => $menuItems,
     ]);
     NavBar::end();
     ?>

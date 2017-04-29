@@ -12,9 +12,11 @@ ini_set('xdebug.var_display_max_depth', 15);
 ini_set('xdebug.var_display_max_children', 256);
 ini_set('xdebug.var_display_max_data', 1024);
 
+use app\models\User;
 use yii\db\Query;
 use Yii;
 use DateTime;
+use app\modules\master\models\Userschedule;
 
 class Statistics
 {
@@ -74,9 +76,44 @@ class Statistics
             ->select(['u_instr.user_id', 'u_instr.instricon_id', '`instr`.instr_name', '`instr`.icon', 'u.first_name', 'u.last_name'])
             ->from('userinstr u_instr')
             ->leftJoin('instricon `instr`', 'u_instr.instricon_id = `instr`.id')
+            ->leftJoin('user u', 'u_instr.user_id = u.id');
+        if (!User::isMaster()){
+            $queryUserInstr->andWhere(['u_instr.user_id' => Yii::$app->user->id]);
+        }
+        $queryUserInstr = $queryUserInstr->all();
+
+        //1.1 START checking lesson list of users from calendar in case if there were changes with actual lesson list
+        $queryUIAction = Userschedule::find()
+            ->select(['u_instr.user_id', 'u_instr.instricon_id', '`instr`.instr_name', '`instr`.icon', 'u.first_name', 'u.last_name'])
+            ->from('userschedule u_instr')
+            ->leftJoin('instricon `instr`', 'u_instr.instricon_id = `instr`.id')
             ->leftJoin('user u', 'u_instr.user_id = u.id')
-//            ->where(['u_instr.user_id' => 76])
-            ->all();//todo add where with user if master or not
+            ->andWhere(['>', 'instricon_id', 0]);
+        if (!User::isMaster()){
+            $queryUIAction->andWhere(['u_instr.user_id' => Yii::$app->user->id]);
+        }
+        $queryUIAction = $queryUIAction->groupBy(['user_id', 'instricon_id'])
+            ->asArray()
+            ->all();
+
+        $uIAction =[];
+
+        foreach ($queryUIAction as $value) {
+            $curentUIAction = [
+                $value['first_name'] . ' ' . $value['last_name'] => [
+                    $value['instr_name'] => [
+                        'id' => $value['instricon_id'],
+                        'icon' => $value['icon'],
+                        'name' => $value['instr_name'],
+                        'data' => [],
+                    ]
+                ]
+            ];
+            $uIAction = array_replace_recursive($uIAction, $curentUIAction);
+            $uIAction[$value['first_name'].' '.$value['last_name']][$value['instr_name']]['data'] = $monthArray;
+        }
+        //1.1 END
+
 
         $userInstr = [];
         foreach ($queryUserInstr as $value){
@@ -92,13 +129,23 @@ class Statistics
             ];
 
             $userInstr = array_replace_recursive($userInstr, $curentUserInstr);
-            $userInstr[$value['first_name'].' '.$value['last_name']]['']['data'] = $monthArray;
+            $userInstr[$value['first_name'].' '.$value['last_name']][''] = [
+                'name' => '', //todo full array stack
+                'data'=> $monthArray,
+            ];
             $userInstr[$value['first_name'].' '.$value['last_name']][$value['instr_name']]['data'] = $monthArray;
             krsort($userInstr[$value['first_name'].' '.$value['last_name']]);
         }
+
+        $userInstr = array_replace_recursive($userInstr, $uIAction);
+
         // END receiving all user instruments
 
-
+        if (!User::isMaster()){
+            $userTeacher = ' AND ussch.user_id = '.Yii::$app->user->id;
+        }else{
+            $userTeacher = '';
+        }
 
         $queryData = Yii::$app->db->createCommand('
             SELECT ussch.user_id, u.first_name, u.last_name, 
@@ -113,12 +160,10 @@ class Statistics
             ON ussch.instricon_id = `instr`.id
             LEFT JOIN statusschedule st
             ON ussch.statusschedule_id = st.id
-            WHERE ussch.lesson_start BETWEEN '.$startDay.' AND '.$endDay.'
+            WHERE ussch.lesson_start BETWEEN '.$startDay.' AND '.$endDay.$userTeacher.'
             GROUP BY ussch.user_id, FROM_UNIXTIME(ussch.lesson_start, \'%Y\'), FROM_UNIXTIME(ussch.lesson_start, \'%c\'), FROM_UNIXTIME(ussch.lesson_start, \'%M\'), ussch.instricon_id, ussch.statusschedule_id  
         ')->queryAll(); //todo add where with user if master or not
 
-//        WHERE ussch.lesson_start BETWEEN '.$startDay.' AND '.$endDay.' AND ussch.user_id REGEXP "76"
-//        WHERE ussch.lesson_start BETWEEN '.$startDay.' AND '.$endDay.' AND ussch.user_id = 76
         $userStatistics = [];
 
         foreach ($queryData as $value){
@@ -150,8 +195,13 @@ class Statistics
 
         // START template preparing
         $queryUser = (new Query())->select(['first_name', 'last_name'])
-            ->from('user')
-            ->all(); //todo add where whith user if master or not
+            ->from('user');
+
+        if (!User::isMaster()){
+            $queryUser->andWhere(['id' => Yii::$app->user->id]);
+        }
+
+        $queryUser = $queryUser->all(); //todo add where whith user if master or not
 
         $template = [];
         foreach ($queryUser as $value) {
@@ -162,16 +212,9 @@ class Statistics
             $template = array_replace_recursive($template, $curentUserTemplate);
         }
         // END template preparing
-//
+
         $userStatistics = array_replace_recursive($userInstr, $userStatistics);
 
-
-
-
-//        return $monthArray;
-//        return $userInstr;
-//        return $curentUserInstr;
-//        return $template;
         return $userStatistics;
     }
 

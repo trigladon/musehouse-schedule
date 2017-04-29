@@ -88,9 +88,18 @@ class SiteController extends Controller
         }
 
         $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->login()){
+
+                return $this->goHome();
+
+            }else{
+                Yii::$app->session->setFlash('Error', 'Please check Email and Password you have entered and try one more time!');
+                return $this->refresh();
+            }
+
         }
+
         return $this->render('login', [
             'model' => $model,
         ]);

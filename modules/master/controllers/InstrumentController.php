@@ -14,10 +14,27 @@ use app\modules\master\models\Instrument;
 use yii\web\UploadedFile;
 use yii\web\Controller;
 use Yii;
+use yii\filters\AccessControl;
 
 
 class InstrumentController extends Controller
 {
+
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['master'],
+                    ],
+                ],
+            ],
+        ];
+    }
+
     public function actionIndex()
     {
 

@@ -52,15 +52,6 @@ class RegForm extends Model
         ];
     }
 
-// validation
-//    public function validateUsername ($attr){
-//
-//        $attrLength = strlen($this->$attr);
-//        if (!ctype_alnum($this->$attr) || $attrLength <= 4 || $attrLength >= 255){
-//            $this->addError($attr, 'Поле должно содержать только буквы и цифры. Длина текста не менее 4х символов.');
-//        }
-//
-//    }
 
     public function validatePassword ($attr){
 

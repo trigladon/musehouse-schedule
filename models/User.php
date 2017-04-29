@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\modules\master\models\Userinstr;
 use Yii;
 use yii\web\IdentityInterface;
 use yii\db\ActiveRecord;
@@ -187,6 +188,16 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->email;
     }
 
+    public function getFirstName(){
+
+        return $this->first_name;
+    }
+
+    public function getLastName(){
+
+        return $this->last_name;
+    }
+
     public function validateAuthKey($authKey)
     {
         return $this->auth_key === $authKey;
@@ -210,17 +221,37 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->username = "$this->first_name $this->last_name";
     }
 
-    public static function userListDropBox(){
-        $rows = (new Query())
-            ->select(['id', 'first_name', 'last_name'])
-            ->from('user')
-            ->where('status' == 10)
+    public function getUserLessons(){
+
+        return Userinstr::find()
+            ->joinWith(['instricon instr'])
+            ->where(['user_id' => $this->id])
+            ->asArray()
             ->all();
+    }
+
+    public static function userListDropBox(){
+        $rows = static::find()
+            ->select(['id', 'first_name', 'last_name'])
+            ->from('user');
+        if(!self::isMaster()){
+            $rows->andWhere(['id' => Yii::$app->user->id]);
+        }
+        $rows->andWhere(['status' => 10]);
+        $rows = $rows->all();
 
         foreach ($rows as $value){
             $user_list[$value['id']] = $value['first_name'].' '.$value['last_name'];
         }
 
         return $user_list;
+    }
+
+    public static function isMaster(){
+        if (key(Yii::$app->authManager->getRolesByUser(Yii::$app->user->id)) == 'master'){
+            return true;
+        }else{
+            return false;
+        }
     }
 }

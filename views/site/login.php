@@ -12,7 +12,13 @@ $this->title = 'Login';
 ?>
 <div class="site-login">
     <h1><?= Html::encode($this->title) ?></h1>
-
+    <?php if (Yii::$app->session->hasFlash('Error')): ?>
+        <div class="alert alert-warning alert-dismissable">
+            <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+            <h4><i class="icon fa fa-exclamation-triangle"></i> Warning!</h4>
+            <?= Yii::$app->session->getFlash('Error') ?>
+        </div>
+    <?php endif;?>
     <p>Please fill out the following fields to login:</p>
 
     <?php $form = ActiveForm::begin([
@@ -44,7 +50,6 @@ $this->title = 'Login';
         </div>
 
     <?php ActiveForm::end(); ?>
-    <?= Html::a('Click if you forgot password!', ['/site/send-recovery-email'])?>
 
     <?php if (Yii::$app->session->hasFlash('reg_succ')): ?>
         <div class="alert alert-success alert-dismissable">

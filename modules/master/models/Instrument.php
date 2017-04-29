@@ -4,6 +4,7 @@ namespace app\modules\master\models;
 
 use Yii;
 use yii\helpers\ArrayHelper;
+use app\models\User;
 
 /**
  * This is the model class for table "instricon".
@@ -116,10 +117,30 @@ class Instrument extends ActiveRecord
     }
 
     public static function lessonListDropBox(){
-        $rows = (new Query())
-            ->select(['id', 'icon', 'instr_name'])
-            ->from('instricon')
-            ->all();
+        $rows = static::find()
+            ->select(['i.id', 'i.icon', 'i.instr_name'])
+            ->from('instricon i');
+
+        if (!User::isMaster()){
+            $rows->innerJoin('userinstr u', 'i.id = u.instricon_id');
+            $rows->andWhere(['u.user_id' => Yii::$app->user->id]);
+        }
+
+        $rows = $rows->all();
+
+        foreach ($rows as $value){
+            $lesson_list[$value['id']] = '<img src="/images/icons/'.$value['icon'].'" class="dropBoxIcon">'.$value['instr_name'];
+        }
+
+        return $lesson_list;
+    }
+
+    public static function lessonListProfile(){
+        $rows = static::find()
+            ->select(['i.id', 'i.icon', 'i.instr_name'])
+            ->from('instricon i');
+
+        $rows = $rows->all();
 
         foreach ($rows as $value){
             $lesson_list[$value['id']] = '<img src="/images/icons/'.$value['icon'].'" class="dropBoxIcon">'.$value['instr_name'];

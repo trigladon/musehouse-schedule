@@ -4,6 +4,7 @@ $params = require(__DIR__ . '/params.php');
 
 $config = [
     'id' => 'basic',
+    'name' => 'MuseHouse Schedule',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'modules' => [
@@ -43,13 +44,12 @@ $config = [
             'transport' => [
                 'class' => 'Swift_SmtpTransport',
                 'host' => 'smtp.gmail.com',
-                'username' => 'bdionis.up@gmail.com',
-                'password' => '0733700201ksyusha',
+                'username' => '',
+                'password' => '',
                 'port' => '587',
                 'encryption' => 'tls',
             ],
             'messageConfig' => [
-//                'from' => ['no_reply@musehouse.cz' => Yii::$app->name.' (was sent by robot)'],
             ],
         ],
         'log' => [
@@ -68,6 +68,7 @@ $config = [
             'showScriptName' => false,
             'rules' => [
                 'index' => 'site/index',
+                'login' => 'site/login',
                 'registration' => 'site/registration',
                 'calendar' => 'teacher/calendar',
                 'statistics' => 'teacher/statistics',

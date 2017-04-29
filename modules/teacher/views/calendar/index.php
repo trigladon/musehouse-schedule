@@ -35,7 +35,6 @@ $this->title = 'Calendar';
 
 <?php
 
-
 $escape2 = new JsExpression("function(m) { return m; }");
 Modal::begin([
     'header' => '<h4 class="text-muted"><i class="fa fa-calendar-plus-o"></i> Add a new Lesson!</h4>',

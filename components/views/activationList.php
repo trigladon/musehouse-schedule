@@ -119,10 +119,6 @@ use yii\bootstrap\Modal;
         ?>
 <?php endif; ?>
     </table>
-<?php
-    var_dump($user_list);
-
-?>
 
 <?php Modal::begin([
     'header' => '<h3 class="text-warning"><i class="icon fa fa-exclamation-triangle"></i> Warning!</h3>',

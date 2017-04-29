@@ -12,9 +12,26 @@ use yii\web\Controller;
 use app\modules\master\forms\InviteUserForm;
 use app\models\User;
 use Yii;
+use yii\filters\AccessControl;
 
 class UsersController extends Controller
 {
+
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['master'],
+                    ],
+                ],
+            ],
+        ];
+    }
+
     public function actionIndex()
     {
         $model = new InviteUserForm();

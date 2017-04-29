@@ -11,6 +11,7 @@ use yii\bootstrap\ActiveForm;
 use kartik\select2\Select2;
 use yii\web\JsExpression;
 use yii\web\View;
+use app\models\User;
 
 ini_set('xdebug.var_display_max_depth', 10);
 ini_set('xdebug.var_display_max_children', 256);
@@ -90,7 +91,7 @@ SCRIPT;
                                 ],
                             ])->label(false);?>
                         </div>
-                        <div class="col-md-3">
+                        <div class="<?= User::isMaster() ? 'col-md-3' : 'col-md-6'?>">
                             <?php $filterForm->lessonFilter = Yii::$app->session->get('lessonFilter');?>
                             <?= $filter->field($filterForm, 'lessonFilter')->widget(Select2::className(), [
                                 'name' => 'lesson_filter',
@@ -107,6 +108,7 @@ SCRIPT;
                                 ],
                             ])->label(false);?>
                         </div>
+                        <?php if (User::isMaster()):?>
                         <div class="col-md-3">
                             <?php $filterForm->teacherFilter = Yii::$app->session->get('teacherFilter');?>
                             <?= $filter->field($filterForm, 'teacherFilter')->widget(Select2::className(), [
@@ -124,6 +126,7 @@ SCRIPT;
                                 ],
                             ])->label(false);?>
                         </div>
+                        <?php endif;?>
                         <div class="form-group col-md-1">
                             <?= Html::submitButton('Apply', ['class' => 'btn btn-success', 'id' => 'filter-confirm'])?>
                         </div>
@@ -269,9 +272,9 @@ SCRIPT;
             <?php if($count == 4 && $whtsh == 'month'): ?>
             <div class="hidenDiv" id = "<?=$actions['lesson_id']?>">
             <?php endif; ?>
-                <div class="dayAction img-rounded" <?=$dayActionStatus?>>
-                    <div class="dropdown">
-                        <div class="timeField dropdown-toggle" data-toggle="dropdown">
+                <div class="dropdown">
+                    <div class="dayAction img-rounded dropdown-toggle" data-toggle="dropdown" <?=$dayActionStatus?>>
+                        <div class="timeField">
                             <div class="timeAction">
                                 <?=date('H:i', $actions['lesson_start'])?>
                             </div>
@@ -279,28 +282,27 @@ SCRIPT;
                                 <?=date('H:i', $actions['lesson_finish'])?>
                             </div>
                         </div>
-                        <ul class="dropdown-menu editIcons">
-                            <li><?= Html::a('<i class="fa fa-pencil-square-o fa-lg text-warning" aria-hidden="true"></i>', 'profile', ['lessonId' => $actions['lesson_id'], 'id' => 'lesson-edit'])?></li>
-                            <li><?= Html::a('<i class="fa fa-trash-o fa-lg text-danger" aria-hidden="true"></i>', 'profile', ['lessonId' => $actions['lesson_id'], 'id' => 'lesson-delete'])?></li>
-                            <li><button aria-hidden="true" data-dismiss="alert" class="close" type="button" style="line-height: 26px;margin-left: 4px;">×</button></li>
-                        </ul>
-                    </div>
-
-                    <div class="lessonIconAction">
-                        <?php if ($actions['icon'] == NULL):?>
-                        <i class="fa fa-question fa-lg icon_reg_action img-thumbnail" aria-hidden="true" style="width: 22px;height: 22px;vertical-align: middle;color: #78909c;padding-top: 3px"></i>
-                        <?php else:?>
-                        <img src="/images/icons/<?=$actions['icon']?>" class="icon_reg_action img-thumbnail" alt="<?=$actions['instr_name']?>" title="<?=$actions['instr_name']?>">
+                        <div class="lessonIconAction">
+                            <?php if ($actions['icon'] == NULL):?>
+                            <i class="fa fa-question fa-lg icon_reg_action img-thumbnail" aria-hidden="true" style="width: 22px;height: 22px;vertical-align: middle;color: #78909c;padding-top: 3px"></i>
+                            <?php else:?>
+                            <img src="/images/icons/<?=$actions['icon']?>" class="icon_reg_action img-thumbnail" alt="<?=$actions['instr_name']?>" title="<?=$actions['instr_name']?>">
+                            <?php endif;?>
+                        </div>
+                        <div class="nameTeacherAction">
+                            <?=$actions['first_name'].' '.$actions['last_name']?>
+                        </div>
+                        <?php if ($whtsh == 'day'):?>
+                        <div class="divComment">
+                            <?=$actions['comment']?>
+                        </div>
                         <?php endif;?>
                     </div>
-                    <div class="nameTeacherAction">
-                        <?=$actions['first_name'].' '.$actions['last_name']?>
-                    </div>
-                    <?php if ($whtsh == 'day'):?>
-                    <div class="divComment">
-                        <?=$actions['comment']?>
-                    </div>
-                    <?php endif;?>
+                    <ul class="dropdown-menu editIcons">
+                        <li><?= Html::a('<i class="fa fa-pencil-square-o fa-lg text-warning" aria-hidden="true"></i>', '#', ['lessonId' => $actions['lesson_id'], 'id' => 'lesson-edit'])?></li>
+                        <li><?= Html::a('<i class="fa fa-trash-o fa-lg text-danger" aria-hidden="true"></i>', '#', ['lessonId' => $actions['lesson_id'], 'id' => 'lesson-delete'])?></li>
+                        <li><button aria-hidden="true" data-dismiss="alert" class="close" type="button" style="line-height: 26px;margin-left: 4px;">×</button></li>
+                    </ul>
                 </div>
             <?php if($count == $qnt): ?>
             </div>
@@ -333,24 +335,6 @@ SCRIPT;
 <div class="results"></div>
 
 <div>
-
-    <?php
-var_dump(Yii::$app->session->get('lessonFilter'));
-    var_dump($calendarArray);
-//    $month = new DateTime();
-//    $cur = $month->format('W');
-//    $ch = 19-$cur;
-//    $month->modify('+'.$ch.'week');
-//    if ($month->format('N') !== 1){
-//        $month->modify('last Monday');
-//    }
-//    $startDay = $month->format('U');
-//    echo $month->format('Y-m-d H:i');
-//    $month->modify('+7 days');
-//    echo $month->format('Y-m-d H:i');
-//    var_dump($endDay = $month->format('U'));
-//    var_dump($endDay-1);
-    ?>
 
 
 </div>
