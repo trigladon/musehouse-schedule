@@ -37,7 +37,7 @@ $this->title = 'Calendar';
 
 $escape2 = new JsExpression("function(m) { return m; }");
 Modal::begin([
-    'header' => '<h4 class="text-muted"><i class="fa fa-calendar-plus-o"></i> Add/Update a new Lesson!</h4>',
+    'header' => '<h4 class="text-muted"><i class="fa fa-calendar"></i> <span class="headerLessonCalendarForm">Add/Update a new Lesson!</span></h4>',
     'id'     => 'modal-addLesson',
     'size' => 'modal-sm',
 //        'footer' => Html::a('Update', '', ['class' => 'btn btn-danger', 'id' => 'update-confirm']),

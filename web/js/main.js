@@ -115,7 +115,7 @@ $(document).ready(function () {
 
         var modal = $('#modal-addLesson').modal('show');
         modal.find('.modal-body').load($('.modal-dialog'));
-
+        $('.headerLessonCalendarForm').text('Add a new Lesson!');
         $('#addLesson-confirm').removeClass('btn-warning');
         $('#addLesson-confirm').addClass('btn-success');
         $('#addLesson-confirm').text('Add Lesson');
@@ -305,6 +305,7 @@ $(document).on('click', '#lesson-edit', function (event) {
             console.log(data);
             var modal = $('#modal-addLesson').modal('show');
             modal.find('.modal-body').load($('.modal-dialog'));
+            $('.headerLessonCalendarForm').text('Update Lesson!');
 
             $('#addLesson-confirm').removeClass('btn-success');
             $('#addLesson-confirm').addClass('btn-warning');

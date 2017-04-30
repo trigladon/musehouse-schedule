@@ -51,7 +51,7 @@ $this->title = 'Profile';
         ],
     ]); ?>
 
-    <h4 class="text-info" style="margin-top: 30px">User Info</h4>
+    <h4 class="text-info" style="margin-top: 30px">User Information</h4>
     <div style="margin: 30px 0; width: 100%">
         <div>
 
@@ -86,7 +86,7 @@ $this->title = 'Profile';
 
             <div class="form-group">
                 <div class="col-lg-2">
-                    <?= Html::submitButton('<i class="fa fa-pencil-square-o" aria-hidden="true"></i> Update Info', ['class' => 'btn btn-warning', 'id' => 'editProfile'])?>
+                    <?= Html::submitButton('<i class="fa fa-pencil-square-o" aria-hidden="true"></i> Update Information', ['class' => 'btn btn-warning', 'id' => 'editProfile'])?>
                 </div>
             </div>
             <?php ActiveForm::end(); ?>
@@ -128,7 +128,7 @@ $this->title = 'Profile';
 
             <div class="form-group">
                 <div class="col-lg-2">
-                    <?= Html::submitButton('<i class="fa fa-pencil-square-o" aria-hidden="true"></i> Update Pass', ['class' => 'btn btn-warning', 'id' => 'changePass'])?>
+                    <?= Html::submitButton('<i class="fa fa-pencil-square-o" aria-hidden="true"></i> Update Password', ['class' => 'btn btn-warning', 'id' => 'changePass'])?>
                 </div>
             </div>
             <?php ActiveForm::end(); ?>
