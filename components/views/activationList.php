@@ -47,15 +47,19 @@ use yii\bootstrap\Modal;
                         'resendUserLetter' => $value['id'],
                     ]), ['class' => 'linkaction']).'</td>';
             }
-        echo '<td class="text-center">'.Html::a('<i class="fa fa-trash-o fa-lg text-danger" aria-hidden="true"></i>', Yii::$app->urlManager->createAbsoluteUrl([
-                '/master/users',
-            ]), [
-                'class'       => 'popup-delete linkaction',
-                'data-toggle' => 'modal',
-                'data-target' => '#modal',
-                'data-id' => $value['id'],
-                'data-name' => $value['first_name'].' '.$value['last_name'],
-                'id'          => 'popupModal',]).'</td>';
+        if (Yii::$app->user->id == $value['id']){
+            echo '<td class="text-center">'.Html::a('<i class="fa fa-trash-o fa-lg text-muted" aria-hidden="true"></i>');
+        }else{
+            echo '<td class="text-center">'.Html::a('<i class="fa fa-trash-o fa-lg text-danger" aria-hidden="true"></i>', Yii::$app->urlManager->createAbsoluteUrl([
+                    '/master/users',
+                ]), [
+                    'class'       => 'popup-delete linkaction',
+                    'data-toggle' => 'modal',
+                    'data-target' => '#modal',
+                    'data-id' => $value['id'],
+                    'data-name' => $value['first_name'].' '.$value['last_name'],
+                    'id'          => 'popupModal',]).'</td>';
+        }
         echo '</tr>';
     }
 ?>
