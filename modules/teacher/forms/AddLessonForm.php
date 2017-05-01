@@ -22,6 +22,7 @@ class AddLessonForm extends Model
 
     public $lesson_start;
     public $lesson_finish;
+    public $lesson_start_repeat;
     public $comment;
     public $user_id;
     public $instricon_id;

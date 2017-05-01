@@ -200,7 +200,7 @@ class Statistics
         if (!User::isMaster()){
             $queryUser->andWhere(['id' => Yii::$app->user->id]);
         }
-
+        $queryUser->andWhere(['status' => 10]);
         $queryUser = $queryUser->all(); //todo add where whith user if master or not
 
         $template = [];

@@ -78,11 +78,3 @@ $this->title = 'User Registration';
     <?php ActiveForm::end(); ?>
 
 </div>
-
-
-<?php
-//var_dump(AuthItemChild::role_list());
-//var_dump($_POST);
-var_dump($lesson_list);
-
-?>

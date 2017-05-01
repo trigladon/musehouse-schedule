@@ -35,7 +35,7 @@ class UsersController extends Controller
     public function actionIndex()
     {
         $model = new InviteUserForm();
-        $user_list = User::userActivationList();
+        $user_list = User::find()->all();
 
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {

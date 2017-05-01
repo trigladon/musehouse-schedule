@@ -139,7 +139,7 @@ $(document).ready(function () {
 });
 
 $(document).on('beforeSubmit', '#addLesson-form', function () {
-    $('#modal-addLesson').modal('hide');
+
     var form = $(this);
     $.ajax({
         url: form.attr('action'),
@@ -157,6 +157,7 @@ $(document).on('beforeSubmit', '#addLesson-form', function () {
                     });
                 }else {
                     if (data.success == 1){
+                        $('#modal-addLesson').modal('hide');
                         $('#addLesson-form')[0].reset();
 
                         var currentDate = document.getElementById('infoDiv').getAttribute('currentDate');
@@ -266,13 +267,14 @@ $(document).on('click', '#lesson-delete', function (event) {
     $('#delete-confirm').click(function(e) {
         $("#delete-confirm").prop("disabled", true);
         e.preventDefault();
-        $('#modal-deleteLesson').modal('hide');
+
         $.ajax({
             url: 'calendar',
             type: 'post',
             data: {deleteLesson: window.lessonId},
             success: function (data) {
                 if (data.success == 1){
+                    $('#modal-deleteLesson').modal('hide');
                     $("#delete-confirm").prop("disabled", false);
                     var currentDate = document.getElementById('infoDiv').getAttribute('currentDate');
                     var whtsh = document.getElementById('infoDiv').getAttribute('whtsh');

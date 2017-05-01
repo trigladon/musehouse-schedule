@@ -254,4 +254,8 @@ class User extends ActiveRecord implements IdentityInterface
             return false;
         }
     }
+
+    public function userRole(){
+        return key(Yii::$app->authManager->getRolesByUser($this->id));
+    }
 }

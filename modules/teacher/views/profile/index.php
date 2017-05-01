@@ -128,7 +128,7 @@ $this->title = 'Profile';
 
             <div class="form-group">
                 <div class="col-lg-2">
-                    <?= Html::submitButton('<i class="fa fa-pencil-square-o" aria-hidden="true"></i> Update Password', ['class' => 'btn btn-warning', 'id' => 'changePass'])?>
+                    <?= Html::submitButton('<i class="fa fa-pencil-square-o" aria-hidden="true"></i> Update Password', ['class' => 'btn btn-warning', 'id' => 'changePass', 'style' => 'width:166px'])?>
                 </div>
             </div>
             <?php ActiveForm::end(); ?>
