@@ -123,6 +123,10 @@ $form = ActiveForm::begin([
 ]); ?>
 
 <p class="modal-message">Do you really want to delete this lesson?</p>
+<div style="width: 60px; margin-right: 3px" class="text-right pull-left"><strong>Date:</strong></div><div id="lessonDate"></div>
+<div style="width: 60px; margin-right: 3px" class="text-right pull-left"><strong>Time:</strong></div><div id="lessonTime"></div>
+<div style="width: 60px; margin-right: 3px" class="text-right pull-left"><strong>Teacher:</strong></div><div id="lessonTeacher"></div>
+<div style="width: 60px; margin-right: 3px" class="text-right pull-left"><strong>Lesson:</strong></div><div id="lessonType"></div>
 
 <?php Modal::end(); ?>
 </div>

@@ -300,7 +300,15 @@ SCRIPT;
                     </div>
                     <ul class="dropdown-menu editIcons">
                         <li><?= Html::a('<i class="fa fa-pencil-square-o fa-lg text-warning" aria-hidden="true"></i>', '#', ['lessonId' => $actions['lesson_id'], 'id' => 'lesson-edit'])?></li>
-                        <li><?= Html::a('<i class="fa fa-trash-o fa-lg text-danger" aria-hidden="true"></i>', '#', ['lessonId' => $actions['lesson_id'], 'id' => 'lesson-delete'])?></li>
+                        <li><?= Html::a('<i class="fa fa-trash-o fa-lg text-danger" aria-hidden="true"></i>', '#', [
+                                'lessonId' => $actions['lesson_id'],
+                                'lessonDate' => date('d-m-Y', $actions['lesson_start']),
+                                'lessonTime' => date('H:i', $actions['lesson_start']).' - '.date('H:i', $actions['lesson_finish']),
+                                'lessonTeacher' => $actions['first_name'].' '.$actions['last_name'],
+                                'lessonType' => $actions['instr_name'],
+                                'lessonIcon' => $actions['icon'],
+                                'id' => 'lesson-delete'
+                            ])?></li>
                         <li><button aria-hidden="true" data-dismiss="alert" class="close" type="button" style="line-height: 26px;margin-left: 4px;">×</button></li>
                     </ul>
                 </div>

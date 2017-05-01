@@ -261,6 +261,11 @@ $(document).on('click', '#lesson-delete', function (event) {
     modal.find('.modal-body').load($('.modal-dialog'));
     delete window.lessonId;
 
+    $('#lessonDate').text($(this).attr('lessonDate'));
+    $('#lessonTime').text($(this).attr('lessonTime'));
+    $('#lessonTeacher').text($(this).attr('lessonTeacher'));
+    $('#lessonType').replaceWith($(this).attr('lessonType')+'<img src="/images/icons/'+$(this).attr('lessonIcon')+'" class="icon_reg" style="margin: 0 5px">');
+
     window.lessonId = $(this).attr('lessonId');
     console.log(window.lessonId);
 
@@ -339,11 +344,6 @@ $(document).on('click', '#lesson-edit', function (event) {
                 minimumResultsForSearch: Infinity,
                 width: '100%'
             });
-
-            // var currentDate = document.getElementById('infoDiv').getAttribute('currentDate');
-            // var whtsh = document.getElementById('infoDiv').getAttribute('whtsh');
-            // var changes = '';
-            // onClickMonth(currentDate, changes, whtsh);
 
         },
         error: function () {
