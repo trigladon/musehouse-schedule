@@ -49,25 +49,29 @@ $form = ActiveForm::begin([
     'layout' => 'horizontal',
     'enableClientValidation' => true,
     'enableAjaxValidation' => false,
+    'validateOnSubmit'=>true,
+    'validateOnChange'=>false,
+    'validateOnType'=>false,
     'action' => 'calendar',
     'fieldConfig' => [
-        'template' => "{label}\n<div class=\"col-lg-12\">{input}</div>",
-        'labelOptions' => ['class' => 'col-lg-1 control-label'],
+        'template' => "{label}\n<div class=\"col-lg-12\">{input}</div>{error}",
+        'labelOptions' => ['class' => 'col-lg-12 control-label', 'style' => 'text-align: left; padding-top: 0;'],
+        'errorOptions' => ['class' => 'col-lg-12 help-block help-block-error ', 'style' => 'margin: 0'],
     ],
 ]); ?>
 
-    <?= $form->field($modelAddLesson, 'action_date')->label(false)->textInput([
+    <?= $form->field($modelAddLesson, 'action_date')->textInput([
         'id' => 'datetimepicker5',
         'placeholder' => 'Date',
     ])?>
 
 
-    <?= $form->field($modelAddLesson, 'lesson_start')->label(false)->textInput([
+    <?= $form->field($modelAddLesson, 'lesson_start')->textInput([
         'id' => 'datetimepicker6',
         'placeholder' => 'Start Time',
     ])?>
 
-    <?= $form->field($modelAddLesson, 'lesson_finish')->label(false)->textInput([
+    <?= $form->field($modelAddLesson, 'lesson_finish')->textInput([
         'id' => 'datetimepicker7',
         'placeholder' => 'Finish Time',
     ])?>
@@ -82,7 +86,7 @@ $form = ActiveForm::begin([
             'escapeMarkup' => $escape2,
             'allowClear' => true,
         ],
-    ])->label(false);?>
+    ]);?>
 
     <?= $form->field($modelAddLesson, 'statusschedule_id')->widget(Select2::className(), [
         'data' => $status_list,
@@ -93,9 +97,9 @@ $form = ActiveForm::begin([
             'escapeMarkup' => $escape2,
             'allowClear' => true,
         ],
-    ])->label(false);?>
+    ]);?>
 
-    <?= $form->field($modelAddLesson, 'comment')->label(false)->textarea([
+    <?= $form->field($modelAddLesson, 'comment')->textarea([
         'placeholder' => 'Comments',
         'id' => 'comment',
     ])?>

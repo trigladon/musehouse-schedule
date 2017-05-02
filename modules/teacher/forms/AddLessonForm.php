@@ -41,7 +41,32 @@ class AddLessonForm extends Model
             [['comment'], 'string'],
             [['action_date'], 'string'],
             [['id'], 'number'],
+            ['lesson_finish', 'validateLessonFinish', 'skipOnEmpty' => false, 'message' => 'Finish Time shouldn\'t be earlier than Start Time'],
         ];
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'lesson_start' => 'Start Time',
+            'lesson_finish' => 'Finish Time',
+            'statusschedule_id' => 'Status',
+            'instricon_id' => 'Type of the Lesson',
+            'comment' => 'Comments',
+            'action_date' => 'Date',
+        ];
+    }
+
+    public function validateLessonFinish(){
+        $lesson_start_save = explode(':', $this->lesson_start);
+        $lesson_finish_save= explode(':', $this->lesson_finish);
+
+        $lesson_start = mktime($lesson_start_save[0], $lesson_start_save[1], 0, 0, 0, 0);
+        $lesson_finish = mktime($lesson_finish_save[0], $lesson_finish_save[1], 0, 0, 0, 0);
+
+        if ($lesson_start > $lesson_finish){
+            $this->addError('lesson_finish', 'Finish Time shouldn\'t be earlier than Start Time');
+        }
     }
 
     public function regLesson(){

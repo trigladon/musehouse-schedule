@@ -171,6 +171,9 @@ $(document).on('beforeSubmit', '#addLesson-form', function () {
             }else{
                 alert('Something is wrong, please try again');
             }
+        },
+        error: function (data) {
+            console.log(data);
         }
     });
     return false; //reject the usual form submit
@@ -300,7 +303,7 @@ $(document).on('click', '#lesson-delete', function (event) {
 $(document).on('click', '#lesson-edit', function (event) {
     event.preventDefault();
 
-
+    $('#addLesson-form')[0].reset();
     var lessonId = $(this).attr('lessonId');
     console.log(lessonId);
 
@@ -346,8 +349,8 @@ $(document).on('click', '#lesson-edit', function (event) {
             });
 
         },
-        error: function () {
-            alert('error appeared')
+        error: function (data) {
+            console.log(data);
         }
     });
 

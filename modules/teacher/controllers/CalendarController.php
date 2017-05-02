@@ -18,6 +18,7 @@ use Yii;
 use app\modules\teacher\helpers\Calendar;
 use app\modules\master\models\Userschedule;
 use yii\web\Response;
+use yii\widgets\ActiveForm;
 
 
 class CalendarController extends Controller
@@ -40,7 +41,7 @@ class CalendarController extends Controller
                 Yii::$app->response->format = Response::FORMAT_JSON;
                 return [
                     'success' => (int)$modelAddLesson->validate(),
-                    'validate' => $modelAddLesson->errors,
+                    'validate' => ActiveForm::validate($modelAddLesson),
                     'result' => $modelAddLesson->errors ? null : $modelAddLesson->regLesson()
                 ];
             }
