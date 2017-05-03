@@ -45,6 +45,7 @@ class UserUpdateForm extends Model
     public function reg(){
 
         $user = $user = User::findOne($this->user_id);
+
         foreach ($user->getUserLessons() as $lesson){
             $arrayExist[] = $lesson['instricon_id'];
         }

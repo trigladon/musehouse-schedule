@@ -377,3 +377,35 @@ function onClickChangeMonth(currentDate, changes) {
         }
     });
 }
+
+$(document).on('click', '#editUser', function (event) {
+    event.preventDefault();
+
+    $('#userUpdateForm_Management')[0].reset();
+
+    var modal = $('#modalUserEdit').modal('show');
+    modal.find('.modal-body').load($('.modal-dialog'));
+    var that = $(this);
+    var first_name = that.data('first_name');
+    var last_name = that.data('last_name');
+    var lessons = that.data('lessons');
+    var user_id = that.data('user_id');
+
+    $('#first_name').val(first_name);
+    $('#last_name').val(last_name);
+    $('#user_idInput').val(user_id);
+
+
+    $("#userupdateform-lessons").select2({ width: '100%' }).val(lessons).trigger('change.select2');
+
+    $('#userupdateform-lessons').select2({
+        escapeMarkup: function (text) { return text; },
+        placeholder: 'Type of the Lesson',
+        theme: 'bootstrap',
+        allowClear: true,
+        minimumResultsForSearch: Infinity,
+        width: '100%'
+    });
+
+
+});

@@ -9,6 +9,11 @@
 use yii\helpers\Html;
 use app\models\User;
 use yii\bootstrap\Modal;
+use yii\bootstrap\ActiveForm;
+use kartik\select2\Select2;
+use yii\web\JsExpression;
+
+/* @var $userUpdate app\modules\master\forms\UserUpdateForm */
 
 ini_set('xdebug.var_display_max_depth', 15);
 ini_set('xdebug.var_display_max_children', 256);
@@ -44,6 +49,9 @@ ini_set('xdebug.var_display_max_data', 1024);
             foreach ($user->getUserLessons() as $lesson):?>
                 <div style="margin: 1px 0"><img src="/images/icons/<?=$lesson['instricon']['icon']?>" class="icon_reg" style="margin: 0 5px"><?=$lesson['instricon']['instr_name']?></div>
             <?php endforeach;
+            foreach ($user->getUserLessons() as $lessons):;
+                $userInstr[] = $lessons['instricon']['id'];
+            endforeach;
             echo '</td>';
             echo '<td class="text-center" style="vertical-align: middle">
             <i class="fa fa-user fa-lg '.$classReg.'" aria-hidden="true"></i>
@@ -60,20 +68,27 @@ ini_set('xdebug.var_display_max_data', 1024);
                             'resendUserLetter' => $user->id,
                         ]), ['class' => 'linkaction']).'</td>';
             }
-            if (Yii::$app->user->id == $user->id){
-                echo '<td class="text-center" style="vertical-align: middle">'.Html::a('<i class="fa fa-trash-o fa-lg text-muted" aria-hidden="true"></i>');
-            }else{
-                echo '<td class="text-center" style="vertical-align: middle">'.Html::a('<i class="fa fa-trash-o fa-lg text-danger" aria-hidden="true"></i>', Yii::$app->urlManager->createAbsoluteUrl([
-                        '/master/users',
-                    ]), [
-                        'class'       => 'popup-delete linkaction',
-                        'data-toggle' => 'modal',
-                        'data-target' => '#modal',
-                        'data-id' => $user->id,
-                        'data-name' => $user->getUsername(),
-                        'id'          => 'popupModal',]).'</td>';
-            }
-            echo '</tr>';
+            echo '<td class="text-center" style="vertical-align: middle">'.
+                Html::a('<i class="fa fa fa-pencil-square-o fa-lg text-warning" aria-hidden="true" style="vertical-align: -3px;"></i>', Yii::$app->urlManager->createAbsoluteUrl([
+                    '/master/users',
+                ]), [
+                    'data-user_id' => $user->id,
+                    'data-first_name' => $user->first_name,
+                    'data-last_name' => $user->last_name,
+                    'data-lessons' => $userInstr,
+                    'id'          => 'editUser',]).' / ';
+            echo Yii::$app->user->id == $user->id ? Html::a('<i class="fa fa-trash-o fa-lg text-muted" aria-hidden="true"></i>') :
+                Html::a('<i class="fa fa-trash-o fa-lg text-danger" aria-hidden="true"></i>', Yii::$app->urlManager->createAbsoluteUrl([
+                    '/master/users',
+                ]), [
+                    'class'       => 'popup-delete linkaction',
+                    'data-toggle' => 'modal',
+                    'data-target' => '#modal',
+                    'data-id' => $user->id,
+                    'data-name' => $user->getUsername(),
+                    'id'          => 'popupModal',
+                    ]);
+            echo '</td></tr>';
             $masterNumber++;
         endif;
     }
@@ -111,6 +126,10 @@ ini_set('xdebug.var_display_max_data', 1024);
             foreach ($user->getUserLessons() as $lesson):?>
                 <div style="margin: 1px 0"><img src="/images/icons/<?=$lesson['instricon']['icon']?>" class="icon_reg" style="margin: 0 5px"><?=$lesson['instricon']['instr_name']?></div>
             <?php endforeach;
+            $userInstr = [];
+            foreach ($user->getUserLessons() as $lessons):;
+                $userInstr[] = $lessons['instricon']['id'];
+            endforeach;
             echo '</td>';
             echo '<td class="text-center" style="vertical-align: middle">
             <i class="fa fa-user fa-lg '.$classReg.'" aria-hidden="true"></i>
@@ -127,7 +146,17 @@ ini_set('xdebug.var_display_max_data', 1024);
                             'resendUserLetter' => $user->id,
                         ]), ['class' => 'linkaction']).'</td>';
             }
-            echo '<td class="text-center" style="vertical-align: middle">'.Html::a('<i class="fa fa-trash-o fa-lg text-danger" aria-hidden="true"></i>', Yii::$app->urlManager->createAbsoluteUrl([
+            echo '<td class="text-center" style="vertical-align: middle">'.
+                Html::a('<i class="fa fa fa-pencil-square-o fa-lg text-warning" aria-hidden="true" style="vertical-align: -3px;"></i>', Yii::$app->urlManager->createAbsoluteUrl([
+                    '/master/users',
+                ]), [
+//                    'class'       => 'linkaction',
+                    'data-user_id' => $user->id,
+                    'data-first_name' => $user->first_name,
+                    'data-last_name' => $user->last_name,
+                    'data-lessons' => $userInstr,
+                    'id'          => 'editUser',]).' / ';
+            echo Html::a('<i class="fa fa-trash-o fa-lg text-danger" aria-hidden="true"></i>', Yii::$app->urlManager->createAbsoluteUrl([
                     '/master/users',
                 ]), [
                     'class'       => 'popup-delete linkaction',
@@ -135,8 +164,9 @@ ini_set('xdebug.var_display_max_data', 1024);
                     'data-target' => '#modal',
                     'data-id' => $user->id,
                     'data-name' => $user->getUsername(),
-                    'id'          => 'popupModal',]).'</td>';
-            echo '</tr>';
+                    'id'          => 'popupModal',
+                ]);
+            echo '</td></tr>';
             $teacherNumber++;
 
 
@@ -159,5 +189,74 @@ ini_set('xdebug.var_display_max_data', 1024);
 ]); ?>
 
     <p class="modal-message">Do you really want to delete <strong class='text-danger modal-name'></strong>?</p>
+
+<?php Modal::end(); ?>
+
+<?php if (Yii::$app->session->hasFlash('Error')): ?>
+    <div class="alert alert-warning alert-dismissable">
+        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+        <h4><i class="icon fa fa-exclamation-triangle"></i> Warning!</h4>
+        <?= Yii::$app->session->getFlash('Error') ?>
+    </div>
+<?php elseif (Yii::$app->session->hasFlash('Success')): ?>
+    <div class="alert alert-success alert-dismissable">
+        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+        <h4><i class="icon fa fa-hand-peace-o"></i> Success!</h4>
+        <?= Yii::$app->session->getFlash('Success') ?>
+    </div>
+<?php endif;?>
+
+<?php Modal::begin([
+    'header' => '<h4 class="text-info">User Information</h4>',
+    'id'     => 'modalUserEdit',
+    'size' => 'modal-sm',
+//    'footer' => Html::a('Delete', '', ['class' => 'btn btn-danger', 'id' => 'delete-confirm']),
+]); ?>
+
+<?php $form = ActiveForm::begin([
+    'id' => 'userUpdateForm_Management',
+    'layout' => 'horizontal',
+    'enableClientValidation' => true,
+    'enableAjaxValidation' => false,
+    'fieldConfig' => [
+        'template' => "<div>{label}</div><div class=\"col-lg-12\">{input}</div>{error}",
+        'labelOptions' => ['class' => 'col-lg-12 control-label', 'style' => 'text-align: left'],
+        'inputOptions' => ['class' => 'form-control'],
+    ],
+]); ?>
+
+    <?= $form->field($userUpdate, 'first_name')->textInput([
+        'id' => 'first_name',
+    ])?>
+
+    <?= $form->field($userUpdate, 'last_name')->textInput([
+        'id' => 'last_name',
+    ])?>
+
+    <?php
+    $escape2 = new JsExpression("function(m) { return m; }");
+    echo $form->field($userUpdate, 'lessons')->widget(Select2::className(), [
+        'id' => 'lessons',
+        'data' => $listUserLessons,
+        'theme' => Select2::THEME_BOOTSTRAP,
+        'hideSearch' => true,
+        'options' => ['placeholder' => 'Type of the Lesson', 'multiple' => true],
+        'pluginOptions' => [
+            'escapeMarkup' => $escape2,
+            'allowClear' => true,
+            'closeOnSelect' =>false,
+        ],
+    ])->label('Lessons');?>
+
+    <?= Html::activeHiddenInput($userUpdate,'user_id', [
+        'id' => 'user_idInput',
+    ]);?>
+
+    <div class="form-group">
+        <div class="col-lg-2">
+            <?= Html::submitButton('<i class="fa fa-pencil-square-o" aria-hidden="true"></i> Update Information', ['class' => 'btn btn-warning', 'id' => 'editUserButton'])?>
+        </div>
+    </div>
+    <?php ActiveForm::end(); ?>
 
 <?php Modal::end(); ?>

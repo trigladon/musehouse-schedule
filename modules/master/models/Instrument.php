@@ -119,11 +119,12 @@ class Instrument extends ActiveRecord
     public static function lessonListDropBox(){
         $rows = static::find()
             ->select(['i.id', 'i.icon', 'i.instr_name'])
-            ->from('instricon i');
+            ->from('instricon i')
+            ->innerJoin('userschedule usch', 'usch.instricon_id = i.id');
 
         if (!User::isMaster()){
-            $rows->innerJoin('userinstr u', 'i.id = u.instricon_id');
-            $rows->andWhere(['u.user_id' => Yii::$app->user->id]);
+//            $rows->innerJoin('userinstr u', 'i.id = u.instricon_id');
+            $rows->andWhere(['usch.user_id' => Yii::$app->user->id]);
         }
 
         $rows = $rows->all();

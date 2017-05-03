@@ -10,7 +10,6 @@ use app\components\ActivationListWidget;
 /* @var $form ActiveForm */
 
 $this->title = 'User Management';
-//$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-inviteUser">
     <h1><?= Html::encode($this->title) ?></h1>
@@ -102,7 +101,7 @@ $this->title = 'User Management';
 
     <div>
         <?php
-            echo ActivationListWidget::widget(['user_list' => $user_list]);
+            echo ActivationListWidget::widget(['user_list' => $user_list, 'userUpdate' => $userUpdate, 'listUserLessons' => $listUserLessons]);
         ?>
     </div>
 

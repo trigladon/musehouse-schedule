@@ -8,11 +8,13 @@
 
 namespace app\modules\master\controllers;
 
+use app\modules\master\forms\UserUpdateForm;
 use yii\web\Controller;
 use app\modules\master\forms\InviteUserForm;
 use app\models\User;
 use Yii;
 use yii\filters\AccessControl;
+use app\modules\master\models\Instrument;
 
 class UsersController extends Controller
 {
@@ -36,6 +38,8 @@ class UsersController extends Controller
     {
         $model = new InviteUserForm();
         $user_list = User::find()->all();
+        $userUpdate = new UserUpdateForm();
+        $listUserLessons = Instrument::lessonListProfile();
 
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {
@@ -54,9 +58,23 @@ class UsersController extends Controller
             return $this->redirect('/master/users');
         }
 
+        if(Yii::$app->request->isPost && $userUpdate->load(Yii::$app->request->post()) && $userUpdate->validate()){
+            if ($userUpdate->reg()){
+                Yii::$app->session->setFlash('Success', 'The changes were successfully applied!');
+            }else{
+                Yii::$app->session->setFlash('Error', 'Something went wrong, please, contact you Administrator!');
+            }
+            return $this->refresh();
+//            var_dump(Yii::$app->request->post());
+        }
+
+
+
         return $this->render('index', [
             'model' => $model,
             'user_list' => $user_list,
+            'userUpdate' => $userUpdate,
+            'listUserLessons' => $listUserLessons,
         ]);
     }
 }
