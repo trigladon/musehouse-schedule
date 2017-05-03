@@ -73,15 +73,34 @@ class AddLessonForm extends Model
         $mergeTime = Userschedule::find()
             ->andWhere(['between', 'lesson_start', $lesson_start+1, $lesson_finish-1])
             ->orWhere(['between', 'lesson_finish', $lesson_start+1, $lesson_finish-1])
-            ->andWhere(['user_id' => $this->user_id])
+            ->andWhere(['user_id' => $this->user_id ? $this->user_id : Yii::$app->user->id])
             ->andWhere(['!=', 'id', $this->id])
             ->one();
+
+        $prevLesson = Userschedule::find()
+            ->andWhere(['<=', 'lesson_start', $lesson_start])
+            ->andWhere(['user_id' => $this->user_id ? $this->user_id : Yii::$app->user->id])
+            ->andWhere(['!=', 'id', $this->id])
+            ->orderBy('lesson_start DESC')
+            ->limit(1)
+            ->one();
+
+        /* @var $prevLesson Userschedule */
 
         if ($mergeTime){
             /* @var $mergeTime Userschedule */
             $date = date('d-m-Y', $mergeTime->lesson_start);
             $start = date('H:i', $mergeTime->lesson_start);
             $finish = date('H:i', $mergeTime->lesson_finish);
+
+            $mergeLesson = $date.' '.$start.'-'.$finish;
+
+            $this->addError('lesson_finish', 'This time is not free. You have already had the lesson fo this time: '.$mergeLesson);
+            $this->addError('lesson_start', '');
+        }elseif ($prevLesson && $lesson_start > $prevLesson->lesson_start && $lesson_start < $prevLesson->lesson_finish){
+            $date = date('d-m-Y', $prevLesson->lesson_start);
+            $start = date('H:i', $prevLesson->lesson_start);
+            $finish = date('H:i', $prevLesson->lesson_finish);
 
             $mergeLesson = $date.' '.$start.'-'.$finish;
 

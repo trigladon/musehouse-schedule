@@ -20,22 +20,22 @@ ini_set('xdebug.var_display_max_data', 1024);
 
 ?>
 
-<div class="table-responsive calendar_act">
+<div class="table-responsive calendar_act" style="min-width: 1140px">
     <table class="table table-bordered">
         <caption>
-            <div class="col-md-1">
+            <div class="col-sm-1">
                 <div class="btn btn-info" onclick="onClickMonth('<?=$monthToShow['currentDate']?>', ' -1 <?=$whtsh?>', '<?=$whtsh?>')">
                     <i class="fa fa-arrow-left" aria-hidden="true"></i>
                 </div>
             </div>
-            <div class="col-md-10">
-                <div class="col-md-4"></div>
-                <div class="col-md-4 monthName" onclick="onClickMonth('<?=$monthToShow['toShow']?>', '', 'month')">
+            <div class="col-sm-10">
+                <div class="col-sm-4"></div>
+                <div class="col-sm-4 monthName" onclick="onClickMonth('<?=$monthToShow['toShow']?>', '', 'month')">
                     <?=$monthToShow['month'].' '.$monthToShow['year']?>
                 </div>
-                <div class="col-md-4" id="infoDiv" currentDate="<?=$monthToShow['currentDate']?>" whtsh="<?=$whtsh?>"></div>
+                <div class="col-sm-4" id="infoDiv" currentDate="<?=$monthToShow['currentDate']?>" whtsh="<?=$whtsh?>"></div>
             </div>
-            <div class="col-md-1">
+            <div class="col-sm-1">
                 <div class="btn btn-info" onclick="onClickMonth('<?=$monthToShow['currentDate']?>', ' +1 <?=$whtsh?>', '<?=$whtsh?>')">
                     <i class="fa fa-arrow-right" aria-hidden="true"></i>
                 </div>
@@ -74,7 +74,7 @@ SCRIPT;
                         ],
                     ]);?>
                     <div>
-                        <div class="col-md-3">
+                        <div class="col-sm-3">
                             <?php $filterForm->statusFilter = Yii::$app->session->get('statusFilter');?>
                             <?= $filter->field($filterForm, 'statusFilter')->widget(Select2::className(), [
                                 'name' => 'status_filter',
@@ -91,7 +91,7 @@ SCRIPT;
                                 ],
                             ])->label(false);?>
                         </div>
-                        <div class="<?= User::isMaster() ? 'col-md-3' : 'col-md-6'?>">
+                        <div class="<?= User::isMaster() ? 'col-sm-3' : 'col-sm-6'?>">
                             <?php $filterForm->lessonFilter = Yii::$app->session->get('lessonFilter');?>
                             <?= $filter->field($filterForm, 'lessonFilter')->widget(Select2::className(), [
                                 'name' => 'lesson_filter',
@@ -109,7 +109,7 @@ SCRIPT;
                             ])->label(false);?>
                         </div>
                         <?php if (User::isMaster()):?>
-                        <div class="col-md-3">
+                        <div class="col-sm-3">
                             <?php $filterForm->teacherFilter = Yii::$app->session->get('teacherFilter');?>
                             <?= $filter->field($filterForm, 'teacherFilter')->widget(Select2::className(), [
                                 'name' => 'teacherFilter',
@@ -127,10 +127,10 @@ SCRIPT;
                             ])->label(false);?>
                         </div>
                         <?php endif;?>
-                        <div class="form-group col-md-1">
+                        <div class="form-group col-sm-1">
                             <?= Html::submitButton('Apply', ['class' => 'btn btn-success', 'id' => 'filter-confirm'])?>
                         </div>
-                        <div class="col-md-1">
+                        <div class="col-sm-1">
                             <?= Html::a('Clear', 'profile', ['class' => 'btn btn-warning', 'id' => 'filter-clear'])?>
                         </div>
                     </div>
