@@ -109,6 +109,11 @@ $form = ActiveForm::begin([
         'id' => 'lessonIdToUpdate',
     ]);?>
 
+    <?= Html::activeHiddenInput($modelAddLesson,'user_id', [
+        'class' => 'action_date_form',
+        'id' => 'lessonUserId',
+    ]);?>
+
 <div class="form-group">
     <div class="col-lg-11">
         <?= Html::submitButton('Add Lesson', ['class' => 'btn', 'id' => 'addLesson-confirm'])?>

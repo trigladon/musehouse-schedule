@@ -79,12 +79,12 @@ $(function () {
         useCurrent: false, //Important! See issue #1075
         showClose: true
     });
-    $("#datetimepicker6").on("dp.change", function (e) {
-        $('#datetimepicker7').data("DateTimePicker").minDate(e.date);
-    });
-    $("#datetimepicker7").on("dp.change", function (e) {
-        $('#datetimepicker6').data("DateTimePicker").maxDate(e.date);
-    });
+    // $("#datetimepicker6").on("dp.change", function (e) {
+    //     $('#datetimepicker7').data("DateTimePicker").minDate(e.date);
+    // });
+    // $("#datetimepicker7").on("dp.change", function (e) {
+    //     $('#datetimepicker6').data("DateTimePicker").maxDate(e.date);
+    // });
 });
 
 $(document).ready(function () {
@@ -326,6 +326,7 @@ $(document).on('click', '#lesson-edit', function (event) {
             $('#datetimepicker7').val(data.lesson_finish);
             $('#comment').val(data.comment);
             $('#lessonIdToUpdate').val(data.id);
+            $('#lessonUserId').val(data.user_id);
 
             $("#addlessonform-instricon_id").select2({ width: '100%' }).val(data.instricon_id).trigger('change.select2');
             $("#addlessonform-statusschedule_id").select2().val(data.statusschedule_id).trigger('change.select2');

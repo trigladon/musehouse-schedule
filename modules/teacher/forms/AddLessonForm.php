@@ -15,6 +15,7 @@ use app\modules\master\models\Instrument;
 use app\modules\master\models\Statusschedule;
 use app\models\User;
 use Yii;
+use yii\db\Query;
 
 
 class AddLessonForm extends Model
@@ -41,7 +42,7 @@ class AddLessonForm extends Model
             [['comment'], 'string'],
             [['action_date'], 'string'],
             [['id'], 'number'],
-            ['lesson_finish', 'validateLessonFinish', 'skipOnEmpty' => false, 'message' => 'Finish Time shouldn\'t be earlier than Start Time'],
+            ['lesson_finish', 'validateLessonFinish', 'skipOnEmpty' => false],
         ];
     }
 
@@ -58,14 +59,34 @@ class AddLessonForm extends Model
     }
 
     public function validateLessonFinish(){
+        $action_date_save = explode('-', $this->action_date);
         $lesson_start_save = explode(':', $this->lesson_start);
         $lesson_finish_save= explode(':', $this->lesson_finish);
 
-        $lesson_start = mktime($lesson_start_save[0], $lesson_start_save[1], 0, 0, 0, 0);
-        $lesson_finish = mktime($lesson_finish_save[0], $lesson_finish_save[1], 0, 0, 0, 0);
+        $lesson_start = mktime($lesson_start_save[0], $lesson_start_save[1], 0, $action_date_save[1], $action_date_save[0], $action_date_save[2]);
+        $lesson_finish = mktime($lesson_finish_save[0], $lesson_finish_save[1], 0, $action_date_save[1], $action_date_save[0], $action_date_save[2]);
 
         if ($lesson_start > $lesson_finish){
             $this->addError('lesson_finish', 'Finish Time shouldn\'t be earlier than Start Time');
+        }
+
+        $mergeTime = Userschedule::find()
+            ->andWhere(['between', 'lesson_start', $lesson_start+1, $lesson_finish-1])
+            ->orWhere(['between', 'lesson_finish', $lesson_start+1, $lesson_finish-1])
+            ->andWhere(['user_id' => $this->user_id])
+            ->andWhere(['!=', 'id', $this->id])
+            ->one();
+
+        if ($mergeTime){
+            /* @var $mergeTime Userschedule */
+            $date = date('d-m-Y', $mergeTime->lesson_start);
+            $start = date('H:i', $mergeTime->lesson_start);
+            $finish = date('H:i', $mergeTime->lesson_finish);
+
+            $mergeLesson = $date.' '.$start.'-'.$finish;
+
+            $this->addError('lesson_finish', 'This time is not free. You have already had the lesson fo this time: '.$mergeLesson);
+            $this->addError('lesson_start', '');
         }
     }
 
@@ -82,7 +103,7 @@ class AddLessonForm extends Model
                 'comment' => $this->comment,
                 'instricon_id' => $this->instricon_id,
                 'statusschedule_id' => $this->statusschedule_id,
-                'user_id' => Yii::$app->user->identity->getId(),
+                'user_id' => $this->user_id,
             ],
             'id ='.$this->id)->execute()){
                 return true;
