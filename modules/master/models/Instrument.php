@@ -46,6 +46,7 @@ class Instrument extends ActiveRecord
             [['icon'], 'string', 'max' => 255],
             [['instr_name'], 'string', 'max' => 25],
             [['instr_name'], 'unique'],
+            ['id', 'integer']
         ];
     }
 
@@ -119,12 +120,14 @@ class Instrument extends ActiveRecord
     public static function lessonListDropBox(){
         $rows = static::find()
             ->select(['i.id', 'i.icon', 'i.instr_name'])
-            ->from('instricon i')
-            ->innerJoin('userschedule usch', 'usch.instricon_id = i.id');
+            ->from('instricon i');
+
 
         if (!User::isMaster()){
-//            $rows->innerJoin('userinstr u', 'i.id = u.instricon_id');
-            $rows->andWhere(['usch.user_id' => Yii::$app->user->id]);
+            $rows->innerJoin('userinstr u', 'i.id = u.instricon_id');
+            $rows->andWhere(['u.user_id' => Yii::$app->user->id]);
+        }else{
+            $rows->innerJoin('userschedule usch', 'usch.instricon_id = i.id');
         }
 
         $rows = $rows->all();
@@ -138,8 +141,8 @@ class Instrument extends ActiveRecord
 
     public static function lessonListProfile(){
         $rows = static::find()
-            ->select(['i.id', 'i.icon', 'i.instr_name'])
-            ->from('instricon i');
+            ->select(['id', 'icon', 'instr_name'])
+            ->andWhere(['!=', 'instr_name', 'Free Time']);
 
         $rows = $rows->all();
 
@@ -151,9 +154,10 @@ class Instrument extends ActiveRecord
     }
 
     public static function lessonListReg(){
-        $rows = (new Query())
+        $rows = static::find()
             ->select(['id', 'icon', 'instr_name'])
-            ->from('instricon')
+            ->andWhere(['!=', 'instr_name', 'Free Time'])
+            ->asArray()
             ->all();
 
         foreach ($rows as $value){
@@ -178,12 +182,16 @@ class Instrument extends ActiveRecord
         Yii::$app->db->createCommand()->delete('instricon', 'id = '.$id)->execute();
     }
 
-    public static function lessonListUser(){
+    public static function lessonListUser($user_id){
+
+        if (!$user_id){
+            $user_id = Yii::$app->user->identity->getId();
+        }
         $rows = (new Query())
             ->select(['ui.instricon_id', 'i.icon', 'i.instr_name'])
             ->from('userinstr ui')
             ->leftJoin('instricon i', 'ui.instricon_id = i.id')
-            ->where(['ui.user_id' => Yii::$app->user->identity->getId()])
+            ->where(['ui.user_id' => $user_id])
             ->all();
 
         foreach ($rows as $value){
@@ -193,4 +201,23 @@ class Instrument extends ActiveRecord
         return $lesson_list;
     }
 
+    public static function lessonListUserAjax($user_id){
+
+        if (!$user_id){
+            $user_id = Yii::$app->user->identity->getId();
+        }
+        $rows = (new Query())
+            ->select(['ui.instricon_id', 'i.icon', 'i.instr_name'])
+            ->from('userinstr ui')
+            ->leftJoin('instricon i', 'ui.instricon_id = i.id')
+            ->where(['ui.user_id' => $user_id])
+            ->all();
+
+        foreach ($rows as $value){
+            $lesson_list[] = ['id' => $value['instricon_id'], 'text' => '<img src="/images/icons/'.$value['icon'].'" class="icon_reg">'.$value['instr_name']];
+//            $lesson_list[$value['instricon_id']] = '<img src="/images/icons/'.$value['icon'].'" class="icon_reg">'.$value['instr_name'];
+        }
+
+        return $lesson_list;
+    }
 }

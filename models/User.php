@@ -226,6 +226,7 @@ class User extends ActiveRecord implements IdentityInterface
         return Userinstr::find()
             ->joinWith(['instricon instr'])
             ->where(['user_id' => $this->id])
+            ->andWhere(['!=', 'instr.instr_name', 'Free Time'])
             ->asArray()
             ->all();
     }

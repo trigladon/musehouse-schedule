@@ -487,7 +487,7 @@ use yii\helpers\Html;
                                     <table border="0" cellpadding="0" cellspacing="0" width="100%" id="templateFooter">
                                         <tr>
                                             <td valign="top" class="footerContent" style="padding-top:15px;">
-                                                <em>Copyright 2015 &copy; MuseHouse International Music School , All rights reserved.</em>
+                                                <em>Copyright 2017 &copy; MuseHouse International Music School , All rights reserved.</em>
                                             </td>
                                         </tr>
                                     </table>

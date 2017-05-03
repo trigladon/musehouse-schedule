@@ -305,12 +305,13 @@ $(document).on('click', '#lesson-edit', function (event) {
 
     $('#addLesson-form')[0].reset();
     var lessonId = $(this).attr('lessonId');
+    var user_id = $(this).attr('user_id');
     console.log(lessonId);
 
     $.ajax({
         url: 'calendar',
         type: 'post',
-        data: {updateLesson: lessonId},
+        data: {updateLesson: lessonId, user_id: user_id},
         success: function (data) {
             console.log(data);
             var modal = $('#modal-addLesson').modal('show');
@@ -328,7 +329,13 @@ $(document).on('click', '#lesson-edit', function (event) {
             $('#lessonIdToUpdate').val(data.id);
             $('#lessonUserId').val(data.user_id);
 
+            $('#addlessonform-instricon_id').empty().trigger("change");
+            $("#addlessonform-instricon_id").select2({
+                data: data.lessonList
+            }).trigger('change.select2');
+
             $("#addlessonform-instricon_id").select2({ width: '100%' }).val(data.instricon_id).trigger('change.select2');
+
             $("#addlessonform-statusschedule_id").select2().val(data.statusschedule_id).trigger('change.select2');
 
             $('#addlessonform-instricon_id').select2({

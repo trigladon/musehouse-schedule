@@ -99,6 +99,14 @@ class Userinstr extends ActiveRecord
             $cat_target->save();
         }
 
+        $freetime = Instrument::find()->select('id')->andWhere(['instr_name' => 'Free Time'])->limit(1)->asArray()->one();
+
+        $cat_target = new Userinstr();
+        $cat_target->instricon_id = $freetime['id'];
+        $cat_target->user_id = $user_id;
+
+        $cat_target->save();
+
         return true;
     }
 

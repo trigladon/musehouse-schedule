@@ -283,11 +283,7 @@ SCRIPT;
                             </div>
                         </div>
                         <div class="lessonIconAction">
-                            <?php if ($actions['icon'] == NULL):?>
-                            <i class="fa fa-question fa-lg icon_reg_action img-thumbnail" aria-hidden="true" style="width: 22px;height: 22px;vertical-align: middle;color: #78909c;padding-top: 3px"></i>
-                            <?php else:?>
-                            <img src="/images/icons/<?=$actions['icon']?>" class="icon_reg_action img-thumbnail" alt="<?=$actions['instr_name']?>" title="<?=$actions['instr_name']?>">
-                            <?php endif;?>
+                                 <img src="/images/icons/<?=$actions['icon']?>" class="icon_reg_action img-thumbnail" alt="<?=$actions['instr_name']?>" title="<?=$actions['instr_name']?>">
                         </div>
                         <div class="nameTeacherAction">
                             <?=$actions['first_name'].' '.$actions['last_name']?>
@@ -299,7 +295,7 @@ SCRIPT;
                         <?php endif;?>
                     </div>
                     <ul class="dropdown-menu editIcons">
-                        <li><?= Html::a('<i class="fa fa-pencil-square-o fa-lg text-warning" aria-hidden="true"></i>', '#', ['lessonId' => $actions['lesson_id'], 'id' => 'lesson-edit'])?></li>
+                        <li><?= Html::a('<i class="fa fa-pencil-square-o fa-lg text-warning" aria-hidden="true"></i>', '#', ['lessonId' => $actions['lesson_id'], 'user_id' => $actions['id'], 'id' => 'lesson-edit'])?></li>
                         <li><?= Html::a('<i class="fa fa-trash-o fa-lg text-danger" aria-hidden="true"></i>', '#', [
                                 'lessonId' => $actions['lesson_id'],
                                 'lessonDate' => date('d-m-Y', $actions['lesson_start']),

@@ -82,8 +82,8 @@ $this->title = 'Lessons';
                     echo '<td style="vertical-align: middle">'.$number.'</td>';
                     echo '<td style="vertical-align: middle"><img src="/images/icons/'.$value['icon'].'" class="icon_table"></td>';
                     echo '<td style="vertical-align: middle">'.$value['instr_name'].'</td>';
-                    echo '<td  style="vertical-align: middle" class="text-center">'.
-                        Html::a('<i class="fa fa-pencil-square-o fa-lg text-warning" aria-hidden="true"></i>',
+                    echo '<td  style="vertical-align: middle" class="text-center">';
+                    echo $value['instr_name'] == 'Free Time' ? '<i class="fa fa-pencil-square-o fa-lg text-muted" aria-hidden="true"></i>' : Html::a('<i class="fa fa-pencil-square-o fa-lg text-warning" aria-hidden="true"></i>',
                         Yii::$app->urlManager->createAbsoluteUrl([
                             '/master/instrument',
                         ]),
@@ -92,10 +92,10 @@ $this->title = 'Lessons';
                             'data-id' => $key,
                             'data-name' => $value['instr_name'],
                             'id'          => 'popup-update',
-])
-                        .'</td>';
-
-                    echo '<td style="vertical-align: middle" class="text-center">'.Html::a('<i class="fa fa-trash-o fa-lg text-danger" aria-hidden="true"></i>', Yii::$app->urlManager->createAbsoluteUrl([
+                        ]);
+                    echo '</td>';
+                    echo '<td style="vertical-align: middle" class="text-center">';
+                    echo $value['instr_name'] == 'Free Time' ? '<i class="fa fa-trash-o fa-lg text-muted" aria-hidden="true"></i>' : Html::a('<i class="fa fa-trash-o fa-lg text-danger" aria-hidden="true"></i>', Yii::$app->urlManager->createAbsoluteUrl([
                             '/master/instrument',
                         ]), [
                             'class'       => 'popup-delete linkaction',
@@ -103,8 +103,8 @@ $this->title = 'Lessons';
                             'data-id' => $key,
                             'data-name' => $value['instr_name'],
                             'data-icon' => $value['icon'],
-                            'id'          => 'popup-delete',]).'</td>';
-                    echo '</tr>';
+                            'id'          => 'popup-delete',]);
+                    echo '</td></tr>';
                     $number++;
                 }
                 ?>

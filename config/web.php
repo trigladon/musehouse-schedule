@@ -44,8 +44,8 @@ $config = [
             'transport' => [
                 'class' => 'Swift_SmtpTransport',
                 'host' => 'smtp.gmail.com',
-                'username' => '',
-                'password' => '',
+                'username' => getenv('EMAIL'),
+                'password' => getenv('EMAIL_PASS'),
                 'port' => '587',
                 'encryption' => 'tls',
             ],

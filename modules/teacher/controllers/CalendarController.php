@@ -29,7 +29,8 @@ class CalendarController extends Controller
 //        var_dump(Yii::$app->request->headers);
         $modelAddLesson = new AddLessonForm();
         $filterForm = new CalendarFilterForm();
-        $listUserLessons = Instrument::lessonListUser();
+        $user_id = '';
+        $listUserLessons = Instrument::lessonListUser($user_id);
         $status_list = Statusschedule::statusList();
         $lesson_list = Instrument::lessonListDropBox();
         $user_list = User::userListDropBox();
@@ -65,6 +66,8 @@ class CalendarController extends Controller
             if ($request->isPost && $request->post('updateLesson')){
                 Yii::$app->response->format = Response::FORMAT_JSON;
                 $lessonToUpdate = Userschedule::lessonToUpdate(Yii::$app->request->post('updateLesson'));
+                $listUserLessons = Instrument::lessonListUserAjax(Yii::$app->request->post('user_id'));
+                $lessonToUpdate['lessonList'] = $listUserLessons;
                 return $lessonToUpdate;
             }
 

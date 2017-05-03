@@ -34,7 +34,7 @@ class AddLessonForm extends Model
     public function rules()
     {
         return [
-            [['lesson_start', 'lesson_finish', 'statusschedule_id', 'action_date'], 'required'],
+            [['lesson_start', 'lesson_finish', 'statusschedule_id', 'action_date', 'instricon_id'], 'required'],
             [['user_id', 'instricon_id', 'statusschedule_id'], 'integer'],
             [['instricon_id'], 'exist', 'skipOnError' => true, 'targetClass' => Instrument::className(), 'targetAttribute' => ['instricon_id' => 'id']],
             [['statusschedule_id'], 'exist', 'skipOnError' => true, 'targetClass' => Statusschedule::className(), 'targetAttribute' => ['statusschedule_id' => 'id']],

@@ -30,7 +30,7 @@ ini_set('xdebug.var_display_max_data', 1024);
         <th class="text-center">Lessons</th>
         <th class="text-center">Status</th>
         <th class="text-center">Letter</th>
-        <th class="text-center">Edit/Delete</th>
+        <th class="text-center">Edit / Delete</th>
     </tr>
     <?php
     foreach ($user_list as $user){
@@ -109,7 +109,7 @@ ini_set('xdebug.var_display_max_data', 1024);
         <th class="text-center">Lessons</th>
         <th class="text-center">Status</th>
         <th class="text-center">Letter</th>
-        <th class="text-center">Edit/Delete</th>
+        <th class="text-center">Edit / Delete</th>
     </tr>
     <?php
     foreach ($user_list as $user):

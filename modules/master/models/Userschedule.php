@@ -194,10 +194,11 @@ class Userschedule extends \yii\db\ActiveRecord
 
     public static function lessonToUpdate($id){
 
-        $rows = (new Query())
+        $rows = static::find()
             ->select(['id', 'lesson_start', 'lesson_finish', 'user_id', 'instricon_id', 'statusschedule_id', '`comment`'])
-            ->from('userschedule')
             ->where(['id' => $id])
+            ->limit(1)
+            ->asArray()
             ->one();
 
         $rows['action_date'] = date('d-m-Y', $rows['lesson_start']);

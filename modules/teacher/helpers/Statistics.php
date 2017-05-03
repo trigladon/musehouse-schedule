@@ -129,10 +129,7 @@ class Statistics
             ];
 
             $userInstr = array_replace_recursive($userInstr, $curentUserInstr);
-            $userInstr[$value['first_name'].' '.$value['last_name']][''] = [
-                'name' => '', //todo full array stack
-                'data'=> $monthArray,
-            ];
+
             $userInstr[$value['first_name'].' '.$value['last_name']][$value['instr_name']]['data'] = $monthArray;
             krsort($userInstr[$value['first_name'].' '.$value['last_name']]);
         }
