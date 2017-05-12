@@ -191,10 +191,6 @@ tbody.tr.td.dayCell{
     margin-right: 5px;
 }
 
-
-
-
-
 .dayAction{
     width: 100%;
     height: 24px;
@@ -205,7 +201,7 @@ tbody.tr.td.dayCell{
 
 
 .dayAction:hover{
-    color: #ff7043;
+    color: #FFEB3B;
     cursor: pointer;
 }
 
@@ -326,9 +322,6 @@ ul.editIcons a{
     border: 1px solid #ccc;
     margin-right: -1px;
     margin-bottom: -1px;
-
-    text-overflow: ellipsis;
-    overflow: hidden;
 }
 
 #calendar li.weekNumber, li.weekName {
@@ -369,7 +362,7 @@ ul.editIcons a{
     width: 20%;
 }
 
-.dayBar:hover, .weekCell:hover{
+.weekCell:hover{
     color: #ff7043;
     cursor: pointer;
 }
@@ -451,6 +444,18 @@ ul.editIcons a{
         display: block;
     }
 
+    #calendar ul.editIcons{
+        padding: 0;
+        min-width: 0 !important;
+        width: auto !important;
+    }
+
+    #calendar ul.editIcons li{
+        width: auto !important;
+        float: left !important;
+        padding: 5px !important;
+    }
+
     #calendar li {
         height: auto !important;
         min-height: 0 !important;
@@ -459,6 +464,7 @@ ul.editIcons a{
         padding: 10px;
         margin-bottom: -1px;
     }
+
 
     #calendar .date {
         float: none;
