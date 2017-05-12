@@ -214,25 +214,41 @@ $(document).on('beforeSubmit', '#filter-form', function () {
     return false; //reject the usual form submit
 });
 
-function showLayer(layerName)
+function showLayer(layerName, qntlessons, week)
 {
     if (document.getElementById) // Netscape 6 and IE 5+
     {
         var targetElement = document.getElementById(layerName);
         targetElement.style.display = 'block';
         $('#iconChange'+layerName).replaceWith('<i id="iconChange'+layerName+'" class="fa fa-caret-up iconShowHide" aria-hidden="true"></i>');
-        $('#showMoreActions'+layerName).attr('onclick',  'hideLayer('+layerName+')');
+        $('#showMoreActions'+layerName).attr('onclick',  'hideLayer('+layerName+', '+qntlessons+', '+week+')');
+        var weeks = document.getElementsByTagName("li");
+        console.log(weeks);
+        for (var i = 0; i < weeks.length; i++) {
+            var cell = weeks[i].getAttribute("week");
+            if ( cell == week ) {
+                weeks[i].style.height = qntlessons+'px';
+            }
+        }
     }
 }
 
-function hideLayer(layerName)
+function hideLayer(layerName, qntlessons, week)
 {
     if (document.getElementById)
     {
         var targetElement = document.getElementById(layerName);
         targetElement.style.display = 'none';
         $('#iconChange'+layerName).replaceWith('<i id="iconChange'+layerName+'" class="fa fa-caret-down iconShowHide" aria-hidden="true"></i>');
-        $('#showMoreActions'+layerName).attr('onclick',  'showLayer('+layerName+')');
+        $('#showMoreActions'+layerName).attr('onclick',  'showLayer('+layerName+', '+qntlessons+', '+week+')');
+        var weeks = document.getElementsByTagName("li");
+        console.log(weeks);
+        for (var i = 0; i < weeks.length; i++) {
+            var cell = weeks[i].getAttribute("week");
+            if ( cell == week ) {
+                weeks[i].style.height = '115px';
+            }
+        }
     }
 }
 

@@ -32,7 +32,7 @@ $this->title = Yii::$app->name;
     <?php endif;?>
 
     <div class="jumbotron">
-        <h1><img src="/images/musehouse_logo.jpg"></h1>
+        <img style="max-width: 100%" src="/images/musehouse_logo.jpg">
 
 <!--        <p class="lead">Welcome to our music school!</p>-->
 
@@ -40,8 +40,8 @@ $this->title = Yii::$app->name;
 
     <div class="body-content">
 
-        <div class="col-lg-12 text-center">
-            <img src="/images/il_570xN.920698074_m80m.jpg" style="height: 500px">
+        <div class="col-lg-12 text-center" style="width: 100%">
+            <img src="/images/il_570xN.920698074_m80m.jpg" style="max-height: 500px; max-width: 100%">
         </div>
 
     </div>
