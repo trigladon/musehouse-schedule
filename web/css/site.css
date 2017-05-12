@@ -191,6 +191,10 @@ tbody.tr.td.dayCell{
     margin-right: 5px;
 }
 
+
+
+
+
 .dayAction{
     width: 100%;
     height: 24px;
@@ -362,7 +366,7 @@ ul.editIcons a{
     width: 20%;
 }
 
-.weekCell:hover{
+.dayBar:hover, .weekCell:hover{
     color: #ff7043;
     cursor: pointer;
 }

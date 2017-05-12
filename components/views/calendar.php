@@ -74,9 +74,9 @@ ini_set('xdebug.var_display_max_data', 1024);
                 foreach ($year['week'] as $week):
                     if (is_string($week)){
                         $_week = $week;
-                        if ($_day_of_the_week == '7' || !$_day_of_the_week){
-                            echo '<ul><li class="weekCell" style="vertical-align: middle;'.$weekStyle.'" onclick="onClickMonth('.$_week.', \'\', \'week\')" week="'.$_week.'"><span class="weekstyle">'.$_week.'</span></li>';
-                        }
+                        if ($_day_of_the_week == '7' || !$_day_of_the_week):?>
+                            <ul><li class="weekCell" style="vertical-align:middle;text-align:center;line-height:<?=$whtsh=='month'?'105':'675'?>px;<?=$weekStyle?>" onclick="onClickMonth(<?=$_week?>, '', 'week')" week="'.$_week.'"><span class="weekstyle"><?=$_week?></span></li>
+                        <?php endif;
                     }else{
                         foreach ($week['month'] as $month):
                             if (is_string($month)) {
