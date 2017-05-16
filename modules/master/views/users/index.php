@@ -13,6 +13,33 @@ $this->title = 'User Management';
 ?>
 <div class="site-inviteUser">
     <h1><?= Html::encode($this->title) ?></h1>
+    <div>
+        <?php if (Yii::$app->session->hasFlash('error_host_connection')): ?>
+            <div class="alert alert-warning alert-dismissable">
+                <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                <h4><i class="icon fa fa-exclamation-triangle"></i> Warning!</h4>
+                <?= Yii::$app->session->getFlash('error_host_connection') ?>
+            </div>
+        <?php elseif (Yii::$app->session->hasFlash('email_was_sent')): ?>
+            <div class="alert alert-success alert-dismissable">
+                <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                <h4><i class="icon fa fa-hand-peace-o"></i> Success!</h4>
+                <?= Yii::$app->session->getFlash('email_was_sent') ?>
+            </div>
+        <?php elseif (Yii::$app->session->hasFlash('error_user_save')): ?>
+            <div class="alert alert-danger alert-dismissable">
+                <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                <h4><i class="icon fa fa-close"></i> Error!</h4>
+                <?= Yii::$app->session->getFlash('error_user_save') ?>
+            </div>
+        <?php endif;?>
+    </div>
+    <div>
+        <?php
+            echo ActivationListWidget::widget(['user_list' => $user_list, 'userUpdate' => $userUpdate, 'listUserLessons' => $listUserLessons]);
+        ?>
+    </div>
+
     <div style="float: left; width: 250px;">
         <?php $form = ActiveForm::begin([
             'id' => 'inviteUser-form',
@@ -41,27 +68,7 @@ $this->title = 'User Management';
         <?php ActiveForm::end(); ?>
 
     </div>
-    <div style="float: left; width: 300px; padding: 0 15px;">
-        <?php if (Yii::$app->session->hasFlash('error_host_connection')): ?>
-            <div class="alert alert-warning alert-dismissable">
-                <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-                <h4><i class="icon fa fa-exclamation-triangle"></i> Warning!</h4>
-                <?= Yii::$app->session->getFlash('error_host_connection') ?>
-            </div>
-        <?php elseif (Yii::$app->session->hasFlash('email_was_sent')): ?>
-            <div class="alert alert-success alert-dismissable">
-                <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-                <h4><i class="icon fa fa-hand-peace-o"></i> Success!</h4>
-                <?= Yii::$app->session->getFlash('email_was_sent') ?>
-            </div>
-        <?php elseif (Yii::$app->session->hasFlash('error_user_save')): ?>
-            <div class="alert alert-danger alert-dismissable">
-                <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-                <h4><i class="icon fa fa-close"></i> Error!</h4>
-                <?= Yii::$app->session->getFlash('error_user_save') ?>
-            </div>
-        <?php endif;?>
-    </div>
+
     <div style="float: right; width: 550px; padding: 0 15px">
         <table class="table">
             <tr>
@@ -96,13 +103,6 @@ $this->title = 'User Management';
                 </td>
             </tr>
         </table>
-    </div>
-
-
-    <div>
-        <?php
-            echo ActivationListWidget::widget(['user_list' => $user_list, 'userUpdate' => $userUpdate, 'listUserLessons' => $listUserLessons]);
-        ?>
     </div>
 
 </div><!-- site-inviteUser -->

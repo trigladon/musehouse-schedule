@@ -28,7 +28,7 @@ class InstrumentController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'roles' => ['master'],
+                        'roles' => ['Master'],
                     ],
                 ],
             ],

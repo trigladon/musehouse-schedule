@@ -249,7 +249,7 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     public static function isMaster(){
-        if (key(Yii::$app->authManager->getRolesByUser(Yii::$app->user->id)) == 'master'){
+        if (key(Yii::$app->authManager->getRolesByUser(Yii::$app->user->id)) == 'Master'){
             return true;
         }else{
             return false;

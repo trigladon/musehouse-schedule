@@ -49,6 +49,7 @@ class Statistics
         $queryStatuses = (new Query())
             ->select(['id', 'color'])
             ->from('statusschedule')
+            ->andWhere(['!=', 'id', 4])
             ->all();
 
         $statuses = [];

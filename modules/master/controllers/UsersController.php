@@ -27,7 +27,7 @@ class UsersController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'roles' => ['master'],
+                        'roles' => ['Master'],
                     ],
                 ],
             ],
@@ -37,9 +37,7 @@ class UsersController extends Controller
     public function actionIndex()
     {
         $model = new InviteUserForm();
-        $user_list = User::find()->all();
         $userUpdate = new UserUpdateForm();
-        $listUserLessons = Instrument::lessonListProfile();
 
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {
@@ -68,6 +66,8 @@ class UsersController extends Controller
 //            var_dump(Yii::$app->request->post());
         }
 
+        $user_list = User::find()->all();
+        $listUserLessons = Instrument::lessonListProfile();
 
 
         return $this->render('index', [

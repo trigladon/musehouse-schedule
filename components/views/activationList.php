@@ -33,11 +33,11 @@ ini_set('xdebug.var_display_max_data', 1024);
         <th class="text-center">Edit / Delete</th>
     </tr>
     <?php
+    $masterNumber = 1;
     foreach ($user_list as $user){
         /* @var $user app\models\User */
 
-        if ($user->userRole() == 'master'):
-            $masterNumber = 1;
+        if ($user->userRole() == 'Master'):
             $classReg = $user->status==1?'text-danger':'text-success';
             $classLet = $user->letter_status==0||!User::isSecretKeyExpire($user->secret_key)?'text-danger':'text-success';
             echo '<tr style="vertical-align: middle">';
@@ -113,9 +113,9 @@ ini_set('xdebug.var_display_max_data', 1024);
         <th class="text-center">Edit / Delete</th>
     </tr>
     <?php
+    $teacherNumber = 1;
     foreach ($user_list as $user):
-        if ($user->userRole() == 'teacher'):
-            $teacherNumber = 1;
+        if ($user->userRole() == 'Teacher'):
             $classReg = $user->status==1?'text-danger':'text-success';
             $classLet = $user->letter_status==0||!User::isSecretKeyExpire($user->secret_key)?'text-danger':'text-success';
             echo '<tr style="vertical-align: middle">';
@@ -169,8 +169,6 @@ ini_set('xdebug.var_display_max_data', 1024);
                 ]);
             echo '</td></tr>';
             $teacherNumber++;
-
-
         endif;
         ?>
     <?php endforeach;?>
@@ -200,9 +198,9 @@ ini_set('xdebug.var_display_max_data', 1024);
         <th class="text-center">Edit / Delete</th>
     </tr>
     <?php
+    $studentNumber = 1;
     foreach ($user_list as $user):
-        if ($user->userRole() == 'student'):
-            $studentNumber = 1;
+        if ($user->userRole() == 'Student'):
             $classReg = $user->status==1?'text-danger':'text-success';
             $classLet = $user->letter_status==0||!User::isSecretKeyExpire($user->secret_key)?'text-danger':'text-success';
             echo '<tr style="vertical-align: middle">';
