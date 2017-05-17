@@ -9,6 +9,7 @@
 namespace app\modules\master\forms;
 
 
+use app\models\AuthItem;
 use yii\base\Model;
 use Yii;
 use yii\helpers\Url;
@@ -18,17 +19,17 @@ use app\models\AuthItemChild;
 class InviteUserForm extends Model
 {
     public $email;
-    public $role = 'teacher';
+    public $role;
 
     public function rules()
     {
         return [
-            ['email', 'required'],
+            [['email', 'role'], 'required'],
             ['email', 'email'],
             ['email', 'unique',
                 'targetClass' => User::className(),
                 'message' => 'Эта почта уже занята.'],
-            [['role'], 'exist', 'skipOnError' => true, 'targetClass' => AuthItemChild::className(), 'targetAttribute' => ['role' => 'parent']],
+            [['role'], 'exist', 'skipOnError' => true, 'targetClass' => AuthItem::className(), 'targetAttribute' => ['role' => 'name']],
         ];
     }
 

@@ -248,6 +248,21 @@ class User extends ActiveRecord implements IdentityInterface
         return $user_list;
     }
 
+    public static function teacherList(){
+        $rows = static::find()
+            ->leftJoin('auth_assignment auth', 'id = auth.user_id')
+            ->andWhere(['=', 'auth.item_name', 'Master'])
+            ->orWhere(['=', 'auth.item_name', 'Teacher'])
+            ->andWhere(['=', 'status', USER::STATUS_ACTIVE])
+            ->all();
+
+        foreach ($rows as $user){
+            /* @var $user User */
+            $teacherList[$user->id] = $user->getUsername();
+        }
+        return $teacherList;
+    }
+
     public static function isMaster(){
         if (key(Yii::$app->authManager->getRolesByUser(Yii::$app->user->id)) == 'Master'){
             return true;
@@ -258,5 +273,15 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function userRole(){
         return key(Yii::$app->authManager->getRolesByUser($this->id));
+    }
+
+    public function teachers(){
+        $rows = static::find()
+            ->from('user u')
+            ->leftJoin('student_rel strel', 'u.id = strel.teacher_id')
+            ->andWhere(['=', 'strel.student_id', $this->id])
+            ->all();
+
+        return $rows;
     }
 }

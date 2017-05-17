@@ -8,6 +8,8 @@
 
 namespace app\modules\master\controllers;
 
+use app\models\AuthItem;
+use app\modules\master\forms\StudentAddForm;
 use app\modules\master\forms\UserUpdateForm;
 use yii\web\Controller;
 use app\modules\master\forms\InviteUserForm;
@@ -38,12 +40,24 @@ class UsersController extends Controller
     {
         $model = new InviteUserForm();
         $userUpdate = new UserUpdateForm();
+        $studentAddForm = new StudentAddForm();
 
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {
                 $model->sendInvitation();
                 return $this->refresh();
             }
+        }
+
+        if ($studentAddForm->load(Yii::$app->request->post()) && $studentAddForm->validate()){
+            var_dump(Yii::$app->request->post());
+
+            if ($studentAddForm->reg()){
+                Yii::$app->session->setFlash('Success', 'Student Added');
+            }else{
+                Yii::$app->session->setFlash('Error', 'Something went wrong!');
+            }
+            return $this->refresh();
         }
 
         if (null !== Yii::$app->request->get('deleteId')){
@@ -62,19 +76,23 @@ class UsersController extends Controller
             }else{
                 Yii::$app->session->setFlash('Error', 'Something went wrong, please, contact you Administrator!');
             }
+            var_dump(Yii::$app->request->post());
             return $this->refresh();
-//            var_dump(Yii::$app->request->post());
         }
 
         $user_list = User::find()->all();
         $listUserLessons = Instrument::lessonListProfile();
-
+        $role_list = AuthItem::getRoleList();
+        $teacherList = User::teacherList();
 
         return $this->render('index', [
             'model' => $model,
             'user_list' => $user_list,
             'userUpdate' => $userUpdate,
             'listUserLessons' => $listUserLessons,
+            'role_list' => $role_list,
+            'studentAddForm' => $studentAddForm,
+            'teacherList' => $teacherList,
         ]);
     }
 }

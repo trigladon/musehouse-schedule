@@ -16,6 +16,7 @@ class ActivationListWidget extends Widget
     public $user_list;
     public $userUpdate;
     public $listUserLessons;
+    public $teacherList;
 
     public function init()
     {
@@ -29,6 +30,7 @@ class ActivationListWidget extends Widget
             'user_list' => $this->user_list,
             'userUpdate' => $this->userUpdate,
             'listUserLessons' => $this->listUserLessons,
+            'teacherList' => $this->teacherList,
         ]);
     }
 }

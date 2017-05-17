@@ -19,8 +19,20 @@ ini_set('xdebug.var_display_max_depth', 15);
 ini_set('xdebug.var_display_max_children', 256);
 ini_set('xdebug.var_display_max_data', 1024);
 ?>
-
-<table class="table table-hover table-striped table-bordered">
+<?php if (Yii::$app->session->hasFlash('Error')): ?>
+    <div class="alert alert-warning alert-dismissable">
+        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+        <h4><i class="icon fa fa-exclamation-triangle"></i> Warning!</h4>
+        <?= Yii::$app->session->getFlash('Error') ?>
+    </div>
+<?php elseif (Yii::$app->session->hasFlash('Success')): ?>
+    <div class="alert alert-success alert-dismissable">
+        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+        <h4><i class="icon fa fa-hand-peace-o"></i> Success!</h4>
+        <?= Yii::$app->session->getFlash('Success') ?>
+    </div>
+<?php endif;?>
+<table class="table table-hover table-striped table-bordered" style="margin-bottom: -1px;">
     <tr><td colspan="8" style="text-align: center;color: #2e498b; font-size: 18px; border-bottom-width: 2px; border-bottom-color: #2e498b;">Masters (Admin users)</td></tr>
     <tr>
         <th class="text-center">#</th>
@@ -33,15 +45,16 @@ ini_set('xdebug.var_display_max_data', 1024);
         <th class="text-center">Edit / Delete</th>
     </tr>
     <?php
-    $masterNumber = 1;
+    $masterNumber = 0;
     foreach ($user_list as $user){
         /* @var $user app\models\User */
 
         if ($user->userRole() == 'Master'):
+            ++$masterNumber;
             $classReg = $user->status==1?'text-danger':'text-success';
             $classLet = $user->letter_status==0||!User::isSecretKeyExpire($user->secret_key)?'text-danger':'text-success';
             echo '<tr style="vertical-align: middle">';
-            echo '<td style="vertical-align: middle">'.$masterNumber.'</td>';
+            echo '<td class="text-center" style="vertical-align: middle">'.$masterNumber.'</td>';
             echo '<td style="vertical-align: middle">'.$user->first_name.'</td>';
             echo '<td style="vertical-align: middle">'.$user->last_name.'</td>';
             echo '<td style="vertical-align: middle">'.$user->email.'</td>';
@@ -76,6 +89,8 @@ ini_set('xdebug.var_display_max_data', 1024);
                     'data-first_name' => $user->first_name,
                     'data-last_name' => $user->last_name,
                     'data-lessons' => $userInstr,
+                    'data-teachers' => '',
+                    'data-role' => $user->userRole(),
                     'id'          => 'editUser',]).' / ';
             echo Yii::$app->user->id == $user->id ? Html::a('<i class="fa fa-trash-o fa-lg text-muted" aria-hidden="true"></i>') :
                 Html::a('<i class="fa fa-trash-o fa-lg text-danger" aria-hidden="true"></i>', Yii::$app->urlManager->createAbsoluteUrl([
@@ -89,7 +104,6 @@ ini_set('xdebug.var_display_max_data', 1024);
                     'id'          => 'popupModal',
                     ]);
             echo '</td></tr>';
-            $masterNumber++;
         endif;
     }
     ?>
@@ -113,13 +127,14 @@ ini_set('xdebug.var_display_max_data', 1024);
         <th class="text-center">Edit / Delete</th>
     </tr>
     <?php
-    $teacherNumber = 1;
+    $teacherNumber = 0;
     foreach ($user_list as $user):
         if ($user->userRole() == 'Teacher'):
+            ++$teacherNumber;
             $classReg = $user->status==1?'text-danger':'text-success';
             $classLet = $user->letter_status==0||!User::isSecretKeyExpire($user->secret_key)?'text-danger':'text-success';
             echo '<tr style="vertical-align: middle">';
-            echo '<td style="vertical-align: middle">'.$teacherNumber.'</td>';
+            echo '<td class="text-center" style="vertical-align: middle">'.$teacherNumber.'</td>';
             echo '<td style="vertical-align: middle">'.$user->first_name.'</td>';
             echo '<td style="vertical-align: middle">'.$user->last_name.'</td>';
             echo '<td style="vertical-align: middle">'.$user->email.'</td>';
@@ -156,6 +171,8 @@ ini_set('xdebug.var_display_max_data', 1024);
                     'data-first_name' => $user->first_name,
                     'data-last_name' => $user->last_name,
                     'data-lessons' => $userInstr,
+                    'data-teachers' => '',
+                    'data-role' => $user->userRole(),
                     'id'          => 'editUser',]).' / ';
             echo Html::a('<i class="fa fa-trash-o fa-lg text-danger" aria-hidden="true"></i>', Yii::$app->urlManager->createAbsoluteUrl([
                     '/master/users',
@@ -168,17 +185,17 @@ ini_set('xdebug.var_display_max_data', 1024);
                     'id'          => 'popupModal',
                 ]);
             echo '</td></tr>';
-            $teacherNumber++;
+
         endif;
         ?>
     <?php endforeach;?>
-    <?php if (!isset($teacherNumber)):?>
+    <?php if ($teacherNumber == 0):?>
         <tr>
             <td colspan="8" class="text-center" style="vertical-align: middle">No Teachers there...</td>
         </tr>
     <?php endif;?>
-
-
+</table>
+<table class="table table-hover table-striped table-bordered">
     <tr><td colspan="8"
             style="
                 text-align: center;
@@ -190,48 +207,32 @@ ini_set('xdebug.var_display_max_data', 1024);
     <tr>
         <th class="text-center">#</th>
         <th class="text-center">First Name</th>
-        <th class="text-center">Last Name</th>
-        <th class="text-center">Teacher</th>
-        <th class="text-center">Lessons</th>
-        <th class="text-center">Status</th>
-        <th class="text-center">Letter</th>
+        <th colspan="2" class="text-center">Last Name</th>
+        <th colspan="3" class="text-center">Teachers</th>
         <th class="text-center">Edit / Delete</th>
     </tr>
     <?php
-    $studentNumber = 1;
+    $studentNumber = 0;
     foreach ($user_list as $user):
         if ($user->userRole() == 'Student'):
+            ++$studentNumber;
             $classReg = $user->status==1?'text-danger':'text-success';
             $classLet = $user->letter_status==0||!User::isSecretKeyExpire($user->secret_key)?'text-danger':'text-success';
             echo '<tr style="vertical-align: middle">';
-            echo '<td style="vertical-align: middle">'.$studentNumber.'</td>';
+            echo '<td class="text-center" style="vertical-align: middle">'.$studentNumber.'</td>';
             echo '<td style="vertical-align: middle">'.$user->first_name.'</td>';
-            echo '<td style="vertical-align: middle">'.$user->last_name.'</td>';
-            echo '<td style="vertical-align: middle">'.$user->email.'</td>';
-            echo '<td class="text-left" style="vertical-align: middle; padding-left: 15px">';
-            foreach ($user->getUserLessons() as $lesson):?>
-                <div style="margin: 1px 0"><img src="/images/icons/<?=$lesson['instricon']['icon']?>" class="icon_reg" style="margin: 0 5px"><?=$lesson['instricon']['instr_name']?></div>
-            <?php endforeach;
-            $userInstr = [];
-            foreach ($user->getUserLessons() as $lessons):;
-                $userInstr[] = $lessons['instricon']['id'];
+            echo '<td colspan="2" style="vertical-align: middle">'.$user->last_name.'</td>';
+            echo '<td colspan="3" class="text-left" style="vertical-align: middle; padding-left: 15px">';
+            $userTeachers = [];
+            foreach ($user->teachers() as $teacher):/* @var $teacher User*/?>
+                <div style="margin: 1px 0">- <?=$teacher->getUsername()?></div>
+            <?php $userTeachers[] = $teacher->id;
             endforeach;
+//            foreach ($user->getUserLessons() as $lessons):;
+//                $userInstr[] = $lessons['instricon']['id'];
+//            endforeach;
+//        var_dump($user->teachers());
             echo '</td>';
-            echo '<td class="text-center" style="vertical-align: middle">
-            <i class="fa fa-user fa-lg '.$classReg.'" aria-hidden="true"></i>
-
-            </td>';
-            if ($classReg === 'text-success'){
-                echo '<td class="text-center" style="vertical-align: middle"><i class="fa fa-check fa-lg text-success" aria-hidden="true"></i></td>';
-            }else{
-                echo '<td class="text-center" style="vertical-align: middle"><i class="fa fa-check fa-lg '.$classLet.'" style="margin-right:11px" aria-hidden="true"></i>'.
-                    Html::a('<i class="fa fa-share text-warning" aria-hidden="true"></i>
-                        <i class="fa fa-envelope text-warning" aria-hidden="true"></i>',
-                        Yii::$app->urlManager->createAbsoluteUrl([
-                            '/master/users',
-                            'resendUserLetter' => $user->id,
-                        ]), ['class' => 'linkaction']).'</td>';
-            }
             echo '<td class="text-center" style="vertical-align: middle">'.
                 Html::a('<i class="fa fa fa-pencil-square-o fa-lg text-warning" aria-hidden="true" style="vertical-align: -3px;"></i>', Yii::$app->urlManager->createAbsoluteUrl([
                     '/master/users',
@@ -240,7 +241,9 @@ ini_set('xdebug.var_display_max_data', 1024);
                     'data-user_id' => $user->id,
                     'data-first_name' => $user->first_name,
                     'data-last_name' => $user->last_name,
-                    'data-lessons' => $userInstr,
+                    'data-lessons' => '',
+                    'data-teachers' => $userTeachers,
+                    'data-role' => $user->userRole(),
                     'id'          => 'editUser',]).' / ';
             echo Html::a('<i class="fa fa-trash-o fa-lg text-danger" aria-hidden="true"></i>', Yii::$app->urlManager->createAbsoluteUrl([
                 '/master/users',
@@ -253,13 +256,13 @@ ini_set('xdebug.var_display_max_data', 1024);
                 'id'          => 'popupModal',
             ]);
             echo '</td></tr>';
-            $studentNumber++;
+
 
 
         endif;
         ?>
     <?php endforeach;?>
-    <?php if (!isset($student)):?>
+    <?php if ($studentNumber == 0):?>
         <tr>
             <td colspan="8" class="text-center" style="vertical-align: middle">No Students there...</td>
         </tr>
@@ -277,20 +280,6 @@ ini_set('xdebug.var_display_max_data', 1024);
     <p class="modal-message">Do you really want to delete <strong class='text-danger modal-name'></strong>?</p>
 
 <?php Modal::end(); ?>
-
-<?php if (Yii::$app->session->hasFlash('Error')): ?>
-    <div class="alert alert-warning alert-dismissable">
-        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-        <h4><i class="icon fa fa-exclamation-triangle"></i> Warning!</h4>
-        <?= Yii::$app->session->getFlash('Error') ?>
-    </div>
-<?php elseif (Yii::$app->session->hasFlash('Success')): ?>
-    <div class="alert alert-success alert-dismissable">
-        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-        <h4><i class="icon fa fa-hand-peace-o"></i> Success!</h4>
-        <?= Yii::$app->session->getFlash('Success') ?>
-    </div>
-<?php endif;?>
 
 <?php Modal::begin([
     'header' => '<h4 class="text-info">User Information</h4>',
@@ -319,6 +308,7 @@ ini_set('xdebug.var_display_max_data', 1024);
         'id' => 'last_name',
     ])?>
 
+    <div id='upFormLessons' style="display: none">
     <?php
     $escape2 = new JsExpression("function(m) { return m; }");
     echo $form->field($userUpdate, 'lessons')->widget(Select2::className(), [
@@ -333,9 +323,22 @@ ini_set('xdebug.var_display_max_data', 1024);
             'closeOnSelect' =>false,
         ],
     ])->label('Lessons');?>
+    </div>
+
+    <div id='upFormTeachers' style="display: none">
+        <?= $form->field($userUpdate, 'teachers')->label('Teachers')->widget(Select2::className(), [
+            'data' => $teacherList,
+            'theme' => Select2::THEME_BOOTSTRAP,
+            'hideSearch' => true,
+            'options' => ['placeholder' => 'Choose the Teacher', 'multiple' => true],
+        ]); ?>
+    </div>
 
     <?= Html::activeHiddenInput($userUpdate,'user_id', [
         'id' => 'user_idInput',
+    ]);?>
+    <?= Html::activeHiddenInput($userUpdate,'role', [
+        'id' => 'user_role',
     ]);?>
 
     <div class="form-group">

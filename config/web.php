@@ -1,5 +1,9 @@
 <?php
 
+$dotenv = new \Dotenv\Dotenv(__DIR__.'/..');
+$dotenv->load();
+$dotenv->required(['EMAIL', 'EMAIL_PASS', 'DB_NAME', 'DB_PASS', 'DB_USER']);
+
 $params = require(__DIR__ . '/params.php');
 
 $config = [

@@ -109,4 +109,18 @@ class AuthItem extends \yii\db\ActiveRecord
     {
         return $this->hasMany(AuthItem::className(), ['name' => 'parent'])->viaTable('auth_item_child', ['child' => 'name']);
     }
+
+    public static function getRoleList(){
+
+        $rows = static::find()
+            ->select('name')
+            ->where('type = 1')
+            ->all();
+
+        foreach ($rows as $value){
+            $role_list[$value['name']] = $value['name'];
+        }
+
+        return $role_list;
+    }
 }

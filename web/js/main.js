@@ -412,23 +412,91 @@ $(document).on('click', '#editUser', function (event) {
     var first_name = that.data('first_name');
     var last_name = that.data('last_name');
     var lessons = that.data('lessons');
+    var teachers = that.data('teachers');
     var user_id = that.data('user_id');
+    var role = that.data('role');
 
     $('#first_name').val(first_name);
     $('#last_name').val(last_name);
     $('#user_idInput').val(user_id);
+    $('#user_role').val(role);
 
+    // $("#addlessonform-instricon_id, #addlessonform-statusschedule_id").select2().val(null).trigger('change.select2');
+console.log(lessons);
+console.log(teachers);
 
-    $("#userupdateform-lessons").select2({ width: '100%' }).val(lessons).trigger('change.select2');
+    if (role == 'Student'){
+        var hideElement = document.getElementById('upFormLessons');
+        hideElement.style.display = 'none';
+        var showElement = document.getElementById('upFormTeachers');
+        showElement.style.display = 'block';
+        $("#userupdateform-lessons").select2({ width: '100%' }).val('').trigger('change.select2');
+        $("#userupdateform-teachers").select2({ width: '100%' }).val(teachers).trigger('change.select2');
 
-    $('#userupdateform-lessons').select2({
-        escapeMarkup: function (text) { return text; },
-        placeholder: 'Type of the Lesson',
-        theme: 'bootstrap',
-        allowClear: true,
-        minimumResultsForSearch: Infinity,
-        width: '100%'
-    });
+        $('#userupdateform-teachers').select2({
+            escapeMarkup: function (text) { return text; },
+            placeholder: 'Type of the Lesson',
+            theme: 'bootstrap',
+            allowClear: true,
+            minimumResultsForSearch: Infinity,
+            width: '100%',
+            closeOnSelect: false
+        });
+    }else{
+        var hideElement = document.getElementById('upFormTeachers');
+        hideElement.style.display = 'none';
+        var showElement = document.getElementById('upFormLessons');
+        showElement.style.display = 'block';
+        $("#userupdateform-teachers").select2({ width: '100%' }).val('').trigger('change.select2');
+        $("#userupdateform-lessons").select2({ width: '100%' }).val(lessons).trigger('change.select2');
+
+        $('#userupdateform-lessons').select2({
+            escapeMarkup: function (text) { return text; },
+            placeholder: 'Type of the Lesson',
+            theme: 'bootstrap',
+            allowClear: true,
+            minimumResultsForSearch: Infinity,
+            width: '100%',
+            closeOnSelect: false
+        });
+    }
 
 
 });
+
+$(document).ready(function(){
+    $("#w0").on("change", function() {
+        var role = $(this).val();
+        if(role == 'Teacher' || 'Master'){
+            console.log(role);
+            var hideElement = document.getElementById('addStudentForm');
+            hideElement.style.display = 'none';
+            var showElement = document.getElementById('inviteForm');
+            showElement.style.display = 'block';
+            $("#inviteuserform-role").select2().val(role).trigger('change.select2');
+            $('#inviteuserform-role').select2({
+                value: role,
+                theme: 'bootstrap',
+                allowClear: true,
+                width: '100%',
+                options: {'class': 'hide'}
+            });
+        }
+
+        if (role == 'Student'){
+            var hideElement = document.getElementById('inviteForm');
+            hideElement.style.display = 'none';
+            var showElement = document.getElementById('addStudentForm');
+            showElement.style.display = 'block';
+        }
+
+        if (role == ''){
+            var hideElement = document.getElementById('inviteForm');
+            hideElement.style.display = 'none';
+            var showElement = document.getElementById('addStudentForm');
+            showElement.style.display = 'none';
+        }
+
+    });
+});
+

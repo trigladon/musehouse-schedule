@@ -5,9 +5,9 @@ defined('YII_DEBUG') or define('YII_DEBUG', true);
 defined('YII_ENV') or define('YII_ENV', 'dev');
 
 require(__DIR__ . '/../vendor/autoload.php');
-$dotenv = new \Dotenv\Dotenv(__DIR__.'/..');
-$dotenv->load();
-$dotenv->required(['EMAIL', 'EMAIL_PASS', 'DB_NAME', 'DB_PASS', 'DB_USER']);
+//$dotenv = new \Dotenv\Dotenv(__DIR__.'/..');
+//$dotenv->load();
+//$dotenv->required(['EMAIL', 'EMAIL_PASS', 'DB_NAME', 'DB_PASS', 'DB_USER']);
 require(__DIR__ . '/../vendor/yiisoft/yii2/Yii.php');
 
 $config = require(__DIR__ . '/../config/web.php');

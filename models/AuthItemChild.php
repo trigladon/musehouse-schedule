@@ -64,13 +64,4 @@ class AuthItemChild extends ActiveRecord
     {
         return $this->hasOne(AuthItem::className(), ['name' => 'child']);
     }
-
-    public static function role_list(){
-        $query = Yii::$app->db->createCommand('SELECT parent FROM auth_item_child GROUP BY parent')->queryAll();
-        foreach ($query as $value){
-            $role_list[$value['parent']] = $value['parent'];
-        }
-        return $role_list;
-
-    }
 }
