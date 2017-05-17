@@ -51,12 +51,12 @@ ini_set('xdebug.var_display_max_data', 1024);
 
         switch ($whtsh){
             case 'week':
-                $dayStyle = 'min-height: 685px;';
-                $weekStyle = 'min-height: 685px;';
+                $dayStyle = 'min-height: 901px;';
+                $weekStyle = 'min-height: 901px;';
                 break;
             case 'day':
-                $dayStyle = 'min-height: 685px; width: calc(100% - 54px);';
-                $weekStyle = 'min-height: 685px;';
+                $dayStyle = 'min-height: 901px; width: calc(100% - 54px);';
+                $weekStyle = 'min-height: 901px;';
                 break; //1085px width
             default:
                 $dayStyle = '';
@@ -75,7 +75,7 @@ ini_set('xdebug.var_display_max_data', 1024);
                     if (is_string($week)){
                         $_week = $week;
                         if ($_day_of_the_week == '7' || !$_day_of_the_week):?>
-                            <ul><li class="weekCell" style="vertical-align:middle;text-align:center;line-height:<?=$whtsh=='month'?'105':'675'?>px;<?=$weekStyle?>" onclick="onClickMonth(<?=$_week?>, '', 'week')" week="'.$_week.'"><span class="weekstyle"><?=$_week?></span></li>
+                            <ul><li class="weekCell" style="vertical-align:middle;text-align:center;line-height:<?=$whtsh=='month'?'139':'891'?>px;<?=$weekStyle?>" onclick="onClickMonth(<?=$_week?>, '', 'week')" week="<?=$_week?>"><span class="weekstyle"><?=$_week?></span></li>
                         <?php endif;
                     }else{
                         foreach ($week['month'] as $month):
@@ -170,7 +170,7 @@ ini_set('xdebug.var_display_max_data', 1024);
             $dayActionStatus = ' style="background-color: '.$actions['color'].'"';
             ?>
             <?php if ($count === 4 && $whtsh == 'month' && $qnt > 3):?>
-            <div id="showMoreActions<?=$actions['lesson_id']?>" class="showMoreActions" onclick="showLayer('<?=$actions['lesson_id']?>', '<?=115+4+($qnt-3)*26?>', '<?=$_week?>')">
+            <div id="showMoreActions<?=$actions['lesson_id']?>" class="showMoreActions" onclick="showLayer('<?=$actions['lesson_id']?>', '<?=151+4+($qnt-3)*38?>', '<?=$_week?>')">
                 <i id="iconChange<?=$actions['lesson_id']?>" class="fa fa-caret-down iconShowHide" aria-hidden="true"></i>
             </div>
             <?php endif;?>
@@ -179,23 +179,27 @@ ini_set('xdebug.var_display_max_data', 1024);
             <?php endif; ?>
                 <div class="dropdown">
                     <div class="dayAction img-rounded dropdown-toggle" data-toggle="dropdown" <?=$dayActionStatus?>>
-                        <div class="timeField">
-<!--                            <div class="timeAction">-->
+                        <div class="row" style="margin: 0">
+                            <div class="timeField">
                                 <?=date('H:i', $actions['lesson_start'])?>
                                 <?=date('H:i', $actions['lesson_finish'])?>
-<!--                            </div>-->
-                        </div>
-                        <div class="lessonIconAction">
-                            <img src="/images/icons/<?=$actions['icon']?>" class="icon_reg_action img-thumbnail" alt="<?=$actions['instr_name']?>" title="<?=$actions['instr_name']?>">
-                        </div>
-                        <div class="nameTeacherAction">
-                            <?=$actions['first_name'].' '.$actions['last_name']?>
-                        </div>
-                        <?php if ($whtsh == 'day'):?>
-                            <div class="divComment">
-                                <?=$actions['comment']?>
                             </div>
-                        <?php endif;?>
+                            <div class="lessonIconAction">
+                                <img src="/images/icons/<?=$actions['icon']?>" class="icon_reg_action img-thumbnail" alt="<?=$actions['instr_name']?>" title="<?=$actions['instr_name']?>">
+                            </div>
+                            <div class="nameTeacherAction">
+                                <?=$actions['first_name'].' '.$actions['last_name']?>
+                            </div>
+                            <?php if ($whtsh == 'day'):?>
+                                <div class="divComment">
+                                    <?=$actions['comment']?>
+                                </div>
+                            <?php endif;?>
+                        </div>
+                        <div class="row" style="margin: 0;font-size: 10px;line-height: 11px;border-top: solid 1px white;">
+                            <div style="width: 50px;padding-right: 5px" class="text-right pull-left"><?=$actions['length']?> min.</div>
+                            <div style="max-width: 94px; min-width: 63px; width: calc(100%-50px);text-overflow: ellipsis;overflow: hidden;" class="pull-left"><?=$actions['student_id']?$students_listFull[$actions['student_id']]:'No student'?></div>
+                        </div>
                     </div>
                     <ul class="dropdown-menu editIcons">
                         <li><?= Html::a('<i class="fa fa-pencil-square-o fa-lg text-warning" aria-hidden="true"></i>', '#', ['lessonId' => $actions['lesson_id'], 'user_id' => $actions['id'], 'id' => 'lesson-edit'])?></li>

@@ -95,6 +95,17 @@ $this->title = 'Profile';
     </div>
 
 <hr>
+
+    <h4 class="text-info" style="margin-top: 30px">User's Students</h4>
+    <div style="margin: 30px 0; width: 100%">
+        <?php foreach ($user->students() as $student): /* @var $student \app\models\User*/?>
+        <div>
+            - <?=$student->getUsername()?>
+        </div>
+        <?php endforeach;?>
+    </div>
+
+<hr>
     <?php $form = ActiveForm::begin([
         'id' => 'passwordUpdateForm',
         'layout' => 'horizontal',

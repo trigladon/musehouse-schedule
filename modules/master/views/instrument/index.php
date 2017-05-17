@@ -66,7 +66,7 @@ $this->title = 'Lessons';
         </div>
         <div  class="col-md-9">
             <table class="table table-hover table-striped table-bordered">
-                <tr><td colspan="7" style="color: #2e498b; font-size: 18px; border-bottom-width: 2px; border-bottom-color: #2e498b;">Table of Lessons</td></tr>
+                <tr><td class="text-center" colspan="7" style="color: #2e498b; font-size: 18px; border-bottom-width: 2px; border-bottom-color: #2e498b;">Table of Lessons</td></tr>
                 <tr>
                     <th class="text-center">#</th>
                     <th class="text-center">Icon</th>
@@ -79,8 +79,8 @@ $this->title = 'Lessons';
                 foreach ($lessonsList as $key => $value){
 
                     echo '<tr>';
-                    echo '<td style="vertical-align: middle">'.$number.'</td>';
-                    echo '<td style="vertical-align: middle"><img src="/images/icons/'.$value['icon'].'" class="icon_table"></td>';
+                    echo '<td class="text-center" style="vertical-align: middle">'.$number.'</td>';
+                    echo '<td class="text-center" style="vertical-align: middle"><img src="/images/icons/'.$value['icon'].'" class="icon_table"></td>';
                     echo '<td style="vertical-align: middle">'.$value['instr_name'].'</td>';
                     echo '<td  style="vertical-align: middle" class="text-center">';
                     echo $value['instr_name'] == 'Free Time' ? '<i class="fa fa-pencil-square-o fa-lg text-muted" aria-hidden="true"></i>' : Html::a('<i class="fa fa-pencil-square-o fa-lg text-warning" aria-hidden="true"></i>',

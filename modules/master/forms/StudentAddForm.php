@@ -57,7 +57,7 @@ class StudentAddForm extends Model
         $user->setPassword('muse');
         $user->generateAuthKey();
         $user->removeSecretKey();
-        $user->status = User::STATUS_ACTIVE;
+        $user->status = User::STATUS_STUDENT;
         $user->letter_status = User::STATUS_LETTER_SENT;
 
         if ($user->save()){

@@ -93,7 +93,16 @@ $(document).ready(function () {
         $('#addLesson-form')[0].reset();
         $('#lessonIdToUpdate').val('');
 
-        $("#addlessonform-instricon_id, #addlessonform-statusschedule_id").select2().val(null).trigger('change.select2');
+        $("#addlessonform-instricon_id, #addlessonform-statusschedule_id, #addlessonform-student_id").select2().val(null).trigger('change.select2');
+
+        $('#addlessonform-student_id').select2({
+            escapeMarkup: function (text) { return text; },
+            placeholder: 'Student',
+            theme: 'bootstrap',
+            allowClear: true,
+            minimumResultsForSearch: Infinity,
+            width: '100%'
+        });
 
         $('#addlessonform-instricon_id').select2({
             escapeMarkup: function (text) { return text; },
@@ -246,7 +255,7 @@ function hideLayer(layerName, qntlessons, week)
         for (var i = 0; i < weeks.length; i++) {
             var cell = weeks[i].getAttribute("week");
             if ( cell == week ) {
-                weeks[i].style.height = '115px';
+                weeks[i].style.height = '151px';
             }
         }
     }
@@ -345,6 +354,13 @@ $(document).on('click', '#lesson-edit', function (event) {
             $('#lessonIdToUpdate').val(data.id);
             $('#lessonUserId').val(data.user_id);
 
+            $('#addlessonform-student_id').empty().trigger("change");
+            $("#addlessonform-student_id").select2({
+                data: data.studentsList
+            }).trigger('change.select2');
+
+            $("#addlessonform-student_id").select2({ width: '100%' }).val(data.student_id).trigger('change.select2');
+
             $('#addlessonform-instricon_id').empty().trigger("change");
             $("#addlessonform-instricon_id").select2({
                 data: data.lessonList
@@ -353,6 +369,15 @@ $(document).on('click', '#lesson-edit', function (event) {
             $("#addlessonform-instricon_id").select2({ width: '100%' }).val(data.instricon_id).trigger('change.select2');
 
             $("#addlessonform-statusschedule_id").select2().val(data.statusschedule_id).trigger('change.select2');
+
+            $('#addlessonform-student_id').select2({
+                escapeMarkup: function (text) { return text; },
+                placeholder: 'Student',
+                theme: 'bootstrap',
+                allowClear: true,
+                minimumResultsForSearch: Infinity,
+                width: '100%'
+            });
 
             $('#addlessonform-instricon_id').select2({
                 escapeMarkup: function (text) { return text; },

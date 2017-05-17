@@ -31,6 +31,7 @@ class CalendarController extends Controller
         $filterForm = new CalendarFilterForm();
         $user_id = '';
         $listUserLessons = Instrument::lessonListUser($user_id);
+        $studentsList = User::studentsList();
         $status_list = Statusschedule::statusList();
         $lesson_list = Instrument::lessonListDropBox();
         $user_list = User::userListDropBox();
@@ -67,7 +68,9 @@ class CalendarController extends Controller
                 Yii::$app->response->format = Response::FORMAT_JSON;
                 $lessonToUpdate = Userschedule::lessonToUpdate(Yii::$app->request->post('updateLesson'));
                 $listUserLessons = Instrument::lessonListUserAjax(Yii::$app->request->post('user_id'));
+                $studentsListAjax = User::studentsListAjax(Yii::$app->request->post('user_id'));
                 $lessonToUpdate['lessonList'] = $listUserLessons;
+                $lessonToUpdate['studentsList'] = $studentsListAjax;
                 return $lessonToUpdate;
             }
 
@@ -111,6 +114,7 @@ class CalendarController extends Controller
                 'status_list' => $status_list,
                 'lesson_list' => $lesson_list,
                 'user_list' => $user_list,
+                'studentsList' => $studentsList,
             ]);
 
         }else{
@@ -136,6 +140,7 @@ class CalendarController extends Controller
             'filterForm' => $filterForm,
             'lesson_list' => $lesson_list,
             'user_list' => $user_list,
+            'studentsList' => $studentsList,
         ]);
     }
 }

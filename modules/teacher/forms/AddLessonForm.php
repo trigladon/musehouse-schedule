@@ -26,6 +26,7 @@ class AddLessonForm extends Model
     public $lesson_start_repeat;
     public $comment;
     public $user_id;
+    public $student_id;
     public $instricon_id;
     public $statusschedule_id;
     public $action_date;
@@ -35,10 +36,11 @@ class AddLessonForm extends Model
     {
         return [
             [['lesson_start', 'lesson_finish', 'statusschedule_id', 'action_date', 'instricon_id'], 'required'],
-            [['user_id', 'instricon_id', 'statusschedule_id'], 'integer'],
+            [['user_id', 'instricon_id', 'statusschedule_id', 'student_id'], 'integer'],
             [['instricon_id'], 'exist', 'skipOnError' => true, 'targetClass' => Instrument::className(), 'targetAttribute' => ['instricon_id' => 'id']],
             [['statusschedule_id'], 'exist', 'skipOnError' => true, 'targetClass' => Statusschedule::className(), 'targetAttribute' => ['statusschedule_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
+            [['student_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['student_id' => 'id']],
             [['comment'], 'string'],
             [['action_date'], 'string'],
             [['id'], 'number'],
@@ -120,6 +122,7 @@ class AddLessonForm extends Model
                 'lesson_start' => mktime($lesson_start_save[0], $lesson_start_save[1], 0, $action_date_save[1], $action_date_save[0], $action_date_save[2]),
                 'lesson_finish' => mktime($lesson_finish_save[0], $lesson_finish_save[1], 0, $action_date_save[1], $action_date_save[0], $action_date_save[2]),
                 'comment' => $this->comment,
+                'student_id' => $this->student_id,
                 'instricon_id' => $this->instricon_id,
                 'statusschedule_id' => $this->statusschedule_id,
                 'user_id' => $this->user_id,
@@ -135,6 +138,7 @@ class AddLessonForm extends Model
             $lesson->lesson_start = mktime($lesson_start_save[0], $lesson_start_save[1], 0, $action_date_save[1], $action_date_save[0], $action_date_save[2]);
             $lesson->lesson_finish = mktime($lesson_finish_save[0], $lesson_finish_save[1], 0, $action_date_save[1], $action_date_save[0], $action_date_save[2]);
             $lesson->comment = $this->comment;
+            $lesson->student_id = $this->student_id;
             $lesson->instricon_id = $this->instricon_id;
             $lesson->statusschedule_id = $this->statusschedule_id;
             $lesson->user_id = Yii::$app->user->identity->getId();

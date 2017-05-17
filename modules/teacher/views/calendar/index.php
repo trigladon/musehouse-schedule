@@ -76,7 +76,17 @@ $form = ActiveForm::begin([
         'placeholder' => 'Finish Time',
     ])?>
 
-<!--    --><?php //$modelAddLesson->instricon_id = 3;?>
+    <?= $form->field($modelAddLesson, 'student_id')->widget(Select2::className(), [
+        'data' => $studentsList,
+        'theme' => Select2::THEME_BOOTSTRAP,
+        'hideSearch' => true,
+        'options' => ['placeholder' => 'Student'],
+        'pluginOptions' => [
+            'escapeMarkup' => $escape2,
+            'allowClear' => true,
+        ],
+    ]);?>
+
     <?= $form->field($modelAddLesson, 'instricon_id')->widget(Select2::className(), [
         'data' => $listUserLessons,
         'theme' => Select2::THEME_BOOTSTRAP,

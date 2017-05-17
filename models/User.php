@@ -32,6 +32,7 @@ class User extends ActiveRecord implements IdentityInterface
     const STATUS_DELETED = 0;
     const STATUS_NOT_ACTIVE = 1;
     const STATUS_ACTIVE = 10;
+    const STATUS_STUDENT = 2;
     //letter status const
     const STATUS_LETTER_SENT = 1;
     const STATUS_LETTER_NOT_SENT = 0;
@@ -283,5 +284,48 @@ class User extends ActiveRecord implements IdentityInterface
             ->all();
 
         return $rows;
+    }
+
+    public function students(){
+        $rows = static::find()
+            ->from('user u')
+            ->leftJoin('student_rel strel', 'u.id = strel.student_id')
+            ->andWhere(['=', 'strel.teacher_id', $this->id])
+            ->all();
+
+        return $rows;
+    }
+
+    public static function studentsListFull(){
+        $rows = static::find()
+            ->andWhere(['=', 'status', USER::STATUS_STUDENT])
+            ->all();
+
+        foreach ($rows as $student){
+            /* @var $student User*/
+            $list[$student->id] = $student->getUsername();
+        }
+        return $list;
+    }
+
+    public static function studentsList(){
+        $students = static::findIdentity(Yii::$app->user->identity->getId());
+        foreach ($students->students() as $student){
+            /* @var $student User*/
+            $list[$student->id] = $student->getUsername();
+        }
+        return $list;
+    }
+
+    public static function studentsListAjax($user_id){
+        if (!$user_id){
+            $user_id = Yii::$app->user->identity->getId();
+        }
+        $students = static::findIdentity($user_id);
+        foreach ($students->students() as $student){
+            /* @var $student User*/
+            $list[] = ['id' => $student->id, 'text' => $student->getUsername()];
+        }
+        return $list;
     }
 }

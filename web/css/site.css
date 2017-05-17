@@ -130,7 +130,7 @@ a.linkaction:focus{
     margin: 0;
     padding: 0; !important;
     width: 155px;
-    height: 115px;
+    height: 151px;
 }
 
 tbody.tr.td.dayCell{
@@ -141,7 +141,7 @@ tbody.tr.td.dayCell{
     margin: 0;
     padding: 0 3px;
     width: 50px;
-    height: 115px;
+    height: 151px;
     font-size: large;
     /*color: #2e498b;*/
 }
@@ -197,7 +197,7 @@ tbody.tr.td.dayCell{
 
 .dayAction{
     width: 100%;
-    height: 24px;
+    height: 36px;
     color: white;
     margin: 2px 0;
 }

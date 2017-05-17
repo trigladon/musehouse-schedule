@@ -9,6 +9,7 @@
 namespace app\components;
 
 
+use app\models\User;
 use yii\base\Widget;
 
 
@@ -24,6 +25,7 @@ class CalendarWidget extends Widget
     public $filterForm;
     public $lesson_list;
     public $user_list;
+    public $students_listFull;
 
     public function init()
     {
@@ -42,6 +44,7 @@ class CalendarWidget extends Widget
             'status_list' => $this->status_list,
             'lesson_list' => $this->lesson_list,
             'user_list' => $this->user_list,
+            'students_listFull' => $this->students_listFull = User::studentsListFull(),
         ]);
     }
 }

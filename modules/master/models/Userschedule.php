@@ -18,6 +18,7 @@ use DateTime;
  * @property string $lesson_finish
  * @property string $comment
  * @property integer $user_id
+ * @property integer $student_id
  * @property integer $instricon_id
  * @property integer $statusschedule_id
  * @property string $created_at
@@ -28,7 +29,7 @@ use DateTime;
  * @property Statusschedule $statusschedule
  * @property User $user
  */
-class Userschedule extends \yii\db\ActiveRecord
+class Userschedule extends ActiveRecord
 {
     const STATUS_OPEN = 1;
     const STATUS_DONE = 2;
@@ -49,10 +50,11 @@ class Userschedule extends \yii\db\ActiveRecord
     {
         return [
             [['lesson_start', 'lesson_finish', 'created_at', 'updated_at'], 'safe'],
-            [['user_id', 'instricon_id', 'statusschedule_id'], 'integer'],
+            [['user_id', 'instricon_id', 'statusschedule_id', 'student_id'], 'integer'],
             [['instricon_id'], 'exist', 'skipOnError' => true, 'targetClass' => Instrument::className(), 'targetAttribute' => ['instricon_id' => 'id']],
             [['statusschedule_id'], 'exist', 'skipOnError' => true, 'targetClass' => Statusschedule::className(), 'targetAttribute' => ['statusschedule_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
+            [['student_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['student_id' => 'id']],
             [['comment'], 'string'],
         ];
     }
@@ -67,6 +69,7 @@ class Userschedule extends \yii\db\ActiveRecord
             'lesson_start' => 'Lesson Start',
             'lesson_finish' => 'Lesson Finish',
             'user_id' => 'User ID',
+            'student_id' => 'Student ID',
             'instricon_id' => 'Instricon ID',
             'statusschedule_id' => 'Statusschedule ID',
             'created_at' => 'Created At',
@@ -104,6 +107,14 @@ class Userschedule extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getStudent()
+    {
+        return $this->hasOne(User::className(), ['id' => 'student_id']);
     }
 
     public function behaviors()
@@ -150,10 +161,13 @@ class Userschedule extends \yii\db\ActiveRecord
         }
         $session = Yii::$app->session;
         $rows = (new Query())
-            ->select(['ussch.id as lesson_id', 'ussch.lesson_start', 'ussch.lesson_finish', 'ussch.`comment`',
+            ->select([
+                'ussch.id as lesson_id', 'ussch.lesson_start', 'ussch.lesson_finish',
+                '(ussch.lesson_finish-ussch.lesson_start)/60 as length', 'ussch.`comment`', 'ussch.student_id',
                 'inst.icon', 'inst.instr_name', 'inst.id',
                 'stsch.name', 'stsch.color',
-                'u.id', 'u.first_name', 'u.last_name'])
+                'u.id', 'u.first_name', 'u.last_name'
+            ])
             ->from('userschedule ussch')
             ->leftJoin('instricon inst', 'ussch.instricon_id = inst.id')
             ->leftJoin('statusschedule stsch', 'ussch.statusschedule_id = stsch.id')
@@ -195,7 +209,7 @@ class Userschedule extends \yii\db\ActiveRecord
     public static function lessonToUpdate($id){
 
         $rows = static::find()
-            ->select(['id', 'lesson_start', 'lesson_finish', 'user_id', 'instricon_id', 'statusschedule_id', '`comment`'])
+            ->select(['id', 'lesson_start', 'lesson_finish', 'user_id', 'instricon_id', 'statusschedule_id', '`comment`', 'student_id'])
             ->where(['id' => $id])
             ->limit(1)
             ->asArray()
