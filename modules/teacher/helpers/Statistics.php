@@ -22,6 +22,9 @@ class Statistics
 {
     public static function userStatistics($currentMonth = '', $changes = ''){
 
+        $user = User::findIdentity(Yii::$app->user->id);
+        $role = $user->userRole();
+
         if (!$currentMonth){
             $dateTime = new DateTime("now");
         }else{
@@ -30,7 +33,6 @@ class Statistics
 
         $dateTime->modify('first day of this month');
         $dateTime->modify('+2 weeks'.$changes);
-        $dateTime->modify('-1 month');
 
         $startMonth = $dateTime->format('U'); // first month to show of 3, for array arranging
 
@@ -39,7 +41,7 @@ class Statistics
 
         $startDay = $dateTime->format('U')-1; // start searching date in timestamp
 
-        $dateTime->modify('+2 weeks +2 month');
+        $dateTime->modify('+2 weeks');
         $dateTime->modify('last day of this month');
         $dateTime->modify('+1 day');
 
@@ -47,9 +49,8 @@ class Statistics
 
         // START receiving all statuses
         $queryStatuses = (new Query())
-            ->select(['id', 'color'])
+            ->select(['id', 'color', 'name'])
             ->from('statusschedule')
-            ->andWhere(['!=', 'id', 4])
             ->all();
 
         $statuses = [];
@@ -58,6 +59,7 @@ class Statistics
                 $value['id'] => [
                     'id' => $value['id'],
                     'color' => $value['color'],
+                    'name' => $value['name'],
                     'qnt_lessons' => 0,
                 ]
             ];
@@ -66,154 +68,133 @@ class Statistics
         }
         // END receiving all statuses
 
-
-        for ($m = 1; $m<= 3; $m++){
-            $monthArray[date('Y', $startMonth)][date('F', $startMonth)]['results'] = $statuses;
-            $startMonth += 60*60*24*30;
+        $monthArray[date('Y', $startMonth)][date('F', $startMonth)]['results'] = $statuses;
+        // START receiving all Lessons
+        $lessonsQuery = Userschedule::find()
+            ->select(['user_id', 'student_id', 'instricon_id', 'statusschedule_id', 'COUNT(*) as summ'])
+            ->andWhere(['between', 'lesson_start', $startDay, $endDay]);
+        if ($role != 'Master'){
+            $lessonsQuery = $lessonsQuery->andWhere(['=', 'user_id', $user->id]);
         }
-
-        // START receiving all user instruments
-        $queryUserInstr = (new Query())
-            ->select(['u_instr.user_id', 'u_instr.instricon_id', '`instr`.instr_name', '`instr`.icon', 'u.first_name', 'u.last_name'])
-            ->from('userinstr u_instr')
-            ->leftJoin('instricon `instr`', 'u_instr.instricon_id = `instr`.id')
-            ->leftJoin('user u', 'u_instr.user_id = u.id');
-        if (!User::isMaster()){
-            $queryUserInstr->andWhere(['u_instr.user_id' => Yii::$app->user->id]);
-        }
-        $queryUserInstr = $queryUserInstr->all();
-
-        //1.1 START checking lesson list of users from calendar in case if there were changes with actual lesson list
-        $queryUIAction = Userschedule::find()
-            ->select(['u_instr.user_id', 'u_instr.instricon_id', '`instr`.instr_name', '`instr`.icon', 'u.first_name', 'u.last_name'])
-            ->from('userschedule u_instr')
-            ->leftJoin('instricon `instr`', 'u_instr.instricon_id = `instr`.id')
-            ->leftJoin('user u', 'u_instr.user_id = u.id')
-            ->andWhere(['>', 'instricon_id', 0]);
-        if (!User::isMaster()){
-            $queryUIAction->andWhere(['u_instr.user_id' => Yii::$app->user->id]);
-        }
-        $queryUIAction = $queryUIAction->groupBy(['user_id', 'instricon_id'])
+        $lessonsQuery = $lessonsQuery->groupBy(['user_id', 'student_id', 'instricon_id', 'statusschedule_id'])
+            ->orderBy('instricon_id')
             ->asArray()
             ->all();
 
-        $uIAction =[];
-
-        foreach ($queryUIAction as $value) {
-            $curentUIAction = [
-                $value['first_name'] . ' ' . $value['last_name'] => [
-                    $value['instr_name'] => [
-                        'id' => $value['instricon_id'],
-                        'icon' => $value['icon'],
-                        'name' => $value['instr_name'],
-                        'data' => [],
-                    ]
-                ]
-            ];
-            $uIAction = array_replace_recursive($uIAction, $curentUIAction);
-            $uIAction[$value['first_name'].' '.$value['last_name']][$value['instr_name']]['data'] = $monthArray;
-        }
-        //1.1 END
-
-
-        $userInstr = [];
-        foreach ($queryUserInstr as $value){
-            $curentUserInstr = [
-                $value['first_name'].' '.$value['last_name'] => [
-                    $value['instr_name'] => [
-                        'id' => $value['instricon_id'],
-                        'icon' => $value['icon'],
-                        'name' => $value['instr_name'],
-                        'data' => [],
-                    ]
-                ]
-            ];
-
-            $userInstr = array_replace_recursive($userInstr, $curentUserInstr);
-
-            $userInstr[$value['first_name'].' '.$value['last_name']][$value['instr_name']]['data'] = $monthArray;
-            krsort($userInstr[$value['first_name'].' '.$value['last_name']]);
+        $lessonList = [];
+        $lessonPerTeacher = [];
+        foreach ($lessonsQuery as $lessons){
+            $lessonPerTeacher[$lessons['user_id']][$lessons['instricon_id']] = $statuses;
         }
 
-        $userInstr = array_replace_recursive($userInstr, $uIAction);
+        foreach ($lessonsQuery as $lessons){
+            $lessonList[$lessons['user_id']]['students'][$lessons['student_id']] = $lessonPerTeacher[$lessons['user_id']];
+        }
+        foreach ($lessonsQuery as $lessons){
+            $lessonList[$lessons['user_id']]['students'][$lessons['student_id']][$lessons['instricon_id']][$lessons['statusschedule_id']]['qnt_lessons'] = $lessons['summ'];
+        }
+        // END receiving all Lessons
+        // ----------------------------------
+        $totalMonthQuery = Userschedule::find()
+            ->select(['user_id', 'statusschedule_id', 'COUNT(*) as summ'])
+            ->andWhere(['between', 'lesson_start', $startDay, $endDay]);
 
-        // END receiving all user instruments
+        if ($role != 'Master'){
+            $totalMonthQuery = $totalMonthQuery->andWhere(['=', 'user_id', $user->id]);
+        }
 
-        if (!User::isMaster()){
-            $userTeacher = ' AND ussch.user_id = '.Yii::$app->user->id;
+        $totalMonthQuery = $totalMonthQuery->groupBy(['user_id', 'statusschedule_id'])
+            ->orderBy('statusschedule_id')
+            ->asArray()
+            ->all();
+
+        $totalMonthRes = [];
+        foreach ($totalMonthQuery as $qnt){
+            $totalMonthRes[$qnt['user_id']] = $statuses;
+        }
+        foreach ($totalMonthQuery as $qnt){
+            $totalMonthRes[$qnt['user_id']][$qnt['statusschedule_id']]['qnt_lessons'] = $qnt['summ'];
+        }
+        foreach ($totalMonthQuery as $qnt){
+            $lessonList[$qnt['user_id']]['monthResult'] = $totalMonthRes[$qnt['user_id']];
+        }
+        // ----------------------------------
+
+        $totalPerLessonQ = Userschedule::find()
+            ->select(['user_id', 'instricon_id', 'statusschedule_id', 'COUNT(*) as summ'])
+            ->andWhere(['between', 'lesson_start', $startDay, $endDay]);
+
+        if ($role != 'Master'){
+            $totalPerLessonQ = $totalPerLessonQ->andWhere(['=', 'user_id', $user->id]);
+        }
+
+        $totalPerLessonQ = $totalPerLessonQ->groupBy(['user_id', 'instricon_id', 'statusschedule_id'])
+            ->orderBy('instricon_id')
+            ->asArray()
+            ->all();
+
+        $totalPerLesson = [];
+        foreach ($totalPerLessonQ as $lessons){
+            $totalPerLesson[$lessons['user_id']][$lessons['instricon_id']] = $statuses;
+        }
+
+        foreach ($totalPerLessonQ as $lessons){
+            $totalPerLesson[$lessons['user_id']][$lessons['instricon_id']][$lessons['statusschedule_id']]['qnt_lessons'] = $lessons['summ'];
+        }
+
+        foreach ($totalPerLessonQ as $qnt){
+            $lessonList[$qnt['user_id']]['monthResultPerLesson'] = $totalPerLesson[$qnt['user_id']];
+        }
+
+        // ----------------------------------
+
+        return $lessonList;
+    }
+
+    public static function lessonsPerTeacher($currentMonth = '', $changes = ''){
+
+        $user = User::findIdentity(Yii::$app->user->id);
+        $role = $user->userRole();
+
+        if (!$currentMonth){
+            $dateTime = new DateTime("now");
         }else{
-            $userTeacher = '';
+            $dateTime = new DateTime($currentMonth);
         }
 
-        $queryData = Yii::$app->db->createCommand('
-            SELECT ussch.user_id, u.first_name, u.last_name, 
-            FROM_UNIXTIME(ussch.lesson_start, \'%Y\') as `year`, FROM_UNIXTIME(ussch.lesson_start, \'%c\') as month_number, FROM_UNIXTIME(ussch.lesson_start, \'%M\') as `month`, 
-            ussch.instricon_id, `instr`.instr_name, `instr`.icon as instr_icon,
-            ussch.statusschedule_id, st.color as status_color,
-            COUNT(ussch.lesson_start) as quant
-            FROM userschedule ussch
-            LEFT JOIN user u
-            ON ussch.user_id = u.id
-            LEFT JOIN instricon `instr`
-            ON ussch.instricon_id = `instr`.id
-            LEFT JOIN statusschedule st
-            ON ussch.statusschedule_id = st.id
-            WHERE ussch.lesson_start BETWEEN '.$startDay.' AND '.$endDay.$userTeacher.'
-            GROUP BY ussch.user_id, FROM_UNIXTIME(ussch.lesson_start, \'%Y\'), FROM_UNIXTIME(ussch.lesson_start, \'%c\'), FROM_UNIXTIME(ussch.lesson_start, \'%M\'), ussch.instricon_id, ussch.statusschedule_id  
-        ')->queryAll(); //todo add where with user if master or not
+        $dateTime->modify('first day of this month');
+        $dateTime->modify('+2 weeks'.$changes);
 
-        $userStatistics = [];
+        $dateTime->modify('first day of this month');
+        $dateTime->modify('midnight');
 
-        foreach ($queryData as $value){
-            $curentData = [
-                $value['first_name'].' '.$value['last_name'] => [
-                    $value['instr_name'] => [
-                        'id' => $value['instricon_id'],
-                        'icon' => $value['instr_icon'],
-                        'name' => $value['instr_name'],
-                        'data' => [
-                            $value['year'] => [
-                                $value['month'] => [
-                                    'results' => [
-                                        $value['statusschedule_id'] => [
-                                            'id' => $value['statusschedule_id'],
-                                            'color' => $value['status_color'],
-                                            'qnt_lessons' => $value['quant'],
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ];
+        $startDay = $dateTime->format('U')-1; // start searching date in timestamp
 
-            $userStatistics = array_replace_recursive($userStatistics, $curentData);
+        $dateTime->modify('+2 weeks');
+        $dateTime->modify('last day of this month');
+        $dateTime->modify('+1 day');
+
+        $endDay = $dateTime->format('U')-1; // end searching date in timestamp
+
+        $lessonsQuery = Userschedule::find()
+            ->select(['user_id', 'instricon_id', 'instricon.icon as icon', 'instricon.instr_name as name'])
+            ->leftJoin('instricon', 'instricon.id = instricon_id')
+            ->andWhere(['between', 'lesson_start', $startDay, $endDay]);
+
+        if ($role != 'Master'){
+            $lessonsQuery = $lessonsQuery->andWhere(['=', 'user_id', $user->id]);
         }
 
-        // START template preparing
-        $queryUser = (new Query())->select(['first_name', 'last_name'])
-            ->from('user');
+        $lessonsQuery = $lessonsQuery->groupBy(['user_id', 'instricon_id', 'instricon.icon', 'instricon.instr_name'])
+            ->asArray()
+            ->all();
 
-        if (!User::isMaster()){
-            $queryUser->andWhere(['id' => Yii::$app->user->id]);
+        $lessonPerTeacher = [];
+        foreach ($lessonsQuery as $lessons){
+            $lessonPerTeacher[$lessons['user_id']][$lessons['instricon_id']]['name'] = $lessons['name'];
+            $lessonPerTeacher[$lessons['user_id']][$lessons['instricon_id']]['icon'] = $lessons['icon'];
         }
-        $queryUser->andWhere(['status' => 10]);
-        $queryUser = $queryUser->all(); //todo add where whith user if master or not
-
-        $template = [];
-        foreach ($queryUser as $value) {
-            $curentUserTemplate = [
-                $value['first_name'] . ' ' . $value['last_name'] => []
-            ];
-            $curentUserTemplate[$value['first_name'].' '.$value['last_name']] = $userInstr[$value['first_name'].' '.$value['last_name']];
-            $template = array_replace_recursive($template, $curentUserTemplate);
-        }
-        // END template preparing
-
-        $userStatistics = array_replace_recursive($userInstr, $userStatistics);
-
-        return $userStatistics;
+        return $lessonPerTeacher;
     }
 
     public static function monthsToShow($currentMonth = '', $changes = ''){
@@ -228,14 +209,7 @@ class Statistics
         $dateTime->modify('+2 weeks'.$changes);
         $info = $dateTime->format('F Y');
         $currentMonth = $dateTime->format('Y-m-d');
-        $dateTime->modify('-1 month');
 
-        $startMonth = $dateTime->format('U'); // first month to show of 3, for array arranging
-
-        for ($m = 1; $m<= 3; $m++){
-            $monthsArray['months'][date('F', $startMonth)] = date('Y', $startMonth);
-            $startMonth += 60*60*24*30;
-        }
 
         $monthsArray['currentMonth'] = $currentMonth;
         $monthsArray['info'] = $info;

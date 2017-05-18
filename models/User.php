@@ -286,6 +286,18 @@ class User extends ActiveRecord implements IdentityInterface
         return $rows;
     }
 
+    public static function teachersListFull(){
+        $rows = static::find()
+            ->andWhere(['=', 'status', USER::STATUS_ACTIVE])
+            ->all();
+
+        foreach ($rows as $teacher){
+            /* @var $teacher User*/
+            $list[$teacher->id] = $teacher->getUsername();
+        }
+        return $list;
+    }
+
     public function students(){
         $rows = static::find()
             ->from('user u')

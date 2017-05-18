@@ -474,3 +474,45 @@ ul.editIcons a{
         float: none;
     }
 }
+/*-----------------------------------STATISTICS-----------------------------------*/
+.cellTotalUser{
+    background-color: #f8f8ff;
+    font-weight: bold;
+    color: #ff714f;
+    /*font-size: larger;*/
+    width: 45px;
+}
+
+.cellTotalLesson{
+    background-color: #f8f8ff;
+    font-weight: bold;
+    color: #ff714f;
+    /*font-size: larger;*/
+}
+
+.cellToMiddle{
+    vertical-align: middle;
+    text-align: center;
+}
+
+.cellTotalMonth{
+    font-size: larger;
+    width: 80px !important;
+    max-width: 80px;
+}
+
+.cellLesson{
+    width: 160px;
+}
+
+.cellLessonStatus{
+    width: 40px;
+}
+
+.cellStTeach{
+    vertical-align: middle;
+    max-width: 160px;
+    padding: 3px;
+    /*font-size: larger;*/
+    /*font-weight: bold;*/
+}

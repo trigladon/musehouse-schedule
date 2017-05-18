@@ -57,6 +57,7 @@ class AddLessonForm extends Model
             'instricon_id' => 'Type of the Lesson',
             'comment' => 'Comments',
             'action_date' => 'Date',
+            'student_id' => 'Student',
         ];
     }
 

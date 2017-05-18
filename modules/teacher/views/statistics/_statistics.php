@@ -11,6 +11,9 @@ use app\components\StatisticsWidget;
     <?php echo StatisticsWidget::widget([
         'statisticsData' => $statisticsData,
         'monthsToShow' => $monthsToShow,
+        'lessonPerTeacher' => $lessonPerTeacher,
+        'teachersList' => $teachersList,
+        'studentsList' => $studentsList,
     ])?>
 
 </div>

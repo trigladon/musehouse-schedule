@@ -16,6 +16,9 @@ class StatisticsWidget extends Widget
 {
     public $statisticsData;
     public $monthsToShow;
+    public $lessonPerTeacher;
+    public $teachersList;
+    public $studentsList;
 
 
     public function init()
@@ -29,6 +32,9 @@ class StatisticsWidget extends Widget
         return $this->render('statistics', [
             'statisticsData' => $this->statisticsData,
             'monthsToShow' => $this->monthsToShow,
+            'lessonPerTeacher' => $this->lessonPerTeacher,
+            'teachersList' => $this->teachersList,
+            'studentsList' => $this->studentsList,
         ]);
     }
 }

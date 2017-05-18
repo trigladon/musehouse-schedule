@@ -11,100 +11,68 @@ ini_set('xdebug.var_display_max_data', 1024);
 
 
 ?>
-<table  class="table">
-<thead>
-    <tr>
-        <th colspan="2" class="text-left">
-            <div class="btn btn-info pull-left" onclick="onClickChangeMonth('<?=$monthsToShow['currentMonth']?>', ' -1 month')">
-                <i class="fa fa-arrow-left" aria-hidden="true"></i>
-            </div>
-            <div class="pull-left text-center" style="width: 200px; line-height: 33px; vertical-align: middle">
-                <?=$monthsToShow['info']?>
-            </div>
-            <div class="btn btn-info pull-left" onclick="onClickChangeMonth('<?=$monthsToShow['currentMonth']?>', ' +1 month')">
-                <i class="fa fa-arrow-right" aria-hidden="true"></i>
-            </div>
-        </th>
+<div class="text-left col-md-12" style="margin-bottom: 10px">
+    <div class="btn btn-info pull-left" onclick="onClickChangeMonth('<?=$monthsToShow['currentMonth']?>', ' -1 month')">
+        <i class="fa fa-arrow-left" aria-hidden="true"></i>
+    </div>
+    <div class="pull-left text-center" style="width: 300px; line-height: 33px; vertical-align: middle; font-size: larger; font-weight: bold">
+        <?=$monthsToShow['info']?>
+    </div>
+    <div class="btn btn-info pull-left" onclick="onClickChangeMonth('<?=$monthsToShow['currentMonth']?>', ' +1 month')">
+        <i class="fa fa-arrow-right" aria-hidden="true"></i>
+    </div>
+</div>
 
+<?php if(empty($statisticsData)){echo 'No lessons for this Month - '.$monthsToShow['info'];}?>
 
-        <?php for($r=1; $r<=3; $r++):?>
-        <th style="width: 65px"><div class="dropBoxStatus img-rounded pull-left" style="background-color:#78909c; width: 100%"></div><br><div class="text-center" style="font-size: 10px">FreeTime<div></th>
-        <th style="width: 65px"><div class="dropBoxStatus img-rounded pull-left" style="background-color:#42a5f5; width: 100%"></div><br><div class="text-center" style="font-size: 10px">Planned</div></th>
-        <th style="width: 65px"><div class="dropBoxStatus img-rounded pull-left" style="background-color:#66bb6a; width: 100%"></div><br><div class="text-center" style="font-size: 10px">Finished</div></th>
-        <th rowspan="2" class="text-center" style="background-color: #f8f8ff; border-right: 2px solid #ddd;"><img src="/images/sum-sign.png" style="width: 20px;"></th>
-        <?php endfor;?>
-    </tr>
-    <tr>
-        <th class="text-center">Teachers</th>
-        <th class="text-center">Lessons</th>
-        <?php foreach ($monthsToShow['months'] as $months => $years):?>
-            <th colspan="3" class="text-center"><?=$months?> <?=$years?></th>
-        <?php endforeach;?>
-    </tr>
-</thead>
-<tbody>
+<?php foreach ($statisticsData as $teacherId => $monthResult):?>
+    <?php $teacherName = $teachersList[$teacherId]?>
+    <?php $stQnt = count($statisticsData[$teacherId]['students'])?>
 
-<?php foreach ($statisticsData as $name => $info1):?>
-    <?php
-    $userName = $name;
-    $rowQnt = count($info1);
-    $i=1; // to calculate row qnt
-    ?>
-    <?php $statusQnt = [
-        1 => [
-            1 => 0,
-            2 => 0,
-            3 => 0,
-        ],
-        2 => [
-            1 => 0,
-            2 => 0,
-            3 => 0,
-        ],
-        3 => [
-            1 => 0,
-            2 => 0,
-            3 => 0,
-        ]
-    ];?>
-    <?php foreach ($info1 as $lesson => $info2):?>
-        <tr>
-            <?php if ($i == 1):?>
-                <td rowspan="<?=$rowQnt?>" style="vertical-align: middle"><?=$userName?></td>
-            <?php endif;?>
-            <?php if ($info2['name']): // todo fail array key=>value; same data, but key works and value not?>
-                <td class="text-right"><?=$info2['name']?><img src="/images/icons/<?=$info2['icon']?>" class="icon_reg" style="margin: 0 5px"></td>
-            <?php else:?>
-                <td class="text-right">Free<i class="fa fa-question fa-lg icon_reg_action" aria-hidden="true" style="width: 20px;height: 20px;color: #78909c;margin: 0 5px; padding: 3px 5px 0 0"></i></td>
-            <?php endif;?>
-
-            <?php $monthIt = 1;?><!-- months iterations for total line calculation-->
-            <?php foreach ($info2['data'] as $year => $info3):?>
-                <?php foreach ($info3 as $month => $info4):?>
-                    <?php foreach ($info4 as $results => $info5):?>
-                        <?php $totalQnt = 0?>
-                        <?php foreach ($info5 as $info6):?>
-                            <td class="text-center" style="color: <?=$info6['color']?>; vertical-align: middle;"><?=$info6['qnt_lessons']?></td>
-                            <?php $totalQnt += $info6['qnt_lessons']?>
-                            <?php $statusQnt[$monthIt][$info6['id']] += $info6['qnt_lessons']?>
-                        <?php endforeach;?>
-                        <td class="text-center" style="color: #ff714f; vertical-align: middle; font-size: 15px; background-color: #f8f8ff; border-right: 2px solid #ddd;"><?=$totalQnt?></td>
-                        <?php $monthIt++;?>
-                    <?php endforeach;?>
-                <?php endforeach;?>
+<table class="table-bordered" style="margin-top: 10px">
+    <thead>
+        <tr style="height: 35px">
+            <?php foreach ($statisticsData[$teacherId]['monthResult'] as $status):?>
+            <th class="cellToMiddle cellTotalMonth" style="color:<?=$status['color']?>"><?=$status['qnt_lessons']?></th>
+            <?php endforeach;?>
+            <?php foreach ($lessonPerTeacher[$teacherId] as $lesson):?>
+            <th class="cellToMiddle cellLesson" colspan="4"><img src="/images/icons/<?=$lesson['icon']?>" class="icon_reg"><?=$lesson['name']?></th>
+            <th class="cellTotalUser cellToMiddle"><img src="/images/sum-sign.png" style="width: 20px;"></th>
             <?php endforeach;?>
         </tr>
-        <?php $i++?>
-    <?php endforeach;?>
-    <tr class="text-center" style="color: #ff714f; vertical-align: middle; font-size: 15px; background-color: #f8f8ff; border-bottom: 2px solid #ddd;">
-        <td colspan="2"><img src="/images/sum-sign.png" style="width: 20px;"></td>
-        <?php foreach ($statusQnt as $qnt):?>
-            <td><?=$qnt[1]?></td>
-            <td><?=$qnt[2]?></td>
-            <td><?=$qnt[3]?></td>
-            <td style="border-right: 2px solid #ddd; font-size: 16px"><strong><?=$qnt[1]+$qnt[2]+$qnt[3]?></strong></td>
+    </thead>
+
+    <tfoot>
+        <tr style="height: 35px">
+            <th colspan="4" class="cellToMiddle" style="background-color:#f8f8ff; width: 320px">Total:</th>
+            <?php foreach ($statisticsData[$teacherId]['monthResultPerLesson'] as $lesson):?>
+                <?php $summ = 0;?>
+                <?php foreach ($lesson as $qntSt):?>
+                    <td class="cellToMiddle cellLessonStatus cellTotalLesson"><?=$qntSt['qnt_lessons']?></td>
+                    <?php $summ+=$qntSt['qnt_lessons']?>
+                <?php endforeach;?>
+                <td class="cellTotalUser cellToMiddle" style="font-size: larger"><?=$summ?></td>
+            <?php endforeach;?>
+        </tr>
+    </tfoot>
+    <tbody>
+        <tr style="height: 35px">
+            <td class="cellStTeach" colspan="2" rowspan="<?=$stQnt?>"><?=$teacherName?></td>
+            <?php $trCl = 0?>
+            <?php foreach ($statisticsData[$teacherId]['students'] as $studId => $student):?>
+            <?php ++$trCl?>
+            <?php if($trCl!=1){echo '<tr style="height: 35px">';}?>
+                <td class="cellStTeach" colspan="2"><?=$studId?$studentsList[$studId]:'No Student'?></td>
+                <?php foreach ($student as $lesson):?>
+                    <?php $summ = 0;?>
+                    <?php foreach ($lesson as $qntSt):?>
+                        <td class="cellToMiddle cellLessonStatus" style="color:<?=$qntSt['color']?>"><?=$qntSt['qnt_lessons']?></td>
+                        <?php $summ+=$qntSt['qnt_lessons']?>
+                    <?php endforeach;?>
+                    <td class="cellTotalUser cellToMiddle"><?=$summ?></td>
+                <?php endforeach;?>
+        </tr>
         <?php endforeach;?>
-    </tr>
-<?php endforeach;?>
-</tbody>
+    </tbody>
 </table>
+<?php endforeach;?>
