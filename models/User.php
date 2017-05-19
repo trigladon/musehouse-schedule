@@ -325,6 +325,7 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     public static function studentsListFull(){
+        $list = [];
         $rows = static::find()
             ->andWhere(['=', 'status', USER::STATUS_STUDENT])
             ->orWhere(['=', 'status', User::STATUS_DELETED])
