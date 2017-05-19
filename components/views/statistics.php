@@ -37,8 +37,10 @@ use yii\helpers\Html;
             <th class="cellToMiddle cellTotalMonth" style="color:<?=$status['color']?>"><?=$status['qnt_lessons']?></th>
             <?php endforeach;?>
             <?php foreach ($lessonPerTeacher[$teacherId] as $lesson):?>
-            <th class="cellToMiddle cellLesson" colspan="4"><img src="/images/icons/<?=$lesson['icon']?>" class="icon_reg"><?=$lesson['name']?></th>
-            <th class="cellTotalUser cellToMiddle"><img src="/images/sum-sign.png" style="width: 20px;"></th>
+            <?php $urlLesson = Yii::$app->urlManager->createAbsoluteUrl(['/images/icons/'.$lesson['icon']])?>
+            <th class="cellToMiddle cellLesson" colspan="4"><img src="<?=$urlLesson?>" class="icon_reg"><?=$lesson['name']?></th>
+            <?php $urlSumm = Yii::$app->urlManager->createAbsoluteUrl(['/images/sum-sign.png'])?>
+            <th class="cellTotalUser cellToMiddle"><img src="<?=$urlSumm?>" style="width: 20px;"></th>
             <?php endforeach;?>
         </tr>
     </thead>
