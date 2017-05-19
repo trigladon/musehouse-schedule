@@ -17,6 +17,15 @@ ini_set('xdebug.var_display_max_depth', 10);
 ini_set('xdebug.var_display_max_children', 256);
 ini_set('xdebug.var_display_max_data', 1024);
 
+$now = new DateTime();
+$cur = $now->format('U');
+$curMY =  $now->format('m-Y');
+$curM =  $now->format('m');
+$curY =  $now->format('Y');
+$now->modify('first day of this month midnight');
+$now->modify(Yii::$app->params['lessonEditing']);
+$till = $now->format('U');
+
 
 ?>
 <!-- ------------------------------------------------------------------------------------ -->
@@ -120,7 +129,13 @@ ini_set('xdebug.var_display_max_data', 1024);
         <div class="dayBar" <?=$dayStyleToDate?> onclick="onClickMonth('<?=$_year?>-<?=$_month?>-<?=$_day?>', '', 'day')">
             <?=$_day?><?=$mothToDate?>
         </div>
+
         <div class="addAction">
+        <?php
+        $chMY = date( "m-Y", strtotime( $_year."-".$_month."-".$_day));
+        $chM = date( "m", strtotime( $_year."-".$_month."-".$_day));
+        $chY = date( "Y", strtotime( $_year."-".$_month."-".$_day));
+        if ($chMY == $curMY || $cur<$till && $chY == $curY && ($curM-$chM)==1 || ($curM-$chM)<0 || User::isMaster()):?>
             <?=
             Html::tag('span', '<i class="fa fa-calendar-plus-o" aria-hidden="true"></i>', [
                 'class'       => 'popup-addLesson linkaction',
@@ -131,6 +146,9 @@ ini_set('xdebug.var_display_max_data', 1024);
                 'id'          => 'popup-addLesson',
             ])
             ?>
+        <?php else:?>
+            <i class="fa fa-calendar-plus-o text-muted" aria-hidden="true"></i>
+        <?php endif;?>
         </div>
         <div class="infoDayLine">
             <?php
@@ -201,19 +219,22 @@ ini_set('xdebug.var_display_max_data', 1024);
                             <div style="max-width: 94px; min-width: 63px; width: calc(100%-50px);text-overflow: ellipsis;overflow: hidden;" class="pull-left"><?=$actions['student_id']?$students_listFull[$actions['student_id']]:'No student'?></div>
                         </div>
                     </div>
-                    <ul class="dropdown-menu editIcons">
-                        <li><?= Html::a('<i class="fa fa-pencil-square-o fa-lg text-warning" aria-hidden="true"></i>', '#', ['lessonId' => $actions['lesson_id'], 'user_id' => $actions['id'], 'id' => 'lesson-edit'])?></li>
-                        <li><?= Html::a('<i class="fa fa-trash-o fa-lg text-danger" aria-hidden="true"></i>', '#', [
-                                'lessonId' => $actions['lesson_id'],
-                                'lessonDate' => date('d-m-Y', $actions['lesson_start']),
-                                'lessonTime' => date('H:i', $actions['lesson_start']).' - '.date('H:i', $actions['lesson_finish']),
-                                'lessonTeacher' => $actions['first_name'].' '.$actions['last_name'],
-                                'lessonType' => $actions['instr_name'],
-                                'lessonIcon' => $actions['icon'],
-                                'id' => 'lesson-delete'
-                            ])?></li>
-                        <li><button aria-hidden="true" data-dismiss="alert" class="close" type="button" style="line-height: 26px;">×</button></li>
-                    </ul>
+                    <?php
+                    if ($chMY == $curMY || $cur<$till && $chY == $curY && ($curM-$chM)==1 || ($curM-$chM)<0 || User::isMaster()):?>
+                        <ul class="dropdown-menu editIcons">
+                            <li><?= Html::a('<i class="fa fa-pencil-square-o fa-lg text-warning" aria-hidden="true"></i>', '#', ['lessonId' => $actions['lesson_id'], 'user_id' => $actions['id'], 'id' => 'lesson-edit'])?></li>
+                            <li><?= Html::a('<i class="fa fa-trash-o fa-lg text-danger" aria-hidden="true"></i>', '#', [
+                                    'lessonId' => $actions['lesson_id'],
+                                    'lessonDate' => date('d-m-Y', $actions['lesson_start']),
+                                    'lessonTime' => date('H:i', $actions['lesson_start']).' - '.date('H:i', $actions['lesson_finish']),
+                                    'lessonTeacher' => $actions['first_name'].' '.$actions['last_name'],
+                                    'lessonType' => $actions['instr_name'],
+                                    'lessonIcon' => $actions['icon'],
+                                    'id' => 'lesson-delete'
+                                ])?></li>
+                            <li><button aria-hidden="true" data-dismiss="alert" class="close" type="button" style="line-height: 26px;">×</button></li>
+                        </ul>
+                    <?php endif;?>
                 </div>
             <?php if($count == $qnt && $count > 3 && $whtsh == 'month'): ?>
                 </div>

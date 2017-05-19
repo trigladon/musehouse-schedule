@@ -6,4 +6,5 @@ return [
     'secretKeyExpire' => 60*60*24*7,
 //    'secretKeyExpire' => 6,
     'emailActivation' => true,
+    'lessonEditing' => '+3 days',
 ];
