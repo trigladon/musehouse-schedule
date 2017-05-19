@@ -338,6 +338,7 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     public static function studentsList(){
+        $list = [];
         $students = static::findIdentity(Yii::$app->user->identity->getId());
         foreach ($students->students() as $student){
             /* @var $student User*/
