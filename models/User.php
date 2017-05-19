@@ -349,6 +349,7 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     public static function studentsListAjax($user_id){
+        $list = [];
         if (!$user_id){
             $user_id = Yii::$app->user->identity->getId();
         }
