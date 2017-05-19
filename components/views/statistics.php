@@ -8,6 +8,7 @@
 ini_set('xdebug.var_display_max_depth', 15);
 ini_set('xdebug.var_display_max_children', 256);
 ini_set('xdebug.var_display_max_data', 1024);
+use yii\helpers\Html;
 
 
 ?>
@@ -29,9 +30,9 @@ ini_set('xdebug.var_display_max_data', 1024);
     <?php $teacherName = $teachersList[$teacherId]?>
     <?php $stQnt = count($statisticsData[$teacherId]['students'])?>
 
-<table class="table-bordered" style="margin-top: 10px">
+<table class="statTable" style="margin-top: 10px">
     <thead>
-        <tr style="height: 35px">
+        <tr style="height: 35px; border-bottom: 2px solid #dbdbdb">
             <?php foreach ($statisticsData[$teacherId]['monthResult'] as $status):?>
             <th class="cellToMiddle cellTotalMonth" style="color:<?=$status['color']?>"><?=$status['qnt_lessons']?></th>
             <?php endforeach;?>
@@ -76,3 +77,11 @@ ini_set('xdebug.var_display_max_data', 1024);
     </tbody>
 </table>
 <?php endforeach;?>
+<div style="margin-top: 10px">
+    <?= Html::a('<i class="fa fa-file-pdf-o" aria-hidden="true"></i> To PDF', ['statistics/statopdf?toShow='.$monthsToShow['currentMonth']], [
+        'class' => 'btn btn-primary',
+        'target'=>'_blank',
+//        'data-toggle'=>'tooltip',
+        'title'=>'Generate PDF file with statistics',
+    ]) ?>
+</div>
