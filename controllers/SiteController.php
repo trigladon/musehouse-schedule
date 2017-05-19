@@ -91,7 +91,7 @@ class SiteController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             if ($model->login()){
 
-                return $this->goHome();
+                return $this->redirect('calendar');
 
             }else{
                 Yii::$app->session->setFlash('Error', 'Please check Email and Password you have entered and try one more time!');
