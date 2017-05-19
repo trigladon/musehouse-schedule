@@ -35,7 +35,7 @@ class StudentAddForm extends Model
         ];
     }
 
-    public function generateRandomEmail() {
+    public static function generateRandomEmail() {
         $length = 5;
         $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
@@ -53,7 +53,7 @@ class StudentAddForm extends Model
 
         $user->first_name = $this->first_name;
         $user->last_name = $this->last_name;
-        $user->email = $this->generateRandomEmail();
+        $user->email = self::generateRandomEmail();
         $user->setPassword('muse');
         $user->generateAuthKey();
         $user->removeSecretKey();

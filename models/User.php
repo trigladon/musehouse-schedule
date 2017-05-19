@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\modules\master\forms\StudentAddForm;
 use app\modules\master\models\Userinstr;
 use Yii;
 use yii\web\IdentityInterface;
@@ -146,6 +147,7 @@ class User extends ActiveRecord implements IdentityInterface
     public static function deleteUserById($id){
         $user = self::findIdentity($id);
         $user->status = User::STATUS_DELETED;
+        $user->email = StudentAddForm::generateRandomEmail();
         if($user->save()){
             return true;
         }else{

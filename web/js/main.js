@@ -148,13 +148,14 @@ $(document).ready(function () {
 });
 
 $(document).on('beforeSubmit', '#addLesson-form', function () {
-
+    $('#addLesson-confirm').prop('disabled', true);
     var form = $(this);
     $.ajax({
         url: form.attr('action'),
         type: 'post',
         data: form.serialize(),
         success: function (data) {
+            $('#addLesson-confirm').prop('disabled', false);
             //checking if the Object, because validation errors return as Objects
             if (data === Object(data)){
                 //if success, then validation wasn't pass
@@ -182,6 +183,7 @@ $(document).on('beforeSubmit', '#addLesson-form', function () {
             }
         },
         error: function (data) {
+            $('#addLesson-confirm').prop('disabled', false);
             console.log(data);
         }
     });
@@ -525,3 +527,25 @@ $(document).ready(function(){
     });
 });
 
+$('#reg-button').click(function() {
+    $('#reg-button').prop('disabled', true);
+});
+$('#editUserButton').click(function() {
+    $('#editUserButton').prop('disabled', true);
+});
+
+$('#addStudent').click(function() {
+    $('#addStudent').prop('disabled', true);
+});
+
+$('#inviteTeacher').click(function() {
+    $('#inviteTeacher').prop('disabled', true);
+});
+
+$('#editProfile').click(function() {
+    $('#editProfile').prop('disabled', true);
+});
+
+$('#changePass').click(function() {
+    $('#changePass').prop('disabled', true);
+});

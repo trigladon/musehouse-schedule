@@ -71,7 +71,7 @@ $this->title = 'User Registration';
 
     <div class="form-group">
         <div class="col-lg-11">
-            <?= Html::submitButton('Register', ['class' => 'btn btn-success', 'name' => 'reg-button'])?>
+            <?= Html::submitButton('Register', ['class' => 'btn btn-success', 'name' => 'reg-button', 'id' => 'reg-button'])?>
         </div>
     </div>
 

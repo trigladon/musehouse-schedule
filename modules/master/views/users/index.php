@@ -89,7 +89,7 @@ $this->title = 'User Management';
 
             <div class="form-group">
                 <div class="col-lg-11">
-                    <?= Html::submitButton('Invite', ['class' => 'btn btn-success'])?>
+                    <?= Html::submitButton('Invite', ['class' => 'btn btn-success', 'id' => 'inviteTeacher'])?>
                 </div>
             </div>
 
@@ -139,7 +139,7 @@ $this->title = 'User Management';
 
             <div class="form-group">
                 <div class="col-lg-11">
-                    <?= Html::submitButton('Add Student', ['class' => 'btn btn-success'])?>
+                    <?= Html::submitButton('Add Student', ['class' => 'btn btn-success', 'id' => 'addStudent'])?>
                 </div>
             </div>
 
