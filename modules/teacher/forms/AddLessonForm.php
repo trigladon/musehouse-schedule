@@ -45,6 +45,7 @@ class AddLessonForm extends Model
             [['action_date'], 'string'],
             [['id'], 'number'],
             ['lesson_finish', 'validateLessonFinish', 'skipOnEmpty' => false],
+            ['student_id', 'validateStudent', 'skipOnEmpty' => false],
         ];
     }
 
@@ -59,6 +60,12 @@ class AddLessonForm extends Model
             'action_date' => 'Date',
             'student_id' => 'Student',
         ];
+    }
+
+    public function validateStudent(){
+        if ($this->statusschedule_id != 1 && !$this->student_id){
+            $this->addError('student_id', 'Student need to be assigned!');
+        }
     }
 
     public function validateLessonFinish(){
