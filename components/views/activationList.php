@@ -129,7 +129,7 @@ ini_set('xdebug.var_display_max_data', 1024);
     <?php
     $teacherNumber = 0;
     foreach ($user_list as $user):
-        if ($user->userRole() == 'Teacher' && $user->status == User::STATUS_ACTIVE):
+        if ($user->userRole() == 'Teacher'):
             ++$teacherNumber;
             $classReg = $user->status==1?'text-danger':'text-success';
             $classLet = $user->letter_status==0||!User::isSecretKeyExpire($user->secret_key)?'text-danger':'text-success';
@@ -214,7 +214,7 @@ ini_set('xdebug.var_display_max_data', 1024);
     <?php
     $studentNumber = 0;
     foreach ($user_list as $user):
-        if ($user->userRole() == 'Student' && $user->status == User::STATUS_STUDENT):
+        if ($user->userRole() == 'Student'):
             ++$studentNumber;
             $classReg = $user->status==1?'text-danger':'text-success';
             $classLet = $user->letter_status==0||!User::isSecretKeyExpire($user->secret_key)?'text-danger':'text-success';
@@ -228,10 +228,6 @@ ini_set('xdebug.var_display_max_data', 1024);
                 <div style="margin: 1px 0">- <?=$teacher->getUsername()?></div>
             <?php $userTeachers[] = $teacher->id;
             endforeach;
-//            foreach ($user->getUserLessons() as $lessons):;
-//                $userInstr[] = $lessons['instricon']['id'];
-//            endforeach;
-//        var_dump($user->teachers());
             echo '</td>';
             echo '<td class="text-center" style="vertical-align: middle">'.
                 Html::a('<i class="fa fa fa-pencil-square-o fa-lg text-warning" aria-hidden="true" style="vertical-align: -3px;"></i>', Yii::$app->urlManager->createAbsoluteUrl([
