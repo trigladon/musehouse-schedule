@@ -61,7 +61,11 @@ class UsersController extends Controller
         }
 
         if (null !== Yii::$app->request->get('deleteId')){
-            User::deleteUserById(Yii::$app->request->get('deleteId'));
+            if(User::deleteUserById(Yii::$app->request->get('deleteId'))){
+                Yii::$app->session->setFlash('Success', 'User is Deleted!');
+            }else{
+                Yii::$app->session->setFlash('Error', 'Something went wrong!');
+            }
             return $this->redirect('/master/users');
         }
 
@@ -80,7 +84,7 @@ class UsersController extends Controller
             return $this->refresh();
         }
 
-        $user_list = User::find()->all();
+        $user_list = User::find()->andWhere(['!=', 'status', User::STATUS_DELETED])->all();
         $listUserLessons = Instrument::lessonListProfile();
         $role_list = AuthItem::getRoleList();
         $teacherList = User::teacherList();

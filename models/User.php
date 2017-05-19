@@ -144,9 +144,13 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     public static function deleteUserById($id){
-        Yii::$app->db->createCommand()->delete('auth_assignment', 'user_id = '.$id)->execute();
-        Yii::$app->db->createCommand()->delete('userinstr', 'user_id = '.$id.'')->execute();
-        Yii::$app->db->createCommand()->delete('user', 'id = '.$id.'')->execute();
+        $user = self::findIdentity($id);
+        $user->status = User::STATUS_DELETED;
+        if($user->save()){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     public function generateSecretKey()
@@ -234,12 +238,15 @@ class User extends ActiveRecord implements IdentityInterface
 
     public static function userListDropBox(){
         $rows = static::find()
-            ->select(['id', 'first_name', 'last_name'])
-            ->from('user');
+            ->select(['u.id', 'u.first_name', 'u.last_name'])
+            ->from('user u')
+            ->leftJoin('auth_assignment auth', 'id = auth.user_id')
+            ->andWhere(['=', 'auth.item_name', 'Master'])
+            ->orWhere(['=', 'auth.item_name', 'Teacher']);
         if(!self::isMaster()){
             $rows->andWhere(['id' => Yii::$app->user->id]);
         }
-        $rows->andWhere(['status' => 10]);
+//        $rows->andWhere(['status' => 10]);
         $rows = $rows->all();
 
         foreach ($rows as $value){
@@ -288,7 +295,13 @@ class User extends ActiveRecord implements IdentityInterface
 
     public static function teachersListFull(){
         $rows = static::find()
-            ->andWhere(['=', 'status', USER::STATUS_ACTIVE])
+//            ->andWhere(['=', 'status', USER::STATUS_ACTIVE])
+//            ->all();
+
+        ->leftJoin('auth_assignment auth', 'id = auth.user_id')
+            ->andWhere(['=', 'auth.item_name', 'Master'])
+            ->orWhere(['=', 'auth.item_name', 'Teacher'])
+//            ->andWhere(['=', 'status', USER::STATUS_ACTIVE])
             ->all();
 
         foreach ($rows as $teacher){
@@ -303,6 +316,7 @@ class User extends ActiveRecord implements IdentityInterface
             ->from('user u')
             ->leftJoin('student_rel strel', 'u.id = strel.student_id')
             ->andWhere(['=', 'strel.teacher_id', $this->id])
+            ->andWhere(['=', 'u.status', User::STATUS_STUDENT])
             ->all();
 
         return $rows;
@@ -311,6 +325,7 @@ class User extends ActiveRecord implements IdentityInterface
     public static function studentsListFull(){
         $rows = static::find()
             ->andWhere(['=', 'status', USER::STATUS_STUDENT])
+            ->orWhere(['=', 'status', User::STATUS_DELETED])
             ->all();
 
         foreach ($rows as $student){

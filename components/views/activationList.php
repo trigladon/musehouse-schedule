@@ -49,7 +49,7 @@ ini_set('xdebug.var_display_max_data', 1024);
     foreach ($user_list as $user){
         /* @var $user app\models\User */
 
-        if ($user->userRole() == 'Master'):
+        if ($user->userRole() == 'Master' && $user->status == User::STATUS_ACTIVE):
             ++$masterNumber;
             $classReg = $user->status==1?'text-danger':'text-success';
             $classLet = $user->letter_status==0||!User::isSecretKeyExpire($user->secret_key)?'text-danger':'text-success';
@@ -129,7 +129,7 @@ ini_set('xdebug.var_display_max_data', 1024);
     <?php
     $teacherNumber = 0;
     foreach ($user_list as $user):
-        if ($user->userRole() == 'Teacher'):
+        if ($user->userRole() == 'Teacher' && $user->status == User::STATUS_ACTIVE):
             ++$teacherNumber;
             $classReg = $user->status==1?'text-danger':'text-success';
             $classLet = $user->letter_status==0||!User::isSecretKeyExpire($user->secret_key)?'text-danger':'text-success';
@@ -214,7 +214,7 @@ ini_set('xdebug.var_display_max_data', 1024);
     <?php
     $studentNumber = 0;
     foreach ($user_list as $user):
-        if ($user->userRole() == 'Student'):
+        if ($user->userRole() == 'Student' && $user->status == User::STATUS_STUDENT):
             ++$studentNumber;
             $classReg = $user->status==1?'text-danger':'text-success';
             $classLet = $user->letter_status==0||!User::isSecretKeyExpire($user->secret_key)?'text-danger':'text-success';
