@@ -22,6 +22,7 @@ $cur = $now->format('U');
 $curMY =  $now->format('m-Y');
 $curM =  $now->format('m');
 $curY =  $now->format('Y');
+$curU =  $now->format('U');
 $now->modify('first day of this month midnight');
 $now->modify(Yii::$app->params['lessonEditing']);
 $till = $now->format('U');
@@ -135,7 +136,8 @@ $till = $now->format('U');
         $chMY = date( "m-Y", strtotime( $_year."-".$_month."-".$_day));
         $chM = date( "m", strtotime( $_year."-".$_month."-".$_day));
         $chY = date( "Y", strtotime( $_year."-".$_month."-".$_day));
-        if ($chMY == $curMY || $cur<$till && $chY == $curY && ($curM-$chM)==1 || ($curM-$chM)<0 || User::isMaster()):?>
+        $chU = date( "U", strtotime( $_year."-".$_month."-".$_day));
+        if ($chMY == $curMY || $cur<$till && $chY == $curY && ($curM-$chM)==1 || $cur<$till && $chY == $curY && ($curM-$chM)==-11 && ($curY-$chY)==1 || $chU > $curU || ($curM-$chM)<0 || User::isMaster()):?>
             <?=
             Html::tag('span', '<i class="fa fa-calendar-plus-o" aria-hidden="true"></i>', [
                 'class'       => 'popup-addLesson linkaction',
@@ -220,7 +222,7 @@ $till = $now->format('U');
                         </div>
                     </div>
                     <?php
-                    if ($chMY == $curMY || $cur<$till && $chY == $curY && ($curM-$chM)==1 || ($curM-$chM)<0 || User::isMaster()):?>
+                    if ($chMY == $curMY || $cur<$till && $chY == $curY && ($curM-$chM)==1 || $cur<$till && $chY == $curY && ($curM-$chM)==-11 && ($curY-$chY)==1 || $chU > $curU || ($curM-$chM)<0 || User::isMaster()):?>
                         <ul class="dropdown-menu editIcons">
                             <li><?= Html::a('<i class="fa fa-pencil-square-o fa-lg text-warning" aria-hidden="true"></i>', '#', ['lessonId' => $actions['lesson_id'], 'user_id' => $actions['id'], 'id' => 'lesson-edit'])?></li>
                             <li><?= Html::a('<i class="fa fa-trash-o fa-lg text-danger" aria-hidden="true"></i>', '#', [
