@@ -24,6 +24,7 @@ class UserUpdateForm extends Model
     public $lessons;
     public $teachers;
     public $role;
+    public $phone;
 
     public function rules()
     {
@@ -32,6 +33,7 @@ class UserUpdateForm extends Model
             [['teachers'], 'each', 'rule' => ['integer']],
             [['first_name', 'last_name', 'role'], 'filter', 'filter' => 'trim'],
             [['first_name', 'last_name', 'role'], 'string', 'max' => 255],
+            [['phone'], 'string', 'max' => 30],
             [['user_id'], 'number'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];
@@ -43,6 +45,7 @@ class UserUpdateForm extends Model
             'first_name' => 'First Name',
             'last_name' => 'Last Name',
             'lessons' => 'Lessons',
+            'phone' => 'Phone',
         ];
     }
 
@@ -133,9 +136,9 @@ class UserUpdateForm extends Model
             }
         }
 
-
         $user->first_name = $this->first_name;
         $user->last_name = $this->last_name;
+        $user->phone = $this->phone;
 
         return $user->save() ? true : false ;
     }

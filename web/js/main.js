@@ -442,15 +442,15 @@ $(document).on('click', '#editUser', function (event) {
     var teachers = that.data('teachers');
     var user_id = that.data('user_id');
     var role = that.data('role');
+    var phone = that.data('phone');
 
     $('#first_name').val(first_name);
     $('#last_name').val(last_name);
     $('#user_idInput').val(user_id);
     $('#user_role').val(role);
+    $('#phone').val(phone);
 
     // $("#addlessonform-instricon_id, #addlessonform-statusschedule_id").select2().val(null).trigger('change.select2');
-console.log(lessons);
-console.log(teachers);
 
     if (role == 'Student'){
         var hideElement = document.getElementById('upFormLessons');

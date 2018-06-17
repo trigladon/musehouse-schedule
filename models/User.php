@@ -18,6 +18,7 @@ use yii\db\Query;
  * @property string $first_name
  * @property string $last_name
  * @property string $email
+ * @property string $phone
  * @property string $password
  * @property string $auth_key
  * @property string $created_at
@@ -55,11 +56,12 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return [
             [['email', 'status', 'letter_status'], 'required'],
-            [['first_name', 'last_name', 'email', 'password'], 'filter', 'filter' => 'trim'],
+            [['first_name', 'last_name', 'email', 'password', 'phone'], 'filter', 'filter' => 'trim'],
             ['email', 'email'],
             ['email', 'unique', 'message' => 'User with this email has been registered already.'],
             [['created_at', 'updated_at', 'date_secret_key'], 'safe'],
             [['first_name', 'last_name', 'email', 'password', 'auth_key'], 'string', 'max' => 255],
+            [['phone'], 'string', 'max' => 30],
             ['secret_key', 'unique'],
         ];
     }
@@ -74,6 +76,7 @@ class User extends ActiveRecord implements IdentityInterface
             'first_name' => 'First Name',
             'last_name' => 'Last Name',
             'email' => 'Email',
+            'phone' => 'Phone Number',
             'password' => 'Password',
             'auth_key' => 'Auth Key',
             'created_at' => 'Created At',
@@ -296,14 +299,11 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     public static function teachersListFull(){
+        $list = [];
         $rows = static::find()
-//            ->andWhere(['=', 'status', USER::STATUS_ACTIVE])
-//            ->all();
-
         ->leftJoin('auth_assignment auth', 'id = auth.user_id')
             ->andWhere(['=', 'auth.item_name', 'Master'])
             ->orWhere(['=', 'auth.item_name', 'Teacher'])
-//            ->andWhere(['=', 'status', USER::STATUS_ACTIVE])
             ->all();
 
         foreach ($rows as $teacher){

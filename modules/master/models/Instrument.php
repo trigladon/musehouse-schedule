@@ -25,6 +25,10 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
 use yii\db\Query;
 
+/**
+ * Class Instrument
+ * @package app\modules\master\models
+ */
 class Instrument extends ActiveRecord
 {
     /**

@@ -20,12 +20,14 @@ class InviteUserForm extends Model
 {
     public $email;
     public $role;
+    public $phone;
 
     public function rules()
     {
         return [
             [['email', 'role'], 'required'],
             ['email', 'email'],
+            ['phone', 'string', 'max' => 30],
             ['email', 'unique',
                 'targetClass' => User::className(),
                 'message' => 'Эта почта уже занята.'],
@@ -38,6 +40,7 @@ class InviteUserForm extends Model
         $user = new User();
         $user->email = $this->email;
         $user->status = User::STATUS_NOT_ACTIVE;
+        if ($this->phone) $user->phone = $this->phone;
         $user->generateSecretKey();
         $user->letter_status = User::STATUS_LETTER_NOT_SENT;
 

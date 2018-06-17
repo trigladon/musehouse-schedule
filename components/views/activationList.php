@@ -33,13 +33,14 @@ ini_set('xdebug.var_display_max_data', 1024);
     </div>
 <?php endif;?>
 <table class="table table-hover table-striped table-bordered" style="margin-bottom: -1px;">
-    <tr><td colspan="8" style="text-align: center;color: #2e498b; font-size: 18px; border-bottom-width: 2px; border-bottom-color: #2e498b;">Masters (Admin users)</td></tr>
+    <tr><td colspan="9" style="text-align: center;color: #2e498b; font-size: 18px; border-bottom-width: 2px; border-bottom-color: #2e498b;">Masters (Admin users)</td></tr>
     <tr>
         <th class="text-center">#</th>
-        <th class="text-center">First Name</th>
-        <th class="text-center">Last Name</th>
+        <th class="text-center">Username</th>
+        <th class="text-center">Phone Number</th>
         <th class="text-center">Email</th>
         <th class="text-center">Lessons</th>
+        <th class="text-center">DPP/ZL</th>
         <th class="text-center">Status</th>
         <th class="text-center">Letter</th>
         <th class="text-center">Edit / Delete</th>
@@ -55,8 +56,8 @@ ini_set('xdebug.var_display_max_data', 1024);
             $classLet = $user->letter_status==0||!User::isSecretKeyExpire($user->secret_key)?'text-danger':'text-success';
             echo '<tr style="vertical-align: middle">';
             echo '<td class="text-center" style="vertical-align: middle">'.$masterNumber.'</td>';
-            echo '<td style="vertical-align: middle">'.$user->first_name.'</td>';
-            echo '<td style="vertical-align: middle">'.$user->last_name.'</td>';
+            echo '<td style="vertical-align: middle">'.$user->getUsername().'</td>';
+            echo '<td style="vertical-align: middle">'.($user->phone?:'no phone provided').'</td>';
             echo '<td style="vertical-align: middle">'.$user->email.'</td>';
             echo '<td class="text-left" style="vertical-align: middle; padding-left: 15px">';
             foreach ($user->getUserLessons() as $lesson):?>
@@ -66,9 +67,9 @@ ini_set('xdebug.var_display_max_data', 1024);
                 $userInstr[] = $lessons['instricon']['id'];
             endforeach;
             echo '</td>';
+            echo '<td style="vertical-align: middle; text-align: center">DPP/ZL</td>';
             echo '<td class="text-center" style="vertical-align: middle">
             <i class="fa fa-user fa-lg '.$classReg.'" aria-hidden="true"></i>
-    
             </td>';
             if ($classReg === 'text-success'){
                 echo '<td class="text-center" style="vertical-align: middle"><i class="fa fa-check fa-lg text-success" aria-hidden="true"></i></td>';
@@ -91,6 +92,7 @@ ini_set('xdebug.var_display_max_data', 1024);
                     'data-lessons' => $userInstr,
                     'data-teachers' => '',
                     'data-role' => $user->userRole(),
+                    'data-phone' => $user->phone,
                     'id'          => 'editUser',]).' / ';
             echo Yii::$app->user->id == $user->id ? Html::a('<i class="fa fa-trash-o fa-lg text-muted" aria-hidden="true"></i>') :
                 Html::a('<i class="fa fa-trash-o fa-lg text-danger" aria-hidden="true"></i>', Yii::$app->urlManager->createAbsoluteUrl([
@@ -108,7 +110,7 @@ ini_set('xdebug.var_display_max_data', 1024);
     }
     ?>
 
-    <tr><td colspan="8"
+    <tr><td colspan="9"
             style="
                 text-align: center;
                 color: #717700;
@@ -118,10 +120,11 @@ ini_set('xdebug.var_display_max_data', 1024);
                 border-bottom-color: #717700; ">Teachers (Common users)</td></tr>
     <tr>
         <th class="text-center">#</th>
-        <th class="text-center">First Name</th>
-        <th class="text-center">Last Name</th>
+        <th class="text-center">Username</th>
+        <th class="text-center">Phone Number</th>
         <th class="text-center">Email</th>
         <th class="text-center">Lessons</th>
+        <th class="text-center">DPP/ZL</th>
         <th class="text-center">Status</th>
         <th class="text-center">Letter</th>
         <th class="text-center">Edit / Delete</th>
@@ -135,8 +138,8 @@ ini_set('xdebug.var_display_max_data', 1024);
             $classLet = $user->letter_status==0||!User::isSecretKeyExpire($user->secret_key)?'text-danger':'text-success';
             echo '<tr style="vertical-align: middle">';
             echo '<td class="text-center" style="vertical-align: middle">'.$teacherNumber.'</td>';
-            echo '<td style="vertical-align: middle">'.$user->first_name.'</td>';
-            echo '<td style="vertical-align: middle">'.$user->last_name.'</td>';
+            echo '<td style="vertical-align: middle">'.$user->getUsername().'</td>';
+            echo '<td style="vertical-align: middle">'.($user->phone?:'no phone provided').'</td>';
             echo '<td style="vertical-align: middle">'.$user->email.'</td>';
             echo '<td class="text-left" style="vertical-align: middle; padding-left: 15px">';
             foreach ($user->getUserLessons() as $lesson):?>
@@ -147,6 +150,9 @@ ini_set('xdebug.var_display_max_data', 1024);
                 $userInstr[] = $lessons['instricon']['id'];
             endforeach;
             echo '</td>';
+
+            echo '<td style="vertical-align: middle; text-align: center">DPP/ZL</td>';
+
             echo '<td class="text-center" style="vertical-align: middle">
             <i class="fa fa-user fa-lg '.$classReg.'" aria-hidden="true"></i>
 
@@ -173,6 +179,7 @@ ini_set('xdebug.var_display_max_data', 1024);
                     'data-lessons' => $userInstr,
                     'data-teachers' => '',
                     'data-role' => $user->userRole(),
+                    'data-phone' => $user->phone,
                     'id'          => 'editUser',]).' / ';
             echo Html::a('<i class="fa fa-trash-o fa-lg text-danger" aria-hidden="true"></i>', Yii::$app->urlManager->createAbsoluteUrl([
                     '/master/users',
@@ -206,8 +213,8 @@ ini_set('xdebug.var_display_max_data', 1024);
                 border-bottom-color: #41773c;">Students</td></tr>
     <tr>
         <th class="text-center">#</th>
-        <th class="text-center">First Name</th>
-        <th colspan="2" class="text-center">Last Name</th>
+        <th class="text-center">Username</th>
+        <th class="text-center">Phone Number</th>
         <th colspan="3" class="text-center">Teachers</th>
         <th class="text-center">Edit / Delete</th>
     </tr>
@@ -220,8 +227,8 @@ ini_set('xdebug.var_display_max_data', 1024);
             $classLet = $user->letter_status==0||!User::isSecretKeyExpire($user->secret_key)?'text-danger':'text-success';
             echo '<tr style="vertical-align: middle">';
             echo '<td class="text-center" style="vertical-align: middle">'.$studentNumber.'</td>';
-            echo '<td style="vertical-align: middle">'.$user->first_name.'</td>';
-            echo '<td colspan="2" style="vertical-align: middle">'.$user->last_name.'</td>';
+            echo '<td style="vertical-align: middle">'.$user->getUsername().'</td>';
+            echo '<td style="vertical-align: middle">'.($user->phone?:'no phone provided').'</td>';
             echo '<td colspan="3" class="text-left" style="vertical-align: middle; padding-left: 15px">';
             $userTeachers = [];
             foreach ($user->teachers() as $teacher):/* @var $teacher User*/?>
@@ -240,6 +247,7 @@ ini_set('xdebug.var_display_max_data', 1024);
                     'data-lessons' => '',
                     'data-teachers' => $userTeachers,
                     'data-role' => $user->userRole(),
+                    'data-phone' => $user->phone,
                     'id'          => 'editUser',]).' / ';
             echo Html::a('<i class="fa fa-trash-o fa-lg text-danger" aria-hidden="true"></i>', Yii::$app->urlManager->createAbsoluteUrl([
                 '/master/users',
@@ -302,6 +310,10 @@ ini_set('xdebug.var_display_max_data', 1024);
 
     <?= $form->field($userUpdate, 'last_name')->textInput([
         'id' => 'last_name',
+    ])?>
+
+    <?= $form->field($userUpdate, 'phone')->textInput([
+        'id' => 'phone',
     ])?>
 
     <div id='upFormLessons' style="display: none">

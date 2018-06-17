@@ -22,6 +22,7 @@ class StudentAddForm extends Model
     public $last_name;
     public $teacher;
     public $role = 'Student';
+    public $phone;
 
     public function rules()
     {
@@ -29,6 +30,7 @@ class StudentAddForm extends Model
             [['first_name', 'last_name'], 'required'],
             [['first_name', 'last_name'], 'filter', 'filter' => 'trim'],
             [['first_name', 'last_name'], 'string', 'max' => 255],
+            [['phone'], 'string', 'max' => 30],
             [['teacher'], 'each', 'rule' => ['integer']],
 //            [['teacher'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['teacher' => 'id']],
             [['role'], 'exist', 'skipOnError' => true, 'targetClass' => AuthItem::className(), 'targetAttribute' => ['role' => 'name']],
@@ -54,6 +56,7 @@ class StudentAddForm extends Model
         $user->first_name = $this->first_name;
         $user->last_name = $this->last_name;
         $user->email = self::generateRandomEmail();
+        if ($this->phone) $user->phone = $this->phone;
         $user->setPassword('muse');
         $user->generateAuthKey();
         $user->removeSecretKey();

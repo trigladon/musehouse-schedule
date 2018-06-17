@@ -63,6 +63,10 @@ $this->title = 'Profile';
                 'value' => $user->getLastName(),
             ])?>
 
+            <?= $form->field($userUpdateForm, 'phone')->label('Phone', ['style'=>'width: 150px'])->textInput([
+                'value' => $user->phone,
+            ])?>
+
             <?php foreach ($user->getUserLessons() as $lessons):;
                    $userInstr[] = $lessons['instricon']['id'];
                 endforeach;

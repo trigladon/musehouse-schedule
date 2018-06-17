@@ -77,6 +77,7 @@ $config = [
                 'calendar' => 'teacher/calendar',
                 'statistics' => 'teacher/statistics',
                 'lessons' => 'master/instrument',
+                'pricing' => 'master/price',
                 'users' => 'master/users',
                 'profile' => 'teacher/profile',
             ],

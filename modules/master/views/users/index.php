@@ -76,6 +76,10 @@ $this->title = 'User Management';
                 'placeholder' => 'Email',
             ]) ?>
 
+            <?= $form->field($model, 'phone')->label(false)->input('string', [
+                'placeholder' => 'Phone',
+            ]) ?>
+
             <div style="display: none">
                 <?= $form->field($model, 'role')->label(false)->widget(Select2::className(), [
                     'data' => $role_list,
@@ -115,6 +119,10 @@ $this->title = 'User Management';
             <?= $form->field($studentAddForm, 'last_name')->label(false)->textInput([
                 'placeholder' => 'Last Name',
             ]); ?>
+
+            <?= $form->field($studentAddForm, 'phone')->label(false)->input('string', [
+                'placeholder' => 'Phone',
+            ]) ?>
 
             <?= $form->field($studentAddForm, 'teacher')->label(false)->widget(Select2::className(), [
                 'data' => $teacherList,

@@ -523,3 +523,12 @@ ul.editIcons a{
 .statTable td, th{
     border: solid 1px #e2e2e2;
 }
+
+.daterangepicker th {
+    border: 0 !important;
+}
+
+.required label:after {
+    content: "*";
+    color: red;
+}
