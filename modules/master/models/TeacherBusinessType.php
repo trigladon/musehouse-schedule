@@ -91,4 +91,10 @@ class TeacherBusinessType extends ActiveRecord
             self::ZL_TYPE => self::ZL_TYPE,
         ];
     }
+
+    public function getDateFrom()
+    {
+        $date = new \DateTime($this->date_from);
+        return $date->format('d-m-Y');
+    }
 }

@@ -21,8 +21,6 @@ function onClickMonth(currentDate, changes, whtsh) {
     });
 }
 
-
-
 $(function() {
     $('.popup-delete').click(function(e) {
         e.preventDefault();
@@ -90,11 +88,20 @@ $(document).ready(function () {
         $('#addLesson-form')[0].reset();
         $('#lessonIdToUpdate').val('');
 
-        $("#addlessonform-instricon_id, #addlessonform-statusschedule_id, #addlessonform-student_id").select2().val(null).trigger('change.select2');
+        $("#addlessonform-instricon_id, #addlessonform-statusschedule_id, #addlessonform-student_id, #addlessonform-lesson_length").select2().val(null).trigger('change.select2');
 
         $('#addlessonform-student_id').select2({
             escapeMarkup: function (text) { return text; },
             placeholder: 'Student',
+            theme: 'bootstrap',
+            allowClear: true,
+            minimumResultsForSearch: Infinity,
+            width: '100%'
+        });
+
+        $('#addlessonform-lesson_length').select2({
+            escapeMarkup: function (text) { return text; },
+            placeholder: 'Choose...',
             theme: 'bootstrap',
             allowClear: true,
             minimumResultsForSearch: Infinity,
@@ -570,9 +577,51 @@ function showBT(userId, action){
     }
 }
 
-function setBusinessType(teacherId, btrow = null) {
+function setBusinessType(teacherId, btId = null) {
     var modal = $('#modalTeacherBT');
     $('#modalTeacherBTForm')[0].reset();
-    $('#teacherbusinesstypeform-teacher_id').val(teacherId);
+
+    if (btId) {
+        $.ajax({
+            url: '/master/users/edit-bt',
+            type: 'post',
+            data: {
+                btId: btId
+            },
+            success: function (data) {
+                var bt = data.result;
+                $('#teacherbusinesstypeform-business_type').val(bt.type);
+                $('#datetimepicker5').val(data.date_from);
+                $('#teacherbusinesstypeform-teacher_id').val(bt.user_id);
+                $('#teacherbusinesstypeform-btrow').val(bt.id);
+            },
+            error: function () {
+                alert('Error!!!');
+            }
+        });
+    }else{
+        $('#teacherbusinesstypeform-teacher_id').val(teacherId);
+    }
+    modal.modal('show');
+}
+
+function delBusinessType(btId) {
+    $.ajax({
+        url: '/master/users/del-bt',
+        type: 'post',
+        data: {
+            btId: btId
+        },
+        success: function (data) {
+            window.location.reload();
+        },
+        error: function () {
+            alert('Error!!!');
+        }
+    });
+}
+
+function setPricePolicy() {
+    var modal = $('#modalPriceManagement');
     modal.modal('show');
 }

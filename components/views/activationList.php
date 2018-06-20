@@ -10,6 +10,7 @@ use yii\helpers\Html;
 use app\models\User;
 
 /** @var $businessTypeForm \app\modules\master\forms\TeacherBusinessTypeForm */
+/** @var $bt \app\modules\master\models\TeacherBusinessType */
 
 ?>
 <?php if (Yii::$app->session->hasFlash('Error')): ?>
@@ -60,7 +61,9 @@ use app\models\User;
                 $userInstr[] = $lessons['instricon']['id'];
             endforeach;
             echo '</td>';
-            echo '<td style="vertical-align: middle; text-align: center">DPP/ZL<br><small class="cursor text-info '.$user->id.'arrow" onclick="showBT('.$user->id.', \'open\')">(show <i class="fa fa-caret-down" aria-hidden="true"></i>)</small></td>';
+            echo '<td style="vertical-align: middle; text-align: center">';
+            echo $user->getCurrentBusinessType()?:"No data found";
+            echo '<br><small class="cursor text-info '.$user->id.'arrow" onclick="showBT('.$user->id.', \'open\')">(show <i class="fa fa-caret-down" aria-hidden="true"></i>)</small></td>';
             echo '<td class="text-center" style="vertical-align: middle">
             <i class="fa fa-user fa-lg '.$classReg.'" aria-hidden="true"></i>
             </td>';
@@ -99,8 +102,16 @@ use app\models\User;
                     'id'          => 'popupModal',
                     ]);
             echo '</td></tr><tr><td class="'.$user->id.'bt text-center" colspan="9" style="display: none">';
-            echo 'No data found.';
-            echo '<br><span role="button" onclick="setBusinessType('.$user->id.')">Add info <i class="fa fa-plus text-success" aria-hidden="true"></i></span>';
+            echo '<strong style="font-size: larger">Changes history</strong><br>';
+            $historyBusinessTypes = $user->getHistoryBusinessType();
+            if ($historyBusinessTypes) :
+                foreach ($historyBusinessTypes as $bt):
+                    echo $bt->type.' from '.$bt->getDateFrom().' <i onclick="setBusinessType('.$user->id.', '.$bt->id.')" class="fa fa-pencil-square-o text-warning cursor" aria-hidden="true"></i> / <i class="fa fa-trash-o text-danger cursor" style="vertical-align: 7%;" onclick="delBusinessType('.$bt->id.')" aria-hidden="true"></i><br>';
+                endforeach;
+            else:
+                echo 'No data found.';
+            endif;
+            echo '<br><span class="btn btn-success" role="button" onclick="setBusinessType('.$user->id.')">Add info <i class="fa fa-plus" aria-hidden="true"></i></span>';
             echo '</td></tr>';
         endif;
     }
@@ -146,9 +157,9 @@ use app\models\User;
                 $userInstr[] = $lessons['instricon']['id'];
             endforeach;
             echo '</td>';
-
-            echo '<td style="vertical-align: middle; text-align: center">DPP/ZL<br><small class="cursor text-info '.$user->id.'arrow" onclick="showBT('.$user->id.', \'open\')">(show <i class="fa fa-caret-down" aria-hidden="true"></i>)</small></td>';
-
+            echo '<td style="vertical-align: middle; text-align: center">';
+            echo $user->getCurrentBusinessType()?:"No data found";
+            echo '<br><small class="cursor text-info '.$user->id.'arrow" onclick="showBT('.$user->id.', \'open\')">(show <i class="fa fa-caret-down" aria-hidden="true"></i>)</small></td>';
             echo '<td class="text-center" style="vertical-align: middle">
             <i class="fa fa-user fa-lg '.$classReg.'" aria-hidden="true"></i>
 
@@ -187,7 +198,18 @@ use app\models\User;
                     'data-name' => $user->getUsername(),
                     'id'          => 'popupModal',
                 ]);
-            echo '</td></tr><tr><td class="'.$user->id.'bt" colspan="9" style="display: none">sometext</td></tr>';
+            echo '</td></tr><tr><td class="'.$user->id.'bt text-center" colspan="9" style="display: none">';
+            echo '<strong style="font-size: larger">Changes history</strong><br>';
+            $historyBusinessTypes = $user->getHistoryBusinessType();
+            if ($historyBusinessTypes) :
+                foreach ($historyBusinessTypes as $bt):
+                    echo $bt->type.' from '.$bt->getDateFrom().' <i onclick="setBusinessType('.$user->id.', '.$bt->id.')" class="fa fa-pencil-square-o text-warning cursor" aria-hidden="true"></i> / <i class="fa fa-trash-o text-danger cursor" style="vertical-align: 7%;" onclick="delBusinessType('.$bt->id.')" aria-hidden="true"></i><br>';
+                endforeach;
+            else:
+                echo 'No data found.';
+            endif;
+            echo '<br><span class="btn btn-success" role="button" onclick="setBusinessType('.$user->id.')">Add info <i class="fa fa-plus" aria-hidden="true"></i></span>';
+            echo '</td></tr>';
 
         endif;
         ?>

@@ -31,7 +31,7 @@ class PriceController extends Controller
         $priceForm = new PricingForm();
         $studentList = User::studentsListFull();
         $teacherList = User::teachersListFull();
-        $priorityList = StudentTeacherPricing::getPriorityList();
+        $priorityList = [];
         $lessonList = Instrument::lessonListProfile();
 
         return $this->render('index', [

@@ -12,12 +12,14 @@ use app\models\AuthItem;
 use app\modules\master\forms\StudentAddForm;
 use app\modules\master\forms\TeacherBusinessTypeForm;
 use app\modules\master\forms\UserUpdateForm;
+use app\modules\master\models\TeacherBusinessType;
 use yii\web\Controller;
 use app\modules\master\forms\InviteUserForm;
 use app\models\User;
 use Yii;
 use yii\filters\AccessControl;
 use app\modules\master\models\Instrument;
+use yii\web\Response;
 
 class UsersController extends Controller
 {
@@ -113,5 +115,36 @@ class UsersController extends Controller
             'businessTypeForm' => $businessTypeForm,
             'businessTypes' => $businessTypes,
         ]);
+    }
+
+    public function actionDelBt()
+    {
+        if (Yii::$app->request->isAjax) {
+            $request = Yii::$app->getRequest();
+            if ($request->isPost) {
+                $post = Yii::$app->request->post();
+                $result = TeacherBusinessType::findOne($post['btId']);
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return [
+                    'success' => $result->delete()
+                ];
+            }
+        }
+    }
+
+    public function actionEditBt()
+    {
+        if (Yii::$app->request->isAjax) {
+            $request = Yii::$app->getRequest();
+            if ($request->isPost) {
+                $post = Yii::$app->request->post();
+                $result = TeacherBusinessType::findOne($post['btId']);
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return [
+                    'result' => $result,
+                    'date_from' => $result->getDateFrom()
+                ];
+            }
+        }
     }
 }

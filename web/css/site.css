@@ -3,8 +3,9 @@ body {
     height: 100%;
     padding-right:0 !important;
 }
-html {
-    overflow-y: scroll;
+
+body.modal-open {
+    overflow: visible;
 }
 
 .wrap {
@@ -535,4 +536,12 @@ ul.editIcons a{
 
 .cursor {
     cursor: pointer;
+}
+
+.buttonBT {
+    padding: 5px 10px;
+    background-color: green;
+    border-radius: 6px;
+    color: white;
+    font-weight: bold;
 }

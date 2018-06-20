@@ -48,6 +48,11 @@ use yii\helpers\Html;
     'value' => '',
 ]);?>
 
+
+<?= Html::activeHiddenInput($businessTypeForm,'btrow', [
+    'value' => '',
+]);?>
+
 <div class="form-group">
     <div class="col-lg-2">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success', 'id' => 'saveBusinessType'])?>

@@ -2,6 +2,8 @@
 
 namespace app\modules\master\models;
 
+use app\modules\master\models\Instrument;
+use Yii;
 use app\models\User;
 use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
@@ -13,22 +15,27 @@ use yii\db\Expression;
  * @property integer $id
  * @property integer $student_id
  * @property integer $teacher_id
- * @property integer $priority
  * @property integer $instrument_id
+ * @property integer $target_qnt_lessons
+ * @property double $short_full_money
+ * @property double $short_clean_money
+ * @property double $short_tax_money
+ * @property double $middle_full_money
+ * @property double $middle_clean_money
+ * @property double $middle_tax_money
+ * @property double $long_full_money
+ * @property double $long_clean_money
+ * @property double $long_tax_money
  * @property string $date_from
- * @property string $date_to
  * @property string $updated_at
  * @property string $created_at
  *
+ * @property Instrument $instrument
  * @property User $student
  * @property User $teacher
  */
-class StudentTeacherPricing extends ActiveRecord
+class StudentTeacherPricing extends \yii\db\ActiveRecord
 {
-
-    const PRIORITY_COMMON = 1;
-    const PRIORITY_MAJOR = 2;
-
     /**
      * @inheritdoc
      */
@@ -43,12 +50,13 @@ class StudentTeacherPricing extends ActiveRecord
     public function rules()
     {
         return [
-            [['student_id', 'teacher_id', 'priority', 'instrument_id', 'date_from', 'date_to', 'updated_at', 'created_at'], 'required'],
-            [['student_id', 'teacher_id', 'priority', 'instrument_id'], 'integer'],
-            [['date_from', 'date_to', 'updated_at', 'created_at'], 'safe'],
+            [['student_id', 'teacher_id', 'instrument_id', 'target_qnt_lessons', 'short_full_money', 'short_clean_money', 'short_tax_money', 'middle_full_money', 'middle_clean_money', 'middle_tax_money', 'long_full_money', 'long_clean_money', 'long_tax_money', 'date_from', 'updated_at', 'created_at'], 'required'],
+            [['student_id', 'teacher_id', 'instrument_id', 'target_qnt_lessons'], 'integer'],
+            [['short_full_money', 'short_clean_money', 'short_tax_money', 'middle_full_money', 'middle_clean_money', 'middle_tax_money', 'long_full_money', 'long_clean_money', 'long_tax_money'], 'number'],
+            [['date_from', 'updated_at', 'created_at'], 'safe'],
+            [['instrument_id'], 'exist', 'skipOnError' => true, 'targetClass' => Instrument::className(), 'targetAttribute' => ['instrument_id' => 'id']],
             [['student_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['student_id' => 'id']],
             [['teacher_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['teacher_id' => 'id']],
-            [['instrument_id'], 'exist', 'skipOnError' => true, 'targetClass' => Instrument::className(), 'targetAttribute' => ['instrument_id' => 'id']],
         ];
     }
 
@@ -61,13 +69,29 @@ class StudentTeacherPricing extends ActiveRecord
             'id' => 'ID',
             'student_id' => 'Student ID',
             'teacher_id' => 'Teacher ID',
-            'priority' => 'Priority',
-            'instrument_id' => 'Lesson ID',
+            'instrument_id' => 'Instrument ID',
+            'target_qnt_lessons' => 'Target Qnt Lessons',
+            'short_full_money' => 'Short Full Money',
+            'short_clean_money' => 'Short Clean Money',
+            'short_tax_money' => 'Short Tax Money',
+            'middle_full_money' => 'Middle Full Money',
+            'middle_clean_money' => 'Middle Clean Money',
+            'middle_tax_money' => 'Middle Tax Money',
+            'long_full_money' => 'Long Full Money',
+            'long_clean_money' => 'Long Clean Money',
+            'long_tax_money' => 'Long Tax Money',
             'date_from' => 'Date From',
-            'date_to' => 'Date To',
             'updated_at' => 'Updated At',
             'created_at' => 'Created At',
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getInstrument()
+    {
+        return $this->hasOne(Instrument::className(), ['id' => 'instrument_id']);
     }
 
     /**
@@ -99,14 +123,5 @@ class StudentTeacherPricing extends ActiveRecord
                 'value' => new Expression('NOW()'),
             ]
         ];
-    }
-
-    public static function getPriorityList()
-    {
-        $list = [];
-        $list[self::PRIORITY_COMMON] = 'Common';
-        $list[self::PRIORITY_MAJOR] = 'Major';
-
-        return $list;
     }
 }

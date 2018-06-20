@@ -12,18 +12,32 @@ class PricingForm extends Model
     public $id;
     public $studentId;
     public $teacherId;
-    public $price;
+    public $s_clean;
+    public $s_tax;
+    public $m_clean;
+    public $m_tax;
+    public $l_clean;
+    public $l_tax;
     public $priority;
     public $instrumentId;
-    public $dateRange;
+    public $date_from;
+    public $target;
 
     public function rules()
     {
         return [
-            [['studentId', 'teacherId', 'price', 'priority', 'instrumentId', 'dateRange'], 'required'],
-            [['id', 'studentId', 'teacherId', 'priority', 'instrumentId'], 'integer'],
-            [['price'], 'double'],
-            [['dateRange'], 'string'],
+            [[
+                'studentId', 'teacherId',
+                'instrumentId',
+                'date_from',
+                'target',
+                's_clean', 's_tax',
+                'm_clean', 'm_tax',
+                'l_clean', 'l_tax'
+            ], 'required'],
+            [['id', 'studentId', 'teacherId', 'priority', 'instrumentId', 'target'], 'integer'],
+            [['s_clean', 's_tax', 'm_clean', 'm_tax', 'l_clean', 'l_tax'], 'double'],
+            [['date_from'], 'string'],
             [['teacherId'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['teacherId' => 'id']],
             [['studentId'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['studentId' => 'id']],
             [['instrumentId'], 'exist', 'skipOnError' => true, 'targetClass' => Instrument::className(), 'targetAttribute' => ['instrumentId' => 'id']],
@@ -38,8 +52,19 @@ class PricingForm extends Model
             'price' => 'Price',
             'priority' => 'Priority',
             'instrumentId' => 'Lesson',
-            'dateRange' => 'DateRange',
+            'date_from' => 'Valid from date',
+            's_clean' => 'S-clean',
+            's_tax' => 'S-tax',
+            'm_clean' => 'M-clean',
+            'm_tax' => 'M-tax',
+            'l_clean' => 'L-clean',
+            'l_tax' => 'L-tax',
+            'target' => 'Lessons target'
         ];
     }
 
+    public function savePrices()
+    {
+
+    }
 }

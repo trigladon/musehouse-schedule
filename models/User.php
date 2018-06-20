@@ -3,6 +3,7 @@
 namespace app\models;
 
 use app\modules\master\forms\StudentAddForm;
+use app\modules\master\models\TeacherBusinessType;
 use app\modules\master\models\Userinstr;
 use Yii;
 use yii\web\IdentityInterface;
@@ -359,5 +360,33 @@ class User extends ActiveRecord implements IdentityInterface
             $list[] = ['id' => $student->id, 'text' => $student->getUsername()];
         }
         return $list;
+    }
+
+    public function getCurrentBusinessType($user_id = null)
+    {
+        $user_id?:$user_id = $this->id;
+        $date = new \DateTime();
+        $now = $date->format('Y-m-d H:i:s');
+        /** @var TeacherBusinessType $query */
+        $query = TeacherBusinessType::find()
+            ->where(['user_id' => $user_id])
+            ->andWhere(['<', 'date_from', $now])
+            ->orderBy('date_from DESC')
+            ->one();
+
+        return $query?$query->type:false;
+    }
+
+    public function getHistoryBusinessType($user_id = null)
+    {
+
+        $user_id?:$user_id = $this->id;
+
+        $query = TeacherBusinessType::find()
+            ->where(['user_id' => $user_id])
+            ->orderBy('date_from DESC')
+            ->all();
+
+        return $query;
     }
 }

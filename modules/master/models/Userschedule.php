@@ -228,9 +228,9 @@ class Userschedule extends ActiveRecord
     public static function getLessonsTypeArray($isAjax = false)
     {
         $returnArray = [
-            self::LESSON_SHORT => '45 minutes',
-            self::LESSON_MIDDLE => '60 minutes',
-            self::LESSON_LONG => '90 minutes'
+            self::LESSON_SHORT => self::LESSON_SHORT.' minutes',
+            self::LESSON_MIDDLE => self::LESSON_MIDDLE.' minutes',
+            self::LESSON_LONG => self::LESSON_LONG.' minutes'
         ];
 
         if (!$isAjax) {
