@@ -12,9 +12,8 @@ use yii\db\Expression;
  *
  * @property integer $id
  * @property integer $user_id
- * @property integer $type
+ * @property string $type
  * @property string $date_from
- * @property string $date_to
  * @property string $updated_at
  * @property string $created_at
  *
@@ -23,8 +22,8 @@ use yii\db\Expression;
 class TeacherBusinessType extends ActiveRecord
 {
 
-    const DDP_TYPE = 1;
-    const ZL_TYPE = 2;
+    const DDP_TYPE = 'DDP';
+    const ZL_TYPE = 'ZL';
 
     /**
      * @inheritdoc
@@ -40,9 +39,9 @@ class TeacherBusinessType extends ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'type', 'date_from', 'updated_at', 'created_at'], 'required'],
-            [['user_id', 'type'], 'integer'],
-            [['date_from', 'date_to', 'updated_at', 'created_at'], 'safe'],
+            [['user_id', 'type', 'date_from'], 'required'],
+            [['user_id'], 'integer'],
+            [['type'], 'string'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
@@ -57,7 +56,6 @@ class TeacherBusinessType extends ActiveRecord
             'user_id' => 'User ID',
             'type' => 'Type',
             'date_from' => 'Date From',
-            'date_to' => 'Date To',
             'updated_at' => 'Updated At',
             'created_at' => 'Created At',
         ];
@@ -89,8 +87,8 @@ class TeacherBusinessType extends ActiveRecord
     public static function getBusinessTypeList()
     {
         return [
-            self::DDP_TYPE => 'DPP',
-            self::ZL_TYPE => 'ZL',
+            self::DDP_TYPE => self::DDP_TYPE,
+            self::ZL_TYPE => self::ZL_TYPE,
         ];
     }
 }

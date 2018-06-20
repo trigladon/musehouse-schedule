@@ -44,6 +44,8 @@ $this->title = 'User Management';
                 'userUpdate' => $userUpdate,
                 'listUserLessons' => $listUserLessons,
                 'teacherList' => $teacherList,
+                'businessTypeForm' => $businessTypeForm,
+                'businessTypes' => $businessTypes,
             ]);
         ?>
     </div>

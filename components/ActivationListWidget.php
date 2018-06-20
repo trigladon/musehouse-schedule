@@ -17,6 +17,8 @@ class ActivationListWidget extends Widget
     public $userUpdate;
     public $listUserLessons;
     public $teacherList;
+    public $businessTypeForm;
+    public $businessTypes;
 
     public function init()
     {
@@ -31,6 +33,8 @@ class ActivationListWidget extends Widget
             'userUpdate' => $this->userUpdate,
             'listUserLessons' => $this->listUserLessons,
             'teacherList' => $this->teacherList,
+            'businessTypeForm' => $this->businessTypeForm,
+            'businessTypes' => $this->businessTypes,
         ]);
     }
 }

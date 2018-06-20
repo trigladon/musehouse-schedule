@@ -35,6 +35,7 @@ class CalendarController extends Controller
         $status_list = Statusschedule::statusList();
         $lesson_list = Instrument::lessonListDropBox();
         $user_list = User::userListDropBox();
+        $lessonLength = Userschedule::getLessonsTypeArray();
 
         if (Yii::$app->request->isAjax){
 
@@ -71,6 +72,7 @@ class CalendarController extends Controller
                 $studentsListAjax = User::studentsListAjax(Yii::$app->request->post('user_id'));
                 $lessonToUpdate['lessonList'] = $listUserLessons;
                 $lessonToUpdate['studentsList'] = $studentsListAjax;
+                $lessonToUpdate['lessonLength'] = Userschedule::getLessonsTypeArray(true);
                 return $lessonToUpdate;
             }
 
@@ -82,8 +84,6 @@ class CalendarController extends Controller
                     'result' => $filterForm->errors ? null : $filterForm->addSessionData(),
                 ];
             }
-
-
 
 //            var_dump(Yii::$app->request->get());
             $data = Yii::$app->request->post();
@@ -115,6 +115,7 @@ class CalendarController extends Controller
                 'lesson_list' => $lesson_list,
                 'user_list' => $user_list,
                 'studentsList' => $studentsList,
+                'lessonLength' => $lessonLength
             ]);
 
         }else{
@@ -141,6 +142,7 @@ class CalendarController extends Controller
             'lesson_list' => $lesson_list,
             'user_list' => $user_list,
             'studentsList' => $studentsList,
+            'lessonLength' => $lessonLength
         ]);
     }
 }

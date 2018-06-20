@@ -15,6 +15,7 @@ use DateTime;
  *
  * @property integer $id
  * @property string $lesson_start
+ * @property int $lesson_length_type
  * @property string $lesson_finish
  * @property string $comment
  * @property integer $user_id
@@ -34,6 +35,9 @@ class Userschedule extends ActiveRecord
     const STATUS_OPEN = 1;
     const STATUS_DONE = 2;
     const STATUS_LOSE = 3;
+    const LESSON_SHORT = 45;
+    const LESSON_MIDDLE = 60;
+    const LESSON_LONG = 90;
 
     /**
      * @inheritdoc
@@ -50,7 +54,7 @@ class Userschedule extends ActiveRecord
     {
         return [
             [['lesson_start', 'lesson_finish', 'created_at', 'updated_at'], 'safe'],
-            [['user_id', 'instricon_id', 'statusschedule_id', 'student_id'], 'integer'],
+            [['user_id', 'instricon_id', 'lesson_length_type', 'statusschedule_id', 'student_id'], 'integer'],
             [['instricon_id'], 'exist', 'skipOnError' => true, 'targetClass' => Instrument::className(), 'targetAttribute' => ['instricon_id' => 'id']],
             [['statusschedule_id'], 'exist', 'skipOnError' => true, 'targetClass' => Statusschedule::className(), 'targetAttribute' => ['statusschedule_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
@@ -67,6 +71,7 @@ class Userschedule extends ActiveRecord
         return [
             'id' => 'ID',
             'lesson_start' => 'Lesson Start',
+            'lesson_length_type' => 'Lesson Length',
             'lesson_finish' => 'Lesson Finish',
             'user_id' => 'User ID',
             'student_id' => 'Student ID',
@@ -209,7 +214,7 @@ class Userschedule extends ActiveRecord
     public static function lessonToUpdate($id){
 
         $rows = static::find()
-            ->select(['id', 'lesson_start', 'lesson_finish', 'user_id', 'instricon_id', 'statusschedule_id', '`comment`', 'student_id'])
+            ->select(['id', 'lesson_start', 'lesson_length_type', 'user_id', 'instricon_id', 'statusschedule_id', '`comment`', 'student_id'])
             ->where(['id' => $id])
             ->limit(1)
             ->asArray()
@@ -217,7 +222,27 @@ class Userschedule extends ActiveRecord
 
         $rows['action_date'] = date('d-m-Y', $rows['lesson_start']);
         $rows['lesson_start'] = date('H:i', $rows['lesson_start']);
-        $rows['lesson_finish'] = date('H:i', $rows['lesson_finish']);
         return $rows;
+    }
+
+    public static function getLessonsTypeArray($isAjax = false)
+    {
+        $returnArray = [
+            self::LESSON_SHORT => '45 minutes',
+            self::LESSON_MIDDLE => '60 minutes',
+            self::LESSON_LONG => '90 minutes'
+        ];
+
+        if (!$isAjax) {
+            return $returnArray;
+        }
+
+        $returnAjaxArray = [];
+
+        foreach ($returnArray as $key => $value){
+            $returnAjaxArray[] = ['id' => $key, 'text' => $value];
+        }
+
+        return $returnAjaxArray;
     }
 }

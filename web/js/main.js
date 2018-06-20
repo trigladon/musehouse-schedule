@@ -14,9 +14,6 @@ function onClickMonth(currentDate, changes, whtsh) {
         },
         success: function (data) {
             $('#mainCalendar').html(data);
-            console.log(currentDate);
-            console.log(changes);
-            console.log(whtsh);
         },
         error: function () {
             alert('Error!!!');
@@ -54,7 +51,7 @@ $(function() {
         var that = $(this);
         var id = that.data('id');
         var name = that.data('name');
-        console.log(id, name);
+
         $('.upfield').val(name);
         $('.upfieldId').val(id);
 
@@ -89,7 +86,7 @@ $(function () {
 
 $(document).ready(function () {
     $('body').on('click', '.popup-addLesson', function(e) {
-        console.log('zbs');
+
         $('#addLesson-form')[0].reset();
         $('#lessonIdToUpdate').val('');
 
@@ -184,7 +181,7 @@ $(document).on('beforeSubmit', '#addLesson-form', function () {
         },
         error: function (data) {
             $('#addLesson-confirm').prop('disabled', false);
-            console.log(data);
+
         }
     });
     return false; //reject the usual form submit
@@ -234,7 +231,7 @@ function showLayer(layerName, qntlessons, week)
         $('#iconChange'+layerName).replaceWith('<i id="iconChange'+layerName+'" class="fa fa-caret-up iconShowHide" aria-hidden="true"></i>');
         $('#showMoreActions'+layerName).attr('onclick',  'hideLayer('+layerName+', '+qntlessons+', '+week+')');
         var weeks = document.getElementsByTagName("li");
-        console.log(weeks);
+
         for (var i = 0; i < weeks.length; i++) {
             var cell = weeks[i].getAttribute("week");
             if ( cell == week ) {
@@ -253,7 +250,7 @@ function hideLayer(layerName, qntlessons, week)
         $('#iconChange'+layerName).replaceWith('<i id="iconChange'+layerName+'" class="fa fa-caret-down iconShowHide" aria-hidden="true"></i>');
         $('#showMoreActions'+layerName).attr('onclick',  'showLayer('+layerName+', '+qntlessons+', '+week+')');
         var weeks = document.getElementsByTagName("li");
-        console.log(weeks);
+
         for (var i = 0; i < weeks.length; i++) {
             var cell = weeks[i].getAttribute("week");
             if ( cell == week ) {
@@ -297,7 +294,6 @@ $(document).on('click', '#lesson-delete', function (event) {
     $('#lessonType').replaceWith($(this).attr('lessonType')+'<img src="/images/icons/'+$(this).attr('lessonIcon')+'" class="icon_reg" style="margin: 0 5px">');
 
     window.lessonId = $(this).attr('lessonId');
-    console.log(window.lessonId);
 
     $('#delete-confirm').click(function(e) {
         $("#delete-confirm").prop("disabled", true);
@@ -333,14 +329,14 @@ $(document).on('click', '#lesson-edit', function (event) {
     $('#addLesson-form')[0].reset();
     var lessonId = $(this).attr('lessonId');
     var user_id = $(this).attr('user_id');
-    console.log(lessonId);
+
 
     $.ajax({
         url: 'calendar',
         type: 'post',
         data: {updateLesson: lessonId, user_id: user_id},
         success: function (data) {
-            console.log(data);
+
             var modal = $('#modal-addLesson').modal('show');
             modal.find('.modal-body').load($('.modal-dialog'));
             $('.headerLessonCalendarForm').text('Update Lesson!');
@@ -351,10 +347,16 @@ $(document).on('click', '#lesson-edit', function (event) {
 
             $('#datetimepicker5').val(data.action_date);
             $('#datetimepicker6').val(data.lesson_start);
-            $('#datetimepicker7').val(data.lesson_finish);
             $('#comment').val(data.comment);
             $('#lessonIdToUpdate').val(data.id);
             $('#lessonUserId').val(data.user_id);
+
+            $('#addlessonform-lesson_length').empty().trigger("change");
+            $("#addlessonform-lesson_length").select2({
+                data: data.lessonLength
+            }).trigger('change.select2');
+
+            $("#addlessonform-lesson_length").select2({ width: '100%' }).val(data.lesson_length_type).trigger('change.select2');
 
             $('#addlessonform-student_id').empty().trigger("change");
             $("#addlessonform-student_id").select2({
@@ -381,6 +383,15 @@ $(document).on('click', '#lesson-edit', function (event) {
                 width: '100%'
             });
 
+            $('#addlessonform-lesson_length').select2({
+                escapeMarkup: function (text) { return text; },
+                placeholder: 'Choose...',
+                theme: 'bootstrap',
+                allowClear: true,
+                minimumResultsForSearch: Infinity,
+                width: '100%'
+            });
+
             $('#addlessonform-instricon_id').select2({
                 escapeMarkup: function (text) { return text; },
                 placeholder: 'Type of the Lesson',
@@ -401,7 +412,7 @@ $(document).on('click', '#lesson-edit', function (event) {
 
         },
         error: function (data) {
-            console.log(data);
+
         }
     });
 
@@ -419,8 +430,6 @@ function onClickChangeMonth(currentDate, changes) {
         },
         success: function (data) {
             $('#mainStatistics').html(data);
-            console.log(currentDate);
-            // console.log(changes);
         },
         error: function () {
             alert('Error!!!');
@@ -495,7 +504,6 @@ $(document).ready(function(){
     $("#w0").on("change", function() {
         var role = $(this).val();
         if(role == 'Teacher' || 'Master'){
-            console.log(role);
             var hideElement = document.getElementById('addStudentForm');
             hideElement.style.display = 'none';
             var showElement = document.getElementById('inviteForm');
@@ -549,3 +557,22 @@ $('#editProfile').click(function() {
 $('#changePass').click(function() {
     $('#changePass').prop('disabled', true);
 });
+
+function showBT(userId, action){
+
+    if (action === 'open') {
+        $('.'+userId+'bt').css('display', 'table-cell');
+        $('.'+userId+'arrow').attr('onClick','showBT('+userId+', \'close\')').html('(hide <i class="fa fa-caret-up" aria-hidden="true"></i>)');
+    }
+    if (action === 'close') {
+        $('.'+userId+'bt').css('display', 'none');
+        $('.'+userId+'arrow').attr('onClick','showBT('+userId+', \'open\')').html('(show <i class="fa fa-caret-down" aria-hidden="true"></i>)');
+    }
+}
+
+function setBusinessType(teacherId, btrow = null) {
+    var modal = $('#modalTeacherBT');
+    $('#modalTeacherBTForm')[0].reset();
+    $('#teacherbusinesstypeform-teacher_id').val(teacherId);
+    modal.modal('show');
+}

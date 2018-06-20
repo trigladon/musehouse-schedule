@@ -7,6 +7,10 @@
  */
 
 /* @var $this yii\web\View */
+/** @var $lessonLength array */
+/** @var $studentsList array */
+/** @var $listUserLessons array */
+/** @var $modelAddLesson \app\modules\teacher\forms\AddLessonForm */
 
 use yii\helpers\Html;
 use app\components\CalendarWidget;
@@ -21,7 +25,7 @@ $this->title = 'Calendar';
 
 <div class="site-calendar">
     <div id="mainCalendar">
-        <?=CalendarWidget::widget([
+        <?= CalendarWidget::widget([
             'calendarArray' => $calendarArray,
             'monthToShow' => $monthToShow,
             'whtsh' => $whtsh,
@@ -71,10 +75,16 @@ $form = ActiveForm::begin([
         'placeholder' => 'Start Time',
     ])?>
 
-    <?= $form->field($modelAddLesson, 'lesson_finish')->textInput([
-        'id' => 'datetimepicker7',
-        'placeholder' => 'Finish Time',
-    ])?>
+    <?= $form->field($modelAddLesson, 'lesson_length')->widget(Select2::className(), [
+        'data' => $lessonLength,
+        'theme' => Select2::THEME_BOOTSTRAP,
+        'hideSearch' => true,
+        'options' => ['placeholder' => 'Choose...'],
+        'pluginOptions' => [
+            'escapeMarkup' => $escape2,
+            'allowClear' => true,
+        ],
+    ]);?>
 
     <?= $form->field($modelAddLesson, 'student_id')->widget(Select2::className(), [
         'data' => $studentsList,

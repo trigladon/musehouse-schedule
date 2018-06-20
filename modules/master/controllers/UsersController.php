@@ -10,6 +10,7 @@ namespace app\modules\master\controllers;
 
 use app\models\AuthItem;
 use app\modules\master\forms\StudentAddForm;
+use app\modules\master\forms\TeacherBusinessTypeForm;
 use app\modules\master\forms\UserUpdateForm;
 use yii\web\Controller;
 use app\modules\master\forms\InviteUserForm;
@@ -41,6 +42,7 @@ class UsersController extends Controller
         $model = new InviteUserForm();
         $userUpdate = new UserUpdateForm();
         $studentAddForm = new StudentAddForm();
+        $businessTypeForm = new TeacherBusinessTypeForm();
 
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {
@@ -54,6 +56,16 @@ class UsersController extends Controller
 
             if ($studentAddForm->reg()){
                 Yii::$app->session->setFlash('Success', 'Student Added');
+            }else{
+                Yii::$app->session->setFlash('Error', 'Something went wrong!');
+            }
+            return $this->refresh();
+        }
+
+        if ($businessTypeForm->load(Yii::$app->request->post()) && $businessTypeForm->validate()){
+
+            if ($businessTypeForm->saveBT()){
+                Yii::$app->session->setFlash('Success', 'Business type added.');
             }else{
                 Yii::$app->session->setFlash('Error', 'Something went wrong!');
             }
@@ -88,6 +100,7 @@ class UsersController extends Controller
         $listUserLessons = Instrument::lessonListProfile();
         $role_list = AuthItem::getRoleList();
         $teacherList = User::teacherList();
+        $businessTypes = \app\modules\master\models\TeacherBusinessType::getBusinessTypeList();
 
         return $this->render('index', [
             'model' => $model,
@@ -97,6 +110,8 @@ class UsersController extends Controller
             'role_list' => $role_list,
             'studentAddForm' => $studentAddForm,
             'teacherList' => $teacherList,
+            'businessTypeForm' => $businessTypeForm,
+            'businessTypes' => $businessTypes,
         ]);
     }
 }

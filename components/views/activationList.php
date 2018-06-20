@@ -8,16 +8,9 @@
 
 use yii\helpers\Html;
 use app\models\User;
-use yii\bootstrap\Modal;
-use yii\bootstrap\ActiveForm;
-use kartik\select2\Select2;
-use yii\web\JsExpression;
 
-/* @var $userUpdate app\modules\master\forms\UserUpdateForm */
+/** @var $businessTypeForm \app\modules\master\forms\TeacherBusinessTypeForm */
 
-ini_set('xdebug.var_display_max_depth', 15);
-ini_set('xdebug.var_display_max_children', 256);
-ini_set('xdebug.var_display_max_data', 1024);
 ?>
 <?php if (Yii::$app->session->hasFlash('Error')): ?>
     <div class="alert alert-warning alert-dismissable">
@@ -32,7 +25,7 @@ ini_set('xdebug.var_display_max_data', 1024);
         <?= Yii::$app->session->getFlash('Success') ?>
     </div>
 <?php endif;?>
-<table class="table table-hover table-striped table-bordered" style="margin-bottom: -1px;">
+<table class="table table-hover table-bordered" style="margin-bottom: -1px;">
     <tr><td colspan="9" style="text-align: center;color: #2e498b; font-size: 18px; border-bottom-width: 2px; border-bottom-color: #2e498b;">Masters (Admin users)</td></tr>
     <tr>
         <th class="text-center">#</th>
@@ -67,7 +60,7 @@ ini_set('xdebug.var_display_max_data', 1024);
                 $userInstr[] = $lessons['instricon']['id'];
             endforeach;
             echo '</td>';
-            echo '<td style="vertical-align: middle; text-align: center">DPP/ZL</td>';
+            echo '<td style="vertical-align: middle; text-align: center">DPP/ZL<br><small class="cursor text-info '.$user->id.'arrow" onclick="showBT('.$user->id.', \'open\')">(show <i class="fa fa-caret-down" aria-hidden="true"></i>)</small></td>';
             echo '<td class="text-center" style="vertical-align: middle">
             <i class="fa fa-user fa-lg '.$classReg.'" aria-hidden="true"></i>
             </td>';
@@ -105,6 +98,9 @@ ini_set('xdebug.var_display_max_data', 1024);
                     'data-name' => $user->getUsername(),
                     'id'          => 'popupModal',
                     ]);
+            echo '</td></tr><tr><td class="'.$user->id.'bt text-center" colspan="9" style="display: none">';
+            echo 'No data found.';
+            echo '<br><span role="button" onclick="setBusinessType('.$user->id.')">Add info <i class="fa fa-plus text-success" aria-hidden="true"></i></span>';
             echo '</td></tr>';
         endif;
     }
@@ -151,7 +147,7 @@ ini_set('xdebug.var_display_max_data', 1024);
             endforeach;
             echo '</td>';
 
-            echo '<td style="vertical-align: middle; text-align: center">DPP/ZL</td>';
+            echo '<td style="vertical-align: middle; text-align: center">DPP/ZL<br><small class="cursor text-info '.$user->id.'arrow" onclick="showBT('.$user->id.', \'open\')">(show <i class="fa fa-caret-down" aria-hidden="true"></i>)</small></td>';
 
             echo '<td class="text-center" style="vertical-align: middle">
             <i class="fa fa-user fa-lg '.$classReg.'" aria-hidden="true"></i>
@@ -191,7 +187,7 @@ ini_set('xdebug.var_display_max_data', 1024);
                     'data-name' => $user->getUsername(),
                     'id'          => 'popupModal',
                 ]);
-            echo '</td></tr>';
+            echo '</td></tr><tr><td class="'.$user->id.'bt" colspan="9" style="display: none">sometext</td></tr>';
 
         endif;
         ?>
@@ -202,7 +198,7 @@ ini_set('xdebug.var_display_max_data', 1024);
         </tr>
     <?php endif;?>
 </table>
-<table class="table table-hover table-striped table-bordered">
+<table class="table table-hover table-bordered">
     <tr><td colspan="8"
             style="
                 text-align: center;
@@ -273,87 +269,10 @@ ini_set('xdebug.var_display_max_data', 1024);
     <?php endif;?>
 </table>
 
+<?php
 
-<?php Modal::begin([
-    'header' => '<h3 class="text-warning"><i class="icon fa fa-exclamation-triangle"></i> Warning!</h3>',
-    'id'     => 'modal-delete',
-    'size' => 'modal-sm',
-    'footer' => Html::a('Delete', '', ['class' => 'btn btn-danger', 'id' => 'delete-confirm']),
-]); ?>
+require '../templates/deleteConfirmationModal.php';
+require '../templates/userUpdateFormModal.php';
+require '../templates/teacherBusinessTypeModal.php';
 
-    <p class="modal-message">Do you really want to delete <strong class='text-danger modal-name'></strong>?</p>
-
-<?php Modal::end(); ?>
-
-<?php Modal::begin([
-    'header' => '<h4 class="text-info">User Information</h4>',
-    'id'     => 'modalUserEdit',
-    'size' => 'modal-sm',
-//    'footer' => Html::a('Delete', '', ['class' => 'btn btn-danger', 'id' => 'delete-confirm']),
-]); ?>
-
-<?php $form = ActiveForm::begin([
-    'id' => 'userUpdateForm_Management',
-    'layout' => 'horizontal',
-    'enableClientValidation' => true,
-    'enableAjaxValidation' => false,
-    'fieldConfig' => [
-        'template' => "<div>{label}</div><div class=\"col-lg-12\">{input}</div>{error}",
-        'labelOptions' => ['class' => 'col-lg-12 control-label', 'style' => 'text-align: left'],
-        'inputOptions' => ['class' => 'form-control'],
-    ],
-]); ?>
-
-    <?= $form->field($userUpdate, 'first_name')->textInput([
-        'id' => 'first_name',
-    ])?>
-
-    <?= $form->field($userUpdate, 'last_name')->textInput([
-        'id' => 'last_name',
-    ])?>
-
-    <?= $form->field($userUpdate, 'phone')->textInput([
-        'id' => 'phone',
-    ])?>
-
-    <div id='upFormLessons' style="display: none">
-    <?php
-    $escape2 = new JsExpression("function(m) { return m; }");
-    echo $form->field($userUpdate, 'lessons')->widget(Select2::className(), [
-        'id' => 'lessons',
-        'data' => $listUserLessons,
-        'theme' => Select2::THEME_BOOTSTRAP,
-        'hideSearch' => true,
-        'options' => ['placeholder' => 'Type of the Lesson', 'multiple' => true],
-        'pluginOptions' => [
-            'escapeMarkup' => $escape2,
-            'allowClear' => true,
-            'closeOnSelect' =>false,
-        ],
-    ])->label('Lessons');?>
-    </div>
-
-    <div id='upFormTeachers' style="display: none">
-        <?= $form->field($userUpdate, 'teachers')->label('Teachers')->widget(Select2::className(), [
-            'data' => $teacherList,
-            'theme' => Select2::THEME_BOOTSTRAP,
-            'hideSearch' => true,
-            'options' => ['placeholder' => 'Choose the Teacher', 'multiple' => true],
-        ]); ?>
-    </div>
-
-    <?= Html::activeHiddenInput($userUpdate,'user_id', [
-        'id' => 'user_idInput',
-    ]);?>
-    <?= Html::activeHiddenInput($userUpdate,'role', [
-        'id' => 'user_role',
-    ]);?>
-
-    <div class="form-group">
-        <div class="col-lg-2">
-            <?= Html::submitButton('<i class="fa fa-pencil-square-o" aria-hidden="true"></i> Update Information', ['class' => 'btn btn-warning', 'id' => 'editUserButton'])?>
-        </div>
-    </div>
-    <?php ActiveForm::end(); ?>
-
-<?php Modal::end(); ?>
+?>

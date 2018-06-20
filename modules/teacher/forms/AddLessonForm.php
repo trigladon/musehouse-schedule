@@ -23,6 +23,7 @@ class AddLessonForm extends Model
 
     public $lesson_start;
     public $lesson_finish;
+    public $lesson_length;
     public $lesson_start_repeat;
     public $comment;
     public $user_id;
@@ -35,7 +36,7 @@ class AddLessonForm extends Model
     public function rules()
     {
         return [
-            [['lesson_start', 'lesson_finish', 'statusschedule_id', 'action_date', 'instricon_id'], 'required'],
+            [['lesson_start', 'lesson_length', 'statusschedule_id', 'action_date', 'instricon_id'], 'required'],
             [['user_id', 'instricon_id', 'statusschedule_id', 'student_id'], 'integer'],
             [['instricon_id'], 'exist', 'skipOnError' => true, 'targetClass' => Instrument::className(), 'targetAttribute' => ['instricon_id' => 'id']],
             [['statusschedule_id'], 'exist', 'skipOnError' => true, 'targetClass' => Statusschedule::className(), 'targetAttribute' => ['statusschedule_id' => 'id']],
@@ -44,7 +45,7 @@ class AddLessonForm extends Model
             [['comment'], 'string'],
             [['action_date'], 'string'],
             [['id'], 'number'],
-            ['lesson_finish', 'validateLessonFinish', 'skipOnEmpty' => false],
+            ['lesson_length', 'validateLessonLength', 'skipOnEmpty' => false],
             ['student_id', 'validateStudent', 'skipOnEmpty' => false],
         ];
     }
@@ -54,6 +55,7 @@ class AddLessonForm extends Model
         return [
             'lesson_start' => 'Start Time',
             'lesson_finish' => 'Finish Time',
+            'lesson_length' => 'Lesson Length',
             'statusschedule_id' => 'Status',
             'instricon_id' => 'Type of the Lesson',
             'comment' => 'Comments',
@@ -68,16 +70,25 @@ class AddLessonForm extends Model
         }
     }
 
-    public function validateLessonFinish(){
+    public function validateLessonLength(){
+
+        $lessonLengthArray = [Userschedule::LESSON_SHORT, Userschedule::LESSON_MIDDLE, Userschedule::LESSON_LONG];
+
+        if (!in_array($this->lesson_length, $lessonLengthArray)) {
+            $this->addError('lesson_length', 'Finish Time shouldn\'t be earlier than Start Time');
+        }
+
+
         $action_date_save = explode('-', $this->action_date);
         $lesson_start_save = explode(':', $this->lesson_start);
-        $lesson_finish_save= explode(':', $this->lesson_finish);
+//        $lesson_finish_save= explode(':', $this->lesson_finish);
 
         $lesson_start = mktime($lesson_start_save[0], $lesson_start_save[1], 0, $action_date_save[1], $action_date_save[0], $action_date_save[2]);
-        $lesson_finish = mktime($lesson_finish_save[0], $lesson_finish_save[1], 0, $action_date_save[1], $action_date_save[0], $action_date_save[2]);
+//        $lesson_finish = mktime($lesson_finish_save[0], $lesson_finish_save[1], 0, $action_date_save[1], $action_date_save[0], $action_date_save[2]);
+        $lesson_finish = $lesson_start + $this->lesson_length*60;
 
         if ($lesson_start > $lesson_finish){
-            $this->addError('lesson_finish', 'Finish Time shouldn\'t be earlier than Start Time');
+            $this->addError('lesson_length', 'Finish Time shouldn\'t be earlier than Start Time');
         }
 
         $mergeTime = Userschedule::find()
@@ -105,7 +116,7 @@ class AddLessonForm extends Model
 
             $mergeLesson = $date.' '.$start.'-'.$finish;
 
-            $this->addError('lesson_finish', 'This time is not free. You have already had the lesson fo this time: '.$mergeLesson);
+            $this->addError('lesson_length', 'This time is not free. You have already had the lesson fo this time: '.$mergeLesson);
             $this->addError('lesson_start', '');
         }elseif ($prevLesson && $lesson_start > $prevLesson->lesson_start && $lesson_start < $prevLesson->lesson_finish){
             $date = date('d-m-Y', $prevLesson->lesson_start);
@@ -114,7 +125,7 @@ class AddLessonForm extends Model
 
             $mergeLesson = $date.' '.$start.'-'.$finish;
 
-            $this->addError('lesson_finish', 'This time is not free. You have already had the lesson fo this time: '.$mergeLesson);
+            $this->addError('lesson_length', 'This time is not free. You have already had the lesson fo this time: '.$mergeLesson);
             $this->addError('lesson_start', '');
         }
     }
@@ -123,12 +134,15 @@ class AddLessonForm extends Model
 
         $action_date_save = explode('-', $this->action_date);
         $lesson_start_save = explode(':', $this->lesson_start);
-        $lesson_finish_save= explode(':', $this->lesson_finish);
+//        $lesson_finish_save= explode(':', $this->lesson_finish);
+        $lesson_start = mktime($lesson_start_save[0], $lesson_start_save[1], 0, $action_date_save[1], $action_date_save[0], $action_date_save[2]);
+        $lesson_finish = $lesson_start + $this->lesson_length*60;
 
         if ($this->id){
             if (Yii::$app->db->createCommand()->update('userschedule', [
-                'lesson_start' => mktime($lesson_start_save[0], $lesson_start_save[1], 0, $action_date_save[1], $action_date_save[0], $action_date_save[2]),
-                'lesson_finish' => mktime($lesson_finish_save[0], $lesson_finish_save[1], 0, $action_date_save[1], $action_date_save[0], $action_date_save[2]),
+                'lesson_start' => $lesson_start,
+                'lesson_length_type' => $this->lesson_length,
+                'lesson_finish' => $lesson_finish,
                 'comment' => $this->comment,
                 'student_id' => $this->student_id,
                 'instricon_id' => $this->instricon_id,
@@ -143,15 +157,16 @@ class AddLessonForm extends Model
         }else{
             $lesson = new Userschedule();
 
-            $lesson->lesson_start = mktime($lesson_start_save[0], $lesson_start_save[1], 0, $action_date_save[1], $action_date_save[0], $action_date_save[2]);
-            $lesson->lesson_finish = mktime($lesson_finish_save[0], $lesson_finish_save[1], 0, $action_date_save[1], $action_date_save[0], $action_date_save[2]);
+            $lesson->lesson_start = $lesson_start;
+            $lesson->lesson_length_type = $this->lesson_length;
+            $lesson->lesson_finish = $lesson_finish;
             $lesson->comment = $this->comment;
             $lesson->student_id = $this->student_id;
             $lesson->instricon_id = $this->instricon_id;
             $lesson->statusschedule_id = $this->statusschedule_id;
             $lesson->user_id = Yii::$app->user->identity->getId();
 
-            $lesson->save()?true:false;
+            return $lesson->save()?true:false;
         }
 
     }
