@@ -3,7 +3,7 @@
 use app\models\User;
 use app\modules\master\models\Instrument;
 use app\modules\master\models\Userschedule;
-use kartik\form\ActiveForm;
+use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\select2\Select2;

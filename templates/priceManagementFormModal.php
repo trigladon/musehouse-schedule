@@ -1,7 +1,7 @@
 <?php
 
 use yii\bootstrap\Modal;
-use kartik\form\ActiveForm;
+use yii\bootstrap\ActiveForm;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\web\JsExpression;
