@@ -224,4 +224,12 @@ class Instrument extends ActiveRecord
 
         return $lesson_list;
     }
+
+    public static function getLessonById($id)
+    {
+        /** @var Instrument $obj */
+        $obj = Instrument::findOne($id);
+        return '<img src="/images/icons/'.$obj->icon.'" class="dropBoxIcon">'.$obj->instr_name;
+    }
+
 }

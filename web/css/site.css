@@ -521,7 +521,7 @@ ul.editIcons a{
     border-collapse: collapse;
 }
 
-.statTable td, th{
+.statTable td, .statTable th{
     border: solid 1px #e2e2e2;
 }
 
@@ -544,4 +544,8 @@ ul.editIcons a{
     border-radius: 6px;
     color: white;
     font-weight: bold;
+}
+
+.verticalAl {
+    vertical-align: middle!important;
 }

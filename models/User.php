@@ -389,4 +389,10 @@ class User extends ActiveRecord implements IdentityInterface
 
         return $query;
     }
+
+    public static function getUsernameById($id)
+    {
+        $user = User::findOne($id);
+        return $user->getUsername();
+    }
 }

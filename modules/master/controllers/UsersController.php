@@ -54,7 +54,6 @@ class UsersController extends Controller
         }
 
         if ($studentAddForm->load(Yii::$app->request->post()) && $studentAddForm->validate()){
-            var_dump(Yii::$app->request->post());
 
             if ($studentAddForm->reg()){
                 Yii::$app->session->setFlash('Success', 'Student Added');

@@ -50,7 +50,7 @@ class StudentTeacherPricing extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['student_id', 'teacher_id', 'instrument_id', 'target_qnt_lessons', 'short_full_money', 'short_clean_money', 'short_tax_money', 'middle_full_money', 'middle_clean_money', 'middle_tax_money', 'long_full_money', 'long_clean_money', 'long_tax_money', 'date_from', 'updated_at', 'created_at'], 'required'],
+            [['student_id', 'teacher_id', 'instrument_id', 'target_qnt_lessons', 'short_full_money', 'short_clean_money', 'short_tax_money', 'middle_full_money', 'middle_clean_money', 'middle_tax_money', 'long_full_money', 'long_clean_money', 'long_tax_money', 'date_from'], 'required'],
             [['student_id', 'teacher_id', 'instrument_id', 'target_qnt_lessons'], 'integer'],
             [['short_full_money', 'short_clean_money', 'short_tax_money', 'middle_full_money', 'middle_clean_money', 'middle_tax_money', 'long_full_money', 'long_clean_money', 'long_tax_money'], 'number'],
             [['date_from', 'updated_at', 'created_at'], 'safe'],
@@ -123,5 +123,64 @@ class StudentTeacherPricing extends \yii\db\ActiveRecord
                 'value' => new Expression('NOW()'),
             ]
         ];
+    }
+
+    public static function getUnsetPriceLessons()
+    {
+        $query = Userschedule::find()
+            ->select([
+                'userschedule.user_id',
+                'userschedule.student_id',
+                'userschedule.instricon_id',
+                'MIN(userschedule.lesson_start) as lessonTimeStart',
+                'MIN(stp.date_from) as price_from'
+            ])
+            ->leftJoin('student_teacher_pricing as stp', 'userschedule.user_id = stp.teacher_id and userschedule.student_id = stp.student_id and userschedule.instricon_id = stp.instrument_id')
+            ->where(['and',
+                ['>', 'userschedule.student_id', 0],
+                ['not in', 'userschedule.instricon_id', [27]]
+            ])
+            ->groupBy('userschedule.user_id, userschedule.student_id, userschedule.instricon_id')
+            ->orderBy('lessonTimeStart')
+            ->distinct()
+            ->asArray()
+            ->all();
+
+        $return_array = [];
+
+        foreach ($query as $item) {
+            if ($item['lessonTimeStart'] < strtotime($item['price_from']) || is_null($item['price_from'])) $return_array[] = $item;
+        }
+
+        return $return_array;
+    }
+
+    public function getDateFrom()
+    {
+        $date = new \DateTime($this->date_from);
+        return $date->format('d-m-Y');
+    }
+
+    public static function getPricesFilter()
+    {
+        $get = Yii::$app->request->get();
+        $filterArray = [];
+        if ($get){
+            if (!empty($get['filterTeacher'])) $filterArray['teacher_id'] = $get['filterTeacher'];
+            if (!empty($get['filterStudent'])) $filterArray['student_id'] = $get['filterStudent'];
+            if (!empty($get['filterLesson'])) $filterArray['instrument_id'] = $get['filterLesson'];
+        }
+
+        $query = StudentTeacherPricing::find();
+
+        if ($filterArray) {
+            $query = $query
+                ->where($filterArray);
+        }
+
+        $query = $query
+            ->all();
+
+        return $query;
     }
 }

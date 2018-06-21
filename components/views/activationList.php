@@ -293,8 +293,8 @@ use app\models\User;
 
 <?php
 
-require '../templates/deleteConfirmationModal.php';
-require '../templates/userUpdateFormModal.php';
-require '../templates/teacherBusinessTypeModal.php';
+require Yii::getAlias('@app').'/templates/deleteConfirmationModal.php';
+require Yii::getAlias('@app').'/templates/userUpdateFormModal.php';
+require Yii::getAlias('@app').'/templates/teacherBusinessTypeModal.php';
 
 ?>

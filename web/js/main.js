@@ -284,7 +284,7 @@ $(document).on('click', '#filter-clear', function (event) {
             }
         },
         error: function () {
-            alert('error appeared')
+            alert('error appeared');
         }
     });
 });
@@ -508,7 +508,7 @@ $(document).on('click', '#editUser', function (event) {
 });
 
 $(document).ready(function(){
-    $("#w0").on("change", function() {
+    $(".site-inviteUser #w0").on("change", function() {
         var role = $(this).val();
         if(role == 'Teacher' || 'Master'){
             var hideElement = document.getElementById('addStudentForm');
@@ -621,7 +621,139 @@ function delBusinessType(btId) {
     });
 }
 
-function setPricePolicy() {
+function showPricePolicy() {
+    var modal = $('#modalPriceManagement');
+    $('#pricing_form')[0].reset();
+    $("#pricingform-teacherid").select2().val('').trigger('change.select2');
+    $('#pricingform-teacherid').select2({
+        escapeMarkup: function (text) { return text; },
+        placeholder: 'Choose the Teacher',
+        theme: 'bootstrap',
+        allowClear: true,
+        width: '100%',
+    });
+
+    $("#pricingform-studentid").select2().val('').trigger('change.select2');
+    $('#pricingform-studentid').select2({
+        escapeMarkup: function (text) { return text; },
+        placeholder: 'Choose the Student',
+        theme: 'bootstrap',
+        allowClear: true,
+        width: '100%',
+    });
+
+    modal.modal('show');
+}
+
+function setPricePolicy(teacherId, studentId, lessonId, date) {
+    $('#pricing_form')[0].reset();
+
+    $('#pricingform-instrumentid').val(lessonId);
+    $('#datetimepicker5').val(date);
+
+    $("#pricingform-teacherid").select2().val(teacherId).trigger('change.select2');
+    $('#pricingform-teacherid').select2({
+        escapeMarkup: function (text) { return text; },
+        placeholder: 'Choose the Teacher',
+        theme: 'bootstrap',
+        allowClear: true,
+        width: '100%',
+    });
+
+    $("#pricingform-studentid").select2().val(studentId).trigger('change.select2');
+    $('#pricingform-studentid').select2({
+        escapeMarkup: function (text) { return text; },
+        placeholder: 'Choose the Student',
+        theme: 'bootstrap',
+        allowClear: true,
+        width: '100%',
+    });
+
     var modal = $('#modalPriceManagement');
     modal.modal('show');
 }
+
+function deletePrice(priceId) {
+    $.ajax({
+        url: '/master/price/del-price',
+        type: 'post',
+        data: {
+            id: priceId
+        },
+        success: function (data) {
+            window.location.reload();
+        },
+        error: function () {
+            alert('Error!!!');
+        }
+    });
+}
+
+function editPrice(priceId) {
+    $.ajax({
+        url: '/master/price/edit-price',
+        type: 'post',
+        data: {
+            id: priceId
+        },
+        success: function (data) {
+            var priceData = data.result;
+
+            $('#pricing_form')[0].reset();
+
+            $('#pricingform-id').val(priceData.id);
+            $('#pricingform-instrumentid').val(priceData.instrument_id);
+            $('#pricingform-target').val(priceData.target_qnt_lessons);
+            $('#pricingform-s_clean').val(priceData.short_clean_money);
+            $('#pricingform-s_tax').val(priceData.short_tax_money);
+            $('#pricingform-m_clean').val(priceData.middle_clean_money);
+            $('#pricingform-m_tax').val(priceData.middle_tax_money);
+            $('#pricingform-l_clean').val(priceData.long_clean_money);
+            $('#pricingform-l_tax').val(priceData.long_tax_money);
+
+            $('#datetimepicker5').val(data.date_from);
+
+            $("#pricingform-teacherid").select2().val(priceData.teacher_id).trigger('change.select2');
+            $('#pricingform-teacherid').select2({
+                escapeMarkup: function (text) { return text; },
+                placeholder: 'Choose the Teacher',
+                theme: 'bootstrap',
+                allowClear: true,
+                width: '100%',
+            });
+
+            $("#pricingform-studentid").select2().val(priceData.student_id).trigger('change.select2');
+            $('#pricingform-studentid').select2({
+                escapeMarkup: function (text) { return text; },
+                placeholder: 'Choose the Student',
+                theme: 'bootstrap',
+                allowClear: true,
+                width: '100%',
+            });
+
+            var modal = $('#modalPriceManagement');
+            modal.modal('show');
+        },
+        error: function () {
+            alert('Error!!!');
+        }
+    });
+}
+
+$(function() {
+    $('.popup-delete-price').click(function(e) {
+        e.preventDefault();
+        var modal = $('#modal-delete').modal('show');
+        modal.find('.modal-body').load($('.modal-dialog'));
+        $('#delete-confirm').prop('disabled', false);
+        var that = $(this);
+        var id = that.data('id');
+        modal.find('.modal-name').text('this data');
+
+        $('#delete-confirm').click(function(e) {
+            e.preventDefault();
+            $('#delete-confirm').prop('disabled', true);
+            deletePrice(id);
+        });
+    });
+});
