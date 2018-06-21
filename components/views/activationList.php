@@ -13,19 +13,6 @@ use app\models\User;
 /** @var $bt \app\modules\master\models\TeacherBusinessType */
 
 ?>
-<?php if (Yii::$app->session->hasFlash('Error')): ?>
-    <div class="alert alert-warning alert-dismissable">
-        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-        <h4><i class="icon fa fa-exclamation-triangle"></i> Warning!</h4>
-        <?= Yii::$app->session->getFlash('Error') ?>
-    </div>
-<?php elseif (Yii::$app->session->hasFlash('Success')): ?>
-    <div class="alert alert-success alert-dismissable">
-        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-        <h4><i class="icon fa fa-hand-peace-o"></i> Success!</h4>
-        <?= Yii::$app->session->getFlash('Success') ?>
-    </div>
-<?php endif;?>
 <table class="table table-hover table-bordered" style="margin-bottom: -1px;">
     <tr><td colspan="9" style="text-align: center;color: #2e498b; font-size: 18px; border-bottom-width: 2px; border-bottom-color: #2e498b;">Masters (Admin users)</td></tr>
     <tr>
