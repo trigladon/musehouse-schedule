@@ -549,3 +549,25 @@ ul.editIcons a{
 .verticalAl {
     vertical-align: middle!important;
 }
+
+.lessonLevelReport {
+    border-left: 1px solid #ededee;
+    border-right: 1px solid #ededee;
+    margin-bottom: 20px;
+}
+
+.progress {
+    padding: 0;
+}
+
+.lessonListReport {
+    font-size: small;
+}
+
+.currencyRepLessonList {
+    font-size: xx-small;
+}
+
+.finishedMoneyRep {
+    font-weight: bold;
+}

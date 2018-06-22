@@ -49,6 +49,7 @@ AppAsset::register($this);
                 ['label' => 'Type of Lessons', 'url' => ['/master/instrument']],
                 ['label' => 'User Management', 'url' => ['/master/users']],
                 ['label' => 'Price Management', 'url' => ['/pricing']],
+                ['label' => 'Admin Report', 'url' => ['/master/report']],
             ]];
         }
         $menuItems[] = [

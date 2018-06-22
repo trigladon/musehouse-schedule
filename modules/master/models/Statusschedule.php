@@ -72,4 +72,21 @@ class Statusschedule extends \yii\db\ActiveRecord
 
         return $status_list;
     }
+
+    public static function getLessonStatuses()
+    {
+        $query = self::find()->all();
+        $returnArray =[];
+
+        /** @var Statusschedule $item */
+        foreach ($query as $item)
+        {
+            $returnArray[$item->id] = [
+                'color' => $item->color,
+                'name' => $item->name
+            ];
+        }
+
+        return $returnArray;
+    }
 }

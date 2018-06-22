@@ -146,10 +146,10 @@ $escape = new JsExpression("function(m) { return m; }");
             <?=Userschedule::LESSON_SHORT ?> minutes lesson (short)
         </th>
         <th class="text-center" colspan="2" style="width:33%">
-            <?=Userschedule::LESSON_MIDDLE ?> minutes lesson (short)
+            <?=Userschedule::LESSON_MIDDLE ?> minutes lesson (middle)
         </th>
         <th class="text-center" colspan="2" style="width:33%">
-            <?=Userschedule::LESSON_LONG ?> minutes lesson (short)
+            <?=Userschedule::LESSON_LONG ?> minutes lesson (long)
         </th>
     </tr>
     <tr>

@@ -245,4 +245,65 @@ class Userschedule extends ActiveRecord
 
         return $returnAjaxArray;
     }
+
+    public static function getReportData()
+    {
+        $query = Userschedule::find()
+            ->select([
+                'userschedule.user_id AS teacherId',
+                'userschedule.student_id AS studentId',
+                'userschedule.instricon_id AS lessonInstrId',
+                'FROM_UNIXTIME(userschedule.lesson_start, \'%Y-%m-%d %k:%i:%s\') AS lessonStartTime',
+                'userschedule.lesson_length_type AS lessonLength',
+                'userschedule.statusschedule_id AS lessonStatus',
+                'userschedule.comment AS lessonComment',
+                'stp.date_from AS priceValidFrom',
+                'stp.target_qnt_lessons AS targetQntInMonth',
+                'stp.short_clean_money AS sC',
+                'stp.short_tax_money AS sT',
+                'stp.short_full_money AS sF',
+                'stp.middle_clean_money AS mC',
+                'stp.middle_tax_money AS mT',
+                'stp.middle_full_money AS mF',
+                'stp.long_clean_money AS lC',
+                'stp.long_tax_money AS lT',
+                'stp.long_full_money AS lF',
+                'tbt.`type` AS businessType',
+                'tbt.date_from AS btValidFrom'
+            ])
+            ->leftJoin('student_teacher_pricing AS stp', 'stp.id = (
+                    SELECT stp2.id
+                    FROM student_teacher_pricing AS stp2
+                    WHERE userschedule.user_id = stp2.teacher_id
+                    AND userschedule.student_id = stp2.student_id
+                    AND userschedule.instricon_id = stp2.instrument_id
+                    AND FROM_UNIXTIME(userschedule.lesson_start) > stp2.date_from
+                    ORDER BY stp2.date_from DESC
+                    LIMIT 1)'
+            )
+            ->leftJoin('teacher_business_type AS tbt', 'tbt.id = (
+                    SELECT tbt2.id
+                    FROM teacher_business_type AS tbt2
+                    WHERE FROM_UNIXTIME(userschedule.lesson_start) > tbt2.date_from
+                    AND userschedule.user_id = tbt2.user_id
+                    ORDER BY tbt2.date_from DESC
+                    LIMIT 1)'
+            )
+            ->where(['and',
+                ['IS NOT', 'stp.date_from', null],
+                ['IS NOT', 'tbt.type', null]
+            ])
+            ->orderBy('userschedule.lesson_start')
+            ->asArray()
+            ->all();
+
+        $returnArray = [];
+
+        foreach ($query as $item)
+        {
+            $returnArray[$item['teacherId']][$item['studentId']][$item['lessonInstrId']][$item['lessonStartTime']] = $item;
+        }
+
+        return $returnArray;
+    }
 }
