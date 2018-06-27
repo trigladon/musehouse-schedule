@@ -68,16 +68,17 @@ $this->title = 'Report';
                 $finished ? $target = number_format($targeting/$finished, 2, '.', ' ') : $target = 0;
 
                 $lessonsList .= '<div class="row lessonListReport" style="color: '.$lessonStatuses[$lessonData['lessonStatus']]['color'].';">';
-                $lessonsList .= '<div class="col-md-2 col-xs-6 text-center">'.date('d-m-Y', strtotime($lessonData['lessonStartTime'])).'</div>';
-                $lessonsList .= '<div class="col-md-2 col-xs-6 text-center">'.$lessonData['lessonLength'].' minutes</div>';
-                $lessonsList .= '<div class="col-md-1 col-xs-6 text-center">'.$lessonData['businessType'].'</div>';
-                $lessonsList .= '<div class="col-md-7 col-xs-6">';
-                    $lessonsList .= '<div class="col-md-3 col-xs-6 text-center'.$moneyColorReport_s.'">'.$lessonData[$impLetter.'C'].' <span class="currencyRepLessonList">CZK</span></div>';
-                    $lessonsList .= '<div class="col-md-3 col-xs-6 text-center'.$moneyColorReport_m.'">'.$lessonData[$impLetter.'T'].' <span class="currencyRepLessonList">CZK</span></div>';
-                    $lessonsList .= '<div class="col-md-3 col-xs-6 text-center'.$moneyColorReport_l.'">'.$lessonData[$impLetter.'F'].' <span class="currencyRepLessonList">CZK</span></div>';
-                    $lessonsList .= '<div class="col-md-3 col-xs-6 text-center">'.$lessonData[$impLetter.'F'].'</div>';
+                $lessonsList .= '<div class="col-md-2 col-xs-4 text-center">'.date('d-m-Y', strtotime($lessonData['lessonStartTime'])).'</div>';
+                $lessonsList .= '<div class="col-md-2 col-xs-4 text-center">'.$lessonData['lessonLength'].' minutes</div>';
+                $lessonsList .= '<div class="col-md-1 col-xs-4 text-center">'.$lessonData['businessType'].'</div>';
+                $lessonsList .= '<div class="col-md-7 col-xs-12">';
+                    $lessonsList .= '<div class="col-md-3 col-xs-3 text-center'.$moneyColorReport_s.'">'.$lessonData[$impLetter.'C'].' <span class="currencyRepLessonList">CZK</span></div>';
+                    $lessonsList .= '<div class="col-md-3 col-xs-3 text-center'.$moneyColorReport_m.'">'.$lessonData[$impLetter.'T'].' <span class="currencyRepLessonList">CZK</span></div>';
+                    $lessonsList .= '<div class="col-md-3 col-xs-3 text-center'.$moneyColorReport_l.'">'.$lessonData[$impLetter.'F'].' <span class="currencyRepLessonList">CZK</span></div>';
+                    $lessonsList .= '<div class="col-md-3 col-xs-3 text-center">'.$lessonData[$impLetter.'F'].'</div>';
                 $lessonsList .= '</div>';
                 $lessonsList .= '</div>';
+                $lessonsList .= '<hr style="margin: 5px 0;">';
                 endforeach; ?>
                 <div class="col-md-3 col-xs-6">
                     <?=$lessonStatuses[3]['name'] ?>
