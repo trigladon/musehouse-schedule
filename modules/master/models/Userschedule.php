@@ -10,6 +10,10 @@ use yii\db\Expression;
 use yii\db\Query;
 use DateTime;
 
+ini_set('xdebug.var_display_max_depth', 5);
+ini_set('xdebug.var_display_max_children', 256);
+ini_set('xdebug.var_display_max_data', 1024);
+
 /**
  * This is the model class for table "userschedule".
  *
@@ -248,6 +252,38 @@ class Userschedule extends ActiveRecord
 
     public static function getReportData()
     {
+        $get = Yii::$app->request->get();
+
+        $filters = ['and',
+            ['IS NOT', 'stp.date_from', null],
+            ['IS NOT', 'tbt.type', null]
+        ];
+
+        if ($get && !empty($get['filterDate'])) {
+            $date = new DateTime($get['filterDate']);
+        } else {
+            $date = new DateTime();
+            $date->modify('first day of this month');
+        }
+        $startDate = $date->format('Y-m-d H:i:s');
+        $date->modify('last day of this month')->setTime(23, 59, 59);
+        $finishDate = $date->format('Y-m-d H:i:s');
+
+        $filters[] = ['>=', 'FROM_UNIXTIME(userschedule.lesson_start, \'%Y-%m-%d %k:%i:%s\')', $startDate];
+        $filters[] = ['<=', 'FROM_UNIXTIME(userschedule.lesson_start, \'%Y-%m-%d %k:%i:%s\')', $finishDate];
+
+        if ($get && !empty($get['filterTeacher'])) {
+            $filters[] = ['userschedule.user_id' => $get['filterTeacher']];
+        }
+
+        if ($get && !empty($get['filterStudent'])) {
+            $filters[] = ['userschedule.student_id' => $get['filterStudent']];
+        }
+
+        if ($get && !empty($get['filterLesson'])) {
+            $filters[] = ['userschedule.instricon_id' => $get['filterLesson']];
+        }
+
         $query = Userschedule::find()
             ->select([
                 'userschedule.user_id AS teacherId',
@@ -289,21 +325,20 @@ class Userschedule extends ActiveRecord
                     ORDER BY tbt2.date_from DESC
                     LIMIT 1)'
             )
-            ->where(['and',
-                ['IS NOT', 'stp.date_from', null],
-                ['IS NOT', 'tbt.type', null]
-            ])
+            ->where($filters)
             ->orderBy('userschedule.lesson_start')
             ->asArray()
             ->all();
 
-        $returnArray = [];
+        $lessons = [];
 
         foreach ($query as $item)
         {
-            $returnArray[$item['teacherId']][$item['studentId']][$item['lessonInstrId']][$item['lessonStartTime']] = $item;
+            $lessons[$item['teacherId']][$item['studentId']][$item['lessonInstrId']][$item['lessonStartTime']] = $item;
         }
 
-        return $returnArray;
+        $fullData = StudentTeacherPricing::getTargetsForMonth($startDate , $lessons);
+
+        return $fullData;
     }
 }

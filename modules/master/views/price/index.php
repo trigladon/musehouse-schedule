@@ -40,7 +40,12 @@ $escape = new JsExpression("function(m) { return m; }");
         <tbody>
         <?php $counter = 0 ?>
         <?php foreach ($unsetPriceLessons as $item): ?>
-        <?php $lessonDate = date('d-m-Y', $item['lessonTimeStart']) ?>
+        <?php
+            $lessonDate = date('d-m-Y', $item['lessonTimeStart']);
+            $dateObj = new DateTime($lessonDate);
+            $dateObj->modify('first day of this month');
+            $clickDate = $dateObj->format('d-m-Y');
+        ?>
         <tr>
             <td class="verticalAl"><?= ++$counter ?></td>
             <td class="verticalAl"><?= User::getUsernameById($item['user_id']) ?></td>
@@ -50,7 +55,7 @@ $escape = new JsExpression("function(m) { return m; }");
             <td class="verticalAl text-center">
                 <span class="btn btn-success"
                       role="button"
-                      onclick="setPricePolicy(<?=$item['user_id'].', '.$item['student_id'].', '.$item['instricon_id'].', \''.$lessonDate.'\'' ?>)">
+                      onclick="setPricePolicy(<?=$item['user_id'].', '.$item['student_id'].', '.$item['instricon_id'].', \''.$clickDate.'\'' ?>)">
                     Add
                     <i class="fa fa-plus" aria-hidden="true"></i>
                 </span>

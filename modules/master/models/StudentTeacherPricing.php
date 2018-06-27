@@ -183,4 +183,64 @@ class StudentTeacherPricing extends \yii\db\ActiveRecord
 
         return $query;
     }
+
+    public static function getTargetsForMonth($firstDayOfTheMonth, $lessons)
+    {
+        $get = Yii::$app->request->get();
+
+        $filters = ['and',
+            ['>', 'stp.target_qnt_lessons', 0]
+        ];
+
+        if ($get && !empty($get['filterTeacher'])) {
+            $filters[] = ['student_teacher_pricing.teacher_id' => $get['filterTeacher']];
+        }
+
+        if ($get && !empty($get['filterStudent'])) {
+            $filters[] = ['student_teacher_pricing.student_id' => $get['filterStudent']];
+        }
+
+        if ($get && !empty($get['filterLesson'])) {
+            $filters[] = ['student_teacher_pricing.instrument_id' => $get['filterLesson']];
+        }
+
+        $query = StudentTeacherPricing::find()
+            ->select([
+                'student_teacher_pricing.id AS id',
+                'student_teacher_pricing.teacher_id AS teacherId',
+                'student_teacher_pricing.student_id AS studentId',
+                'student_teacher_pricing.instrument_id AS lessonInstrId',
+                'stp.target_qnt_lessons AS target',
+                'stp.date_from AS dateFrom'
+            ])
+            ->leftJoin('student_teacher_pricing AS stp', 'stp.id = (
+                    SELECT stp2.id
+                    FROM student_teacher_pricing AS stp2
+                    WHERE stp2.teacher_id = student_teacher_pricing.teacher_id
+                    AND stp2.student_id = student_teacher_pricing.student_id
+                    AND stp2.instrument_id = student_teacher_pricing.instrument_id
+                    AND stp2.date_from <= \''.$firstDayOfTheMonth.'\'
+                    ORDER BY stp2.date_from DESC
+                    LIMIT 1)'
+            )
+            ->where($filters)
+            ->distinct()
+            ->asArray()
+            ->all();
+
+        $returnArray = [];
+
+        foreach ($query as $item)
+        {
+            if (isset($lessons[$item['teacherId']][$item['studentId']][$item['lessonInstrId']])) {
+                $returnArray[$item['teacherId']][$item['studentId']][$item['lessonInstrId']] = $lessons[$item['teacherId']][$item['studentId']][$item['lessonInstrId']];
+            }
+            $returnArray[$item['teacherId']][$item['studentId']][$item['lessonInstrId']]['target'] = [
+                'qnt' => $item['target'],
+                'dateFrom' => $item['dateFrom']
+            ];
+        }
+
+        return $returnArray;
+    }
 }

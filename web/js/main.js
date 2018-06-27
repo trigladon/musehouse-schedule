@@ -63,6 +63,13 @@ $(function () {
 });
 
 $(function () {
+    $('#filterDate').datetimepicker({
+        format: 'MMM-YYYY',
+        viewMode: 'months'
+    });
+});
+
+$(function () {
     $('#datetimepicker6').datetimepicker({
         format: 'HH:mm',
         stepping: 5,
