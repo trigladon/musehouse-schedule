@@ -567,7 +567,29 @@ ul.editIcons a{
 .currencyRepLessonList {
     font-size: xx-small;
 }
+.currencyRepMoneyLesson {
+    font-size: x-small;
+}
+
+.currencyRepMoneyStudent {
+    font-size: larger;
+}
+
+.currencyRepMoneyTotal {
+    font-size: large;
+    font-weight: bold;
+}
+
+.teacherBlock {
+    margin-bottom: 50px;
+}
 
 .finishedMoneyRep {
     font-weight: bold;
+}
+
+.legendLessonInfo{
+    font-weight: bold;
+    font-size: smaller;
+    margin-bottom: 5px;
 }

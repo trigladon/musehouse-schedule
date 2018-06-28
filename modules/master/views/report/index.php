@@ -86,14 +86,16 @@ HTML;
 
 <?php if ($reportData): ?>
 <?php foreach ($reportData as $teacherId => $student): ?>
-<div>
+<div class="teacherBlock">
     <div class="text-center text-muted">
         <h3><?=User::getUsernameById($teacherId) ?></h3>
     </div>
+    <?php $moneyForTeacher = 0; ?>
     <?php foreach ($student as $studentId => $lessonInstr): ?>
     <div>
         <h4 class="text-center text-info"><?=User::getUsernameById($studentId) ?></h4>
         <div class="row">
+            <?php $moneyForStudent = 0; ?>
             <?php foreach ($lessonInstr as $lessonInstrId => $lesson): ?>
             <div class="col-md-6 lessonLevelReport">
                 <?php
@@ -104,13 +106,13 @@ HTML;
                 $targeting = 0;
                 $lessonsList = '';
                 $target = $lesson['target']['qnt'];
+                $moneyForLessonType = 0;
 
                 foreach ($lesson as $key => $lessonData):
                     if ($key != 'target'):
 
-                    $moneyColorReport_s = ' text-muted';
-                    $moneyColorReport_m = ' text-muted';
-                    $moneyColorReport_l = ' text-muted';
+                    $moneyColorReport_DPP = ' text-muted';
+                    $moneyColorReport_ZL = ' text-muted';
 
                     switch ($lessonData['lessonLength']) {
                         case '45': $impLetter = 's';
@@ -127,10 +129,15 @@ HTML;
                         case 3:
                             $finished += 1;
                             $targeting += $lessonData['targetQntInMonth'];
-                            switch ($impLetter) {
-                                case 's': $moneyColorReport_s = ' text-success finishedMoneyRep';break;
-                                case 'm': $moneyColorReport_m = ' text-success finishedMoneyRep';break;
-                                case 'l': $moneyColorReport_l = ' text-success finishedMoneyRep';break;
+                            switch ($lessonData['businessType']) {
+                                case 'DPP':
+                                    $moneyColorReport_DPP = ' text-success finishedMoneyRep';
+                                    $moneyForLessonType += $lessonData[$impLetter.'C'];
+                                    break;
+                                case 'ZL':
+                                    $moneyColorReport_ZL = ' text-success finishedMoneyRep';
+                                    $moneyForLessonType += $lessonData[$impLetter.'F'];
+                                    break;
                             }
                             break;
                         case 4: $failed += 1;break;
@@ -140,11 +147,11 @@ HTML;
                     $lessonsList .= '<div class="col-md-2 col-xs-4 text-center">'.date('d-m-Y', strtotime($lessonData['lessonStartTime'])).'</div>';
                     $lessonsList .= '<div class="col-md-2 col-xs-4 text-center">'.$lessonData['lessonLength'].' minutes</div>';
                     $lessonsList .= '<div class="col-md-2 col-xs-4 text-center">'.$lessonData['businessType'].'</div>';
-                    $lessonsList .= '<div class="col-md-6 col-xs-12">';
-                        $lessonsList .= '<div class="col-md-4 col-xs-4 text-center'.$moneyColorReport_s.'">'.$lessonData[$impLetter.'C'].' <span class="currencyRepLessonList">CZK</span></div>';
-                        $lessonsList .= '<div class="col-md-4 col-xs-4 text-center'.$moneyColorReport_m.'">'.$lessonData[$impLetter.'T'].' <span class="currencyRepLessonList">CZK</span></div>';
-                        $lessonsList .= '<div class="col-md-4 col-xs-4 text-center'.$moneyColorReport_l.'">'.$lessonData[$impLetter.'F'].' <span class="currencyRepLessonList">CZK</span></div>';
-                    $lessonsList .= '</div>';
+
+                    $lessonsList .= '<div class="col-md-2 col-xs-4 text-center'.$moneyColorReport_DPP.'">'.$lessonData[$impLetter.'C'].' <span class="currencyRepLessonList">CZK</span></div>';
+                    $lessonsList .= '<div class="col-md-2 col-xs-4 text-center text-muted">'.$lessonData[$impLetter.'T'].' <span class="currencyRepLessonList">CZK</span></div>';
+                    $lessonsList .= '<div class="col-md-2 col-xs-4 text-center'.$moneyColorReport_ZL.'">'.$lessonData[$impLetter.'F'].' <span class="currencyRepLessonList">CZK</span></div>';
+
                     if ($lessonData['lessonComment']) {
                         $lessonsList .= '<div class="col-md-12">';
                         $lessonsList .= '<span>Comment: '.$lessonData['lessonComment'].'</span>';
@@ -178,13 +185,29 @@ HTML;
                         <?=$percentOfTarget ?>%
                     </div>
                 </div>
+                <?php if ($lessonsList): ?>
+                <div class="row text-info legendLessonInfo">
+                    <div class="col-md-2 col-xs-4 text-center">Date</div>
+                    <div class="col-md-2 col-xs-4 text-center">Length</div>
+                    <div class="col-md-2 col-xs-4 text-center">Type</div>
+                    <div class="col-md-2 col-xs-4 text-center">Clear Rate</div>
+                    <div class="col-md-2 col-xs-4 text-center">Tax</div>
+                    <div class="col-md-2 col-xs-4 text-center">Full Rate</div>
+                </div>
                 <?=$lessonsList ?>
+                <?php endif; ?>
+                <?php $moneyForStudent += $moneyForLessonType ?>
+                <div><span class="currencyRepMoneyLesson text-info">Total (lessons): <?=$moneyForLessonType ?> CZK</span></div>
             </div>
             <?php endforeach; ?>
+            <?php $moneyForTeacher += $moneyForStudent ?>
+            <div class="col-xs-12 text-center"><span class="currencyRepMoneyStudent text-info">Total (student): <?=$moneyForStudent ?> CZK</span></div>
         </div>
     </div>
     <hr>
     <?php endforeach; ?>
+    <div class="text-center"><span class="currencyRepMoneyTotal">TOTAL AMOUNT: <?=$moneyForTeacher ?> CZK</span></div>
+    <hr>
 </div>
 <?php endforeach; ?>
 <?php else: ?>
