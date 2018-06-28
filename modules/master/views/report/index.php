@@ -96,7 +96,6 @@ HTML;
         <div class="row">
             <?php foreach ($lessonInstr as $lessonInstrId => $lesson): ?>
             <div class="col-md-6 lessonLevelReport">
-                <div class="text-center" style="font-size: larger; margin-bottom: 5px;"><?=Instrument::getLessonById($lessonInstrId) ?></div>
                 <?php
                 $finished = 0;
                 $failed = 0;
@@ -105,8 +104,8 @@ HTML;
                 $targeting = 0;
                 $lessonsList = '';
                 $target = $lesson['target']['qnt'];
-                ?>
-                <?php foreach ($lesson as $key => $lessonData):
+
+                foreach ($lesson as $key => $lessonData):
                     if ($key != 'target'):
 
                     $moneyColorReport_s = ' text-muted';
@@ -140,32 +139,37 @@ HTML;
                     $lessonsList .= '<div class="row lessonListReport" style="color: '.$lessonStatuses[$lessonData['lessonStatus']]['color'].';">';
                     $lessonsList .= '<div class="col-md-2 col-xs-4 text-center">'.date('d-m-Y', strtotime($lessonData['lessonStartTime'])).'</div>';
                     $lessonsList .= '<div class="col-md-2 col-xs-4 text-center">'.$lessonData['lessonLength'].' minutes</div>';
-                    $lessonsList .= '<div class="col-md-1 col-xs-4 text-center">'.$lessonData['businessType'].'</div>';
-                    $lessonsList .= '<div class="col-md-7 col-xs-12">';
-                        $lessonsList .= '<div class="col-md-3 col-xs-3 text-center'.$moneyColorReport_s.'">'.$lessonData[$impLetter.'C'].' <span class="currencyRepLessonList">CZK</span></div>';
-                        $lessonsList .= '<div class="col-md-3 col-xs-3 text-center'.$moneyColorReport_m.'">'.$lessonData[$impLetter.'T'].' <span class="currencyRepLessonList">CZK</span></div>';
-                        $lessonsList .= '<div class="col-md-3 col-xs-3 text-center'.$moneyColorReport_l.'">'.$lessonData[$impLetter.'F'].' <span class="currencyRepLessonList">CZK</span></div>';
-                        $lessonsList .= '<div class="col-md-3 col-xs-3 text-center">'.$lessonData[$impLetter.'F'].'</div>';
+                    $lessonsList .= '<div class="col-md-2 col-xs-4 text-center">'.$lessonData['businessType'].'</div>';
+                    $lessonsList .= '<div class="col-md-6 col-xs-12">';
+                        $lessonsList .= '<div class="col-md-4 col-xs-4 text-center'.$moneyColorReport_s.'">'.$lessonData[$impLetter.'C'].' <span class="currencyRepLessonList">CZK</span></div>';
+                        $lessonsList .= '<div class="col-md-4 col-xs-4 text-center'.$moneyColorReport_m.'">'.$lessonData[$impLetter.'T'].' <span class="currencyRepLessonList">CZK</span></div>';
+                        $lessonsList .= '<div class="col-md-4 col-xs-4 text-center'.$moneyColorReport_l.'">'.$lessonData[$impLetter.'F'].' <span class="currencyRepLessonList">CZK</span></div>';
                     $lessonsList .= '</div>';
+                    if ($lessonData['lessonComment']) {
+                        $lessonsList .= '<div class="col-md-12">';
+                        $lessonsList .= '<span>Comment: '.$lessonData['lessonComment'].'</span>';
+                        $lessonsList .= '</div>';
+                    }
                     $lessonsList .= '</div>';
                     $lessonsList .= '<hr style="margin: 5px 0;">';
                     endif;
                 endforeach; ?>
+                <div class="text-center" style="font-size: larger; margin-bottom: 5px;"><?=Instrument::getLessonById($lessonInstrId) ?> <small>(<i class="fa fa-crosshairs" aria-hidden="true"></i> <?=$target ?>)</small></div>
                 <div class="col-md-3 col-xs-6">
-                    <?=$lessonStatuses[3]['name'] ?>
                     <span class="badge" style="background-color: <?=$lessonStatuses[3]['color'] ?>"><?=$finished ?></span>
+                    <?=$lessonStatuses[3]['name'] ?>
                 </div>
                 <div class="col-md-3 col-xs-6">
-                    <?=$lessonStatuses[4]['name'] ?>
                     <span class="badge" style="background-color: <?=$lessonStatuses[4]['color'] ?>"><?=$failed ?></span>
+                    <?=$lessonStatuses[4]['name'] ?>
                 </div>
                 <div class="col-md-3 col-xs-6">
-                    <?=$lessonStatuses[2]['name'] ?>
                     <span class="badge" style="background-color: <?=$lessonStatuses[2]['color'] ?>"><?=$planed ?></span>
+                    <?=$lessonStatuses[2]['name'] ?>
                 </div>
                 <div class="col-md-3 col-xs-6">
-                    <?=$lessonStatuses[1]['name'] ?>
                     <span class="badge" style="background-color: <?=$lessonStatuses[1]['color'] ?>"><?=$freeTime ?></span>
+                    <?=$lessonStatuses[1]['name'] ?>
                 </div>
                 <?php $percentOfTarget = number_format(($finished/$target)*100, 2, '.', ' ') ?>
 
