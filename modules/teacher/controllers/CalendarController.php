@@ -85,9 +85,8 @@ class CalendarController extends Controller
                 ];
             }
 
-//            var_dump(Yii::$app->request->get());
             $data = Yii::$app->request->post();
-//            var_dump($data);
+
             $toShow = explode(':', $data['currentDate']);
             $toChange = explode(':', $data['changes']);
             $whtsh = explode(':', $data['whtsh']);
@@ -101,9 +100,6 @@ class CalendarController extends Controller
             $actionList = Userschedule::getScheduleList($monthToShow['toShow'], $monthToShow['daysToShow'], $whtsh);
             $calendarArray = array_replace_recursive($calendarArray, $actionList);
             $weekDaysToShow = Calendar::weekDaysToShow($monthToShow['toShow'], $whtsh);
-
-//            var_dump($monthToShow);
-//            var_dump(yii::$app->session);
 
             return Yii::$app->controller->renderAjax('_calendar', [
                 'calendarArray' => $calendarArray,

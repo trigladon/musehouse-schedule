@@ -32,7 +32,7 @@ class Calendar
                 'year_'.$now->format('Y') => $now->format('Y'),
                 $now->format('Y') => [
                     'week' => [
-                        'week_'.$now->format('W') => $now->format('W'),
+                        'week_'.$now->format('W') => $now->format('U'),
                         $now->format('W') => [
                             'month' => [
                                 'month_'.$now->format('m') => $now->format('m'),
@@ -68,16 +68,18 @@ class Calendar
             case 'week':
                 $month = new DateTime();
                 $daysToShow = 7;
-                $cur = $month->format('W');
-                $ch = $currentDate-$cur;
-                $month->modify('+'.$ch.'week');
+                $cur = $month->format('U');
+                $ch = $currentDate - $cur;
+                $month->modify('+'.$ch.'sec');
                 if ($month->format('N') != 1){
                     $month->modify('last Monday');
                 }
                 if ($changes){
                     $month->modify($changes);
                 }
-                $currentDate = $month->format('W');
+                $currentDate = $month->format('U');
+                $year = $month->format('W:Y');
+                $monthCheck = $month->format('W:F');
                 break;
             case 'day':
                 $month = new DateTime($currentDate);
@@ -101,9 +103,6 @@ class Calendar
             ];
 
             return $monthToShow;
-//        }
-
-
     }
 
     public static function weekDaysToShow($toShow, $whtsh){

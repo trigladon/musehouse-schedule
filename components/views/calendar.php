@@ -85,7 +85,7 @@ $till = $now->format('U');
                     if (is_string($week)){
                         $_week = $week;
                         if ($_day_of_the_week == '7' || !$_day_of_the_week):?>
-                            <ul><li class="weekCell" style="vertical-align:middle;text-align:center;line-height:<?=$whtsh=='month'?'139':'891'?>px;<?=$weekStyle?>" onclick="onClickMonth(<?=$_week?>, '', 'week')" week="<?=$_week?>"><span class="weekstyle"><?=$_week?></span></li>
+                            <ul><li class="weekCell" style="vertical-align:middle;text-align:center;line-height:<?=$whtsh=='month'?'139':'891'?>px;<?=$weekStyle?>" onclick="onClickMonth('<?=$_week ?>', '', 'week')" week="<?=date('W', $_week) ?>"><span class="weekstyle"><?=date('W', $_week) ?></span></li>
                         <?php endif;
                     }else{
                         foreach ($week['month'] as $month):
@@ -124,7 +124,7 @@ $till = $now->format('U');
                                         ?>
 <!--  ---------------------------------------------------------------------------------------------------------------  -->
 
-<li style="padding: 0; <?=$dayStyle?>" class="dayCell <?="$holiday $today $currentMonth"?>" week="<?=$_week?>">
+<li style="padding: 0; <?=$dayStyle?>" class="dayCell <?="$holiday $today $currentMonth"?>" week="<?=date('W', $_week)?>">
 <!-- START DAY LINE BAR -->
     <div class="dayLineBar">
         <div class="dayBar" <?=$dayStyleToDate?> onclick="onClickMonth('<?=$_year?>-<?=$_month?>-<?=$_day?>', '', 'day')">
@@ -139,7 +139,7 @@ $till = $now->format('U');
         $chU = date( "U", strtotime( $_year."-".$_month."-".$_day));
         if ($chMY == $curMY || // current month
             $cur<$till && $chY == $curY && ($curM-$chM)==1 ||
-            $cur<$till && $chY == $curY && ($curM-$chM)==-11 && ($curY-$chY)==1 ||
+            $cur<$till && ($curM-$chM)==-11 && ($curY-$chY)==1 ||
             $chU > $curU ||
             User::isMaster()):?>
             <?=
