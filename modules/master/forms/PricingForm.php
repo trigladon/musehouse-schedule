@@ -72,7 +72,7 @@ class PricingForm extends Model
         } else {
             $prices = new StudentTeacherPricing();
         }
-        var_dump(\Yii::$app->request->post());
+
         $date = new \DateTime($this->date_from);
         $saveDate = $date->format('Y-m-d H:i:s');
 

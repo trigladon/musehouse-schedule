@@ -46,8 +46,6 @@ class InstrumentController extends Controller
             $modelUpdate->icon = UploadedFile::getInstance($modelUpdate, 'icon');
             $modelUpdate->updateLesson();
             return $this->refresh();
-//            var_dump(Yii::$app->request->post());
-//            var_dump($modelUpdate);
         }
 
         $lessonsList = Instrument::lessonList();

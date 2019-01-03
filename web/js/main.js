@@ -90,7 +90,7 @@ $(function () {
 });
 
 $(document).ready(function () {
-    $('body').on('click', '.popup-addLesson', function(e) {
+    $('body').on('click touchstart', '.popup-addLesson', function(e) {
 
         $('#addLesson-form')[0].reset();
         $('#lessonIdToUpdate').val('');

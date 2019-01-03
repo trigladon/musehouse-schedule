@@ -35,7 +35,6 @@ class ProfileController extends Controller
                 Yii::$app->session->setFlash('Error', 'Something went wrong, please, contact you Administrator!');
             }
             return $this->refresh();
-//            var_dump(Yii::$app->request->post());
         }
 
         if(Yii::$app->request->isPost && $passwordUpdateForm->load(Yii::$app->request->post()) && $passwordUpdateForm->validate()){
@@ -45,7 +44,6 @@ class ProfileController extends Controller
                 Yii::$app->session->setFlash('Error', 'Something went wrong, please, check the passwords you entered and try one more time!');
             }
             return $this->refresh();
-//            var_dump(Yii::$app->request->post());
         }
 
         return $this->render('index', [

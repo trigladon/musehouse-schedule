@@ -93,7 +93,6 @@ class UsersController extends Controller
             }else{
                 Yii::$app->session->setFlash('Error', 'Something went wrong, please, contact you Administrator!');
             }
-            var_dump(Yii::$app->request->post());
             return $this->refresh();
         }
 

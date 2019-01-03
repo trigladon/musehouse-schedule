@@ -231,6 +231,7 @@ tbody.tr.td.dayCell{
 
 .popup-addLesson{
     color: #689f38;
+    cursor: pointer;
 }
 .popup-addLesson:hover{
     color: green;

@@ -112,15 +112,6 @@ $this->title = 'Lessons';
         </div>
     </div>
     <div>
-        <?php
-
-//        var_dump(Yii::$app->user->identity->getId());
-//        var_dump($list);
-//        var_dump($list2);
-//        var_dump($lessonsList);
-
-        ?>
-
 
     </div>
     <?php Modal::begin([

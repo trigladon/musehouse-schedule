@@ -26,7 +26,6 @@ class CalendarController extends Controller
 
     public function actionIndex()
     {
-//        var_dump(Yii::$app->request->headers);
         $modelAddLesson = new AddLessonForm();
         $filterForm = new CalendarFilterForm();
         $user_id = '';

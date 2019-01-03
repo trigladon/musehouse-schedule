@@ -24,13 +24,11 @@ class StatisticsController extends Controller
         $lessonPerTeacher = Statistics::lessonsPerTeacher();
         $teachersList = User::teachersListFull();
         $studentsList = User::studentsListFull();
-//        '2017-01-01'
+
         if (Yii::$app->request->isAjax) {
 
-
-//            var_dump(Yii::$app->request->post());
             $data = Yii::$app->request->post();
-//            var_dump($data);
+
             $toShow = explode(':', $data['currentDate']);
             $toChange = explode(':', $data['changes']);
             $toShow = $toShow[0];
@@ -39,9 +37,6 @@ class StatisticsController extends Controller
             $statisticsData = Statistics::userStatistics($toShow, $toChange);
             $monthsToShow = Statistics::monthsToShow($toShow, $toChange);
             $lessonPerTeacher = Statistics::lessonsPerTeacher($toShow, $toChange);
-
-//            var_dump($statisticsData);
-//            var_dump($monthsToShow);
 
             return Yii::$app->controller->renderAjax('_statistics', [
                 'statisticsData' => $statisticsData,
