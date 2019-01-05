@@ -594,3 +594,15 @@ ul.editIcons a{
     font-size: smaller;
     margin-bottom: 5px;
 }
+
+.studentsName {
+    /*max-width: 94px;*/
+    min-width: 63px;
+    width: calc(100% - 50px);
+}
+
+.cutBlock {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}

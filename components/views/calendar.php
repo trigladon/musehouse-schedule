@@ -194,7 +194,7 @@ $till = $now->format('U');
             $dayActionStatus = ' style="background-color: '.$actions['color'].'"';
             ?>
             <?php if ($count === 4 && $whtsh == 'month' && $qnt > 3):?>
-            <div id="showMoreActions<?=$actions['lesson_id']?>" class="showMoreActions" onclick="showLayer('<?=$actions['lesson_id']?>', '<?=151+4+($qnt-3)*38?>', '<?=$_week?>')">
+            <div id="showMoreActions<?=$actions['lesson_id']?>" class="showMoreActions" onclick="showLayer('<?=$actions['lesson_id']?>', '<?=151+4+($qnt-3)*38 ?>', '<?=date('W', $_week) ?>')">
                 <i id="iconChange<?=$actions['lesson_id']?>" class="fa fa-caret-down iconShowHide" aria-hidden="true"></i>
             </div>
             <?php endif;?>
@@ -222,13 +222,20 @@ $till = $now->format('U');
                         </div>
                         <div class="row" style="margin: 0;font-size: 10px;line-height: 11px;border-top: solid 1px white;">
                             <div style="width: 50px;padding-right: 5px" class="text-right pull-left"><?=$actions['length']?> min.</div>
-                            <div style="max-width: 94px; min-width: 63px; width: calc(100%-50px);text-overflow: ellipsis;overflow: hidden;" class="pull-left"><?=$actions['student_id']?$students_listFull[$actions['student_id']]:'No student'?></div>
+                            <?php
+                                if (isset($monthToShow['daysToShow']) && $monthToShow['daysToShow'] !== 1) {
+                                    $hideBlock = ' cutBlock';
+                                } else {
+                                    $hideBlock = '';
+                                }
+                            ?>
+                            <div class="studentsName pull-left<?=$hideBlock ?>"><?=$actions['student_id']?$students_listFull[$actions['student_id']]:'No student'?></div>
                         </div>
                     </div>
                     <?php
-                    if ($chMY == $curMY ||
+                    if ($chMY == $curMY || // current month
                         $cur<$till && $chY == $curY && ($curM-$chM)==1 ||
-                        $cur<$till && $chY == $curY && ($curM-$chM)==-11 && ($curY-$chY)==1 ||
+                        $cur<$till && ($curM-$chM)==-11 && ($curY-$chY)==1 ||
                         $chU > $curU ||
                         User::isMaster()):?>
                         <ul class="dropdown-menu editIcons">

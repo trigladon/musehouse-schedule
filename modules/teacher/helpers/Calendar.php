@@ -78,8 +78,6 @@ class Calendar
                     $month->modify($changes);
                 }
                 $currentDate = $month->format('U');
-                $year = $month->format('W:Y');
-                $monthCheck = $month->format('W:F');
                 break;
             case 'day':
                 $month = new DateTime($currentDate);
