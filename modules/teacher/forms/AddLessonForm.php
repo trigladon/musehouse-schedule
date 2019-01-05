@@ -16,6 +16,7 @@ use app\modules\master\models\Statusschedule;
 use app\models\User;
 use Yii;
 use yii\db\Query;
+use DateTime;
 
 
 class AddLessonForm extends Model
@@ -127,6 +128,29 @@ class AddLessonForm extends Model
 
             $this->addError('lesson_length', 'This time is not free. You have already had the lesson fo this time: '.$mergeLesson);
             $this->addError('lesson_start', '');
+        }
+
+        $now = new DateTime();
+        $cur = $now->format('U');
+        $curMY =  $now->format('m-Y');
+        $curM =  $now->format('m');
+        $curY =  $now->format('Y');
+        $curU =  $now->format('U');
+        $now->modify('first day of this month midnight');
+        $now->modify(Yii::$app->params['lessonEditing']);
+        $till = $now->format('U');
+
+        $chMY = date( "m-Y", $lesson_start);
+        $chM = date( "m", $lesson_start);
+        $chY = date( "Y", $lesson_start);
+        $chU = date( "U", $lesson_start);
+
+        if (!($chMY == $curMY || // current month
+            $cur<$till && $chY == $curY && ($curM-$chM)==1 ||
+            $cur<$till && ($curM-$chM)==-11 && ($curY-$chY)==1 ||
+            $chU > $curU ||
+            User::isMaster())) {
+            $this->addError('action_date', 'You are not allowed to add lesson for this date');
         }
     }
 
