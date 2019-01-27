@@ -468,13 +468,15 @@ use yii\helpers\Html;
                                         <tr>
                                             <td valign="top" class="bodyContent">
                                                 <h2>Registration Email</h2>
-                                                <h4>Good day!</h4>
-                                                    You have been invited to proceed registration at <em>MuseHouse Schedule</em> by the link below:</br>
+                                                <h4>Dear Teacher!</h4>
+                                                You have been invited to proceed registration at <em><a href="www.musehouseteachers.cz">www.musehouseteachers.cz</a></em> by the link below:<br>
                                                     <?=Html::a('Keep going with registration!', Yii::$app->urlManager->createAbsoluteUrl([
                                                     '/site/registration',
                                                     'key' => $user->secret_key,
                                                 ]))?>
-                                                </br></br>
+                                                <br><br>
+                                                <h4>Sincerely yours,<br>
+                                                MUSEHOUSE International Music School's IT support.</h4>
                                             </td>
                                         </tr>
                                     </table>
@@ -487,7 +489,7 @@ use yii\helpers\Html;
                                     <table border="0" cellpadding="0" cellspacing="0" width="100%" id="templateFooter">
                                         <tr>
                                             <td valign="top" class="footerContent" style="padding-top:15px;">
-                                                <em>Copyright 2017 &copy; MuseHouse International Music School , All rights reserved.</em>
+                                                <em>Copyright 2018 © Musehouse International Music School s.r.o. , All rights reserved.</em>
                                             </td>
                                         </tr>
                                     </table>
