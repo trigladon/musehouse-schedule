@@ -161,6 +161,8 @@ $till = $now->format('U');
             $finished = 0;
             $planned = 0;
             $free = 0;
+            $failedTbp = 0;
+            $failed = 0;
             ?>
             <?php if(isset($day['actionList'])):
                 foreach ($day['actionList'] as $actions):
@@ -168,17 +170,25 @@ $till = $now->format('U');
                         case 'Free Time': $free+=1; break;
                         case 'Planned': $planned+=1;break;
                         case 'Finished': $finished+=1;break;
+                        case 'Failed (TBP)': $failedTbp+=1;break;
+                        case 'Failed': $failed+=1;break;
                     }
                 endforeach;
             endif;?>
-            <div class="dayInfo" style="color: #66bb6a;">
-                <strong><?=$finished?></strong>
+            <div class="dayInfo" style="color: #78909c;">
+                <strong><?=$free?></strong>
+            </div>
+            <div class="dayInfo" style="color: #fbaa27;">
+                <strong><?=$failedTbp?></strong>
             </div>
             <div class="dayInfo" style="color: #42a5f5;">
                 <strong><?=$planned?></strong>
             </div>
-            <div class="dayInfo" style="color: #78909c;">
-                <strong><?=$free?></strong>
+            <div class="dayInfo" style="color: #c22d2e;">
+                <strong><?=$failed?></strong>
+            </div>
+            <div class="dayInfo" style="color: #66bb6a;">
+                <strong><?=$finished?></strong>
             </div>
         </div>
     </div>
