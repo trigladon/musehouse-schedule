@@ -40,7 +40,7 @@ class LessonForm extends Model
     {
         if ($this->validate()) {
             $iconName = uniqid().'.'.$this->icon->extension;
-            $this->icon->saveAs(Yii::$app->getBasePath().'/web/images/icons/' . $iconName);
+            $this->icon->saveAs(Yii::getAlias('@webroot').'/images/icons/' . $iconName);
             $this->reg($iconName);
         } else {
             echo 'shit happens';
