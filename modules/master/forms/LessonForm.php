@@ -14,6 +14,7 @@ use yii\base\Exception;
 use yii\base\Model;
 use yii\web\UploadedFile;
 use Yii;
+use yii\log\Logger;
 
 class LessonForm extends Model
 {
@@ -51,6 +52,10 @@ class LessonForm extends Model
         $icon = new Instrument();
         $icon->icon = $iconName;
         $icon->instr_name = $this->lessonName;
-        $icon->save();
+        try {
+            $icon->save();
+        } catch (\Exception $e) {
+            Yii::getLogger()->log($e, Logger::LEVEL_ERROR);
+        }
     }
 }
