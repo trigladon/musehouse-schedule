@@ -14,6 +14,8 @@ use yii\base\Widget;
 class ActivationListWidget extends Widget
 {
     public $user_list;
+    public $role_user_ids;
+    public $role_list;
     public $userUpdate;
     public $listUserLessons;
     public $teacherList;
@@ -30,6 +32,8 @@ class ActivationListWidget extends Widget
     {
         return $this->render('activationList', [
             'user_list' => $this->user_list,
+            'role_user_ids' => $this->role_user_ids,
+            'role_list' => $this->role_list,
             'userUpdate' => $this->userUpdate,
             'listUserLessons' => $this->listUserLessons,
             'teacherList' => $this->teacherList,

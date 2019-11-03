@@ -151,7 +151,7 @@ class Instrument extends ActiveRecord
         $rows = $rows->all();
 
         foreach ($rows as $value){
-            $lesson_list[$value['id']] = '<img src="/images/icons/'.$value['icon'].'" class="dropBoxIcon">'.$value['instr_name'];
+            $lesson_list[$value['id']] = Instrument::buildHtmlIcon($value['icon'], $value['instr_name']);
         }
 
         return $lesson_list;
@@ -229,7 +229,17 @@ class Instrument extends ActiveRecord
     {
         /** @var Instrument $obj */
         $obj = Instrument::findOne($id);
-        return '<img src="/images/icons/'.$obj->icon.'" class="dropBoxIcon">'.$obj->instr_name;
+        return Instrument::buildHtmlIcon($obj->icon, $obj->instr_name);
+    }
+
+    public function getHtmlIcon(){
+        return Instrument::buildHtmlIcon($this->icon, $this->instr_name);
+    }
+
+
+    public static function buildHtmlIcon($icon_name, $instr_name, $class='dropBoxIcon'){
+        // todo need refactoring
+        return '<img src="/images/icons/'.$icon_name.'" class="'.$class.'">'.$instr_name;
     }
 
 }

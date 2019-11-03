@@ -522,8 +522,8 @@ $(document).ready(function(){
             hideElement.style.display = 'none';
             var showElement = document.getElementById('inviteForm');
             showElement.style.display = 'block';
-            $("#inviteuserform-role").select2().val(role).trigger('change.select2');
-            $('#inviteuserform-role').select2({
+            $("#userform-role").select2().val(role).trigger('change.select2');
+            $('#userform-role').select2({
                 value: role,
                 theme: 'bootstrap',
                 allowClear: true,

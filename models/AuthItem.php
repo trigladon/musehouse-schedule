@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\rbac\Role;
 
 /**
  * This is the model class for table "auth_item".
@@ -110,7 +111,8 @@ class AuthItem extends \yii\db\ActiveRecord
         return $this->hasMany(AuthItem::className(), ['name' => 'parent'])->viaTable('auth_item_child', ['child' => 'name']);
     }
 
-    public static function getRoleList(){
+    public static function getRoleList()
+    {
 
         $rows = static::find()
             ->select('name')
@@ -123,4 +125,33 @@ class AuthItem extends \yii\db\ActiveRecord
 
         return $role_list;
     }
+
+    public static function getUserIdsAndRoles()
+    {
+        $items = Yii::$app->db->createCommand(
+             'SELECT `auth_item`.`name` AS `name`, `aa`.`user_id` AS `user_id` 
+                  FROM `auth_item` RIGHT JOIN `auth_assignment` `aa` ON aa.item_name = auth_item.name  
+                  WHERE `auth_item`.`type`=:role', ['role'=> Role::TYPE_ROLE])->queryAll();
+
+        return $items;
+    }
+
+    public static function getGroupRolesAndUserIds()
+    {
+        $result = [];
+        $items = AuthItem::getUserIdsAndRoles();
+        $roles = AuthItem::getRoleList();
+
+        foreach ($roles as $role){
+            $result[$role] = [];
+            foreach ($items as $item) {
+                if ($role == $item['name']){
+                    $result[$role][] = $item['user_id'];
+                }
+            }
+        }
+
+        return $result;
+    }
+
 }

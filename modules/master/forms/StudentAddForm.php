@@ -77,7 +77,7 @@ class StudentAddForm extends Model
                 }
 
             }catch (Exception $e){
-                var_dump($e->getMessage());
+                $e->getMessage();
             }
 
             return true;

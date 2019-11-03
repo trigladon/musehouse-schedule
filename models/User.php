@@ -22,12 +22,15 @@ use yii\db\Query;
  * @property string $phone
  * @property string $password
  * @property string $auth_key
+ * @property string $letter_status
  * @property string $created_at
  * @property string $updated_at
  * @property string $date_secret_key
  * @property string $secret_key
  * @property integer $status
- * @property integer $letter_status
+ * @property integer
+ *
+ * @property AuthAssignment[] $roles
  */
 class User extends ActiveRecord implements IdentityInterface
 {
@@ -41,6 +44,11 @@ class User extends ActiveRecord implements IdentityInterface
     const STATUS_LETTER_NOT_SENT = 0;
 
     public $username;
+
+    protected $lessons;
+    protected $teachers;
+    protected $current_business_type;
+    protected $history_business_type;
 
     /**
      * @inheritdoc
@@ -141,6 +149,18 @@ class User extends ActiveRecord implements IdentityInterface
         return $timestamp+$expire >= time();
     }
 
+    public function isUserSecretKeyExpire()
+    {
+        if (empty($this->date_secret_key)){
+            return false;
+        }
+
+        $expire = Yii::$app->params['secretKeyExpire'];
+        $timestamp = $this->date_secret_key;
+
+        return $timestamp + $expire >= time();
+    }
+
     public static function findBySecretKey($key)
     {
         return self::findOne([
@@ -229,17 +249,26 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     public function getUsername(){
-        return $this->username = "$this->first_name $this->last_name";
+        $this->username = User::buildUsername($this->first_name, $this->last_name);
+        return $this->username;
     }
 
-    public function getUserLessons(){
+    public static function buildUsername($first_name, $last_name) {
+        return $first_name.' '.$last_name;
+    }
 
-        return Userinstr::find()
-            ->joinWith(['instricon instr'])
-            ->where(['user_id' => $this->id])
-            ->andWhere(['!=', 'instr.instr_name', 'Free Time'])
-            ->asArray()
-            ->all();
+    public function getUserLessons()
+    {
+        if (!$this->lessons)
+        {
+            $this->lessons = Userinstr::find()
+                ->joinWith(['instricon instr'])
+                ->where(['user_id' => $this->id])
+                ->andWhere(['!=', 'instr.instr_name', 'Free Time'])
+                ->asArray()
+                ->all();
+        }
+        return $this->lessons;
     }
 
     public static function userListDropBox(){
@@ -278,11 +307,7 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     public static function isMaster(){
-        if (key(Yii::$app->authManager->getRolesByUser(Yii::$app->user->id)) == 'Master'){
-            return true;
-        }else{
-            return false;
-        }
+        return key(Yii::$app->authManager->getRolesByUser(Yii::$app->user->id)) == 'Master';
     }
 
     public function userRole(){
@@ -290,13 +315,15 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     public function teachers(){
-        $rows = static::find()
-            ->from('user u')
-            ->leftJoin('student_rel strel', 'u.id = strel.teacher_id')
-            ->andWhere(['=', 'strel.student_id', $this->id])
-            ->all();
+        if (!$this->teachers){
+            $this->teachers = static::find()
+                ->from('user u')
+                ->leftJoin('student_rel strel', 'u.id = strel.teacher_id')
+                ->andWhere(['=', 'strel.student_id', $this->id])
+                ->all();
+        }
 
-        return $rows;
+        return $this->teachers;
     }
 
     public static function teachersListFull(){
@@ -364,35 +391,53 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function getCurrentBusinessType($user_id = null)
     {
-        $user_id?:$user_id = $this->id;
-        $date = new \DateTime();
-        $now = $date->format('Y-m-d H:i:s');
-        /** @var TeacherBusinessType $query */
-        $query = TeacherBusinessType::find()
-            ->where(['user_id' => $user_id])
-            ->andWhere(['<', 'date_from', $now])
-            ->orderBy('date_from DESC')
-            ->one();
+        if (!$this->current_business_type) {
+            $user_id?:$user_id = $this->id;
+            $date = new \DateTime();
+            $now = $date->format('Y-m-d H:i:s');
+            /** @var TeacherBusinessType $query */
+            $query = TeacherBusinessType::find()
+                ->where(['user_id' => $user_id])
+                ->andWhere(['<', 'date_from', $now])
+                ->orderBy('date_from DESC')
+                ->one();
 
-        return $query?$query->type:false;
+            $this->current_business_type = $query?$query->type:false;
+        }
+
+        return $this->current_business_type;
     }
 
     public function getHistoryBusinessType($user_id = null)
     {
+        if (!$this->history_business_type){
+            $user_id?:$user_id = $this->id;
 
-        $user_id?:$user_id = $this->id;
+            $this->history_business_type = TeacherBusinessType::find()
+                ->where(['user_id' => $user_id])
+                ->orderBy('date_from DESC')
+                ->all();
+        }
 
-        $query = TeacherBusinessType::find()
-            ->where(['user_id' => $user_id])
-            ->orderBy('date_from DESC')
-            ->all();
-
-        return $query;
+        return $this->history_business_type;
     }
 
     public static function getUsernameById($id)
     {
         $user = User::findOne($id);
         return $user->getUsername();
+    }
+
+    protected function updateLetterStatus($status, $commit=true)
+    {
+        $this->letter_status = $status;
+        if ($commit) {
+            $this->save();
+        }
+    }
+
+    public function letterSendStatus($commit=true)
+    {
+        $this->updateLetterStatus(User::STATUS_LETTER_SENT);
     }
 }

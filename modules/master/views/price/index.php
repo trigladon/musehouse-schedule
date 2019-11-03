@@ -48,9 +48,9 @@ $escape = new JsExpression("function(m) { return m; }");
         ?>
         <tr>
             <td class="verticalAl"><?= ++$counter ?></td>
-            <td class="verticalAl"><?= User::getUsernameById($item['user_id']) ?></td>
-            <td class="verticalAl"><?= User::getUsernameById($item['student_id']) ?></td>
-            <td class="verticalAl"><?= Instrument::getLessonById($item['instricon_id'])?></td>
+            <td class="verticalAl"><?= $teacherList[$item['user_id']] ?></td>
+            <td class="verticalAl"><?= $studentList[$item['student_id']] ?></td>
+            <td class="verticalAl"><?= $lessonList[$item['instricon_id']]?></td>
             <td class="verticalAl text-center"><?= $lessonDate ?></td>
             <td class="verticalAl text-center">
                 <span class="btn btn-success"
@@ -136,9 +136,9 @@ $escape = new JsExpression("function(m) { return m; }");
     <?php foreach ($allSetPrices as $priceObj): ?>
     <tr style="border-top: 2px #2e498b solid;">
         <td class="text-center verticalAl text-muted" rowspan="4"><strong><?=++$counter ?></strong></td>
-        <td><?=User::getUsernameById($priceObj->teacher_id) ?></td>
-        <td><?=User::getUsernameById($priceObj->student_id) ?></td>
-        <td><?=Instrument::getLessonById($priceObj->instrument_id) ?></td>
+        <td><?=$teacherList[$priceObj->teacher_id] ?></td>
+        <td><?=$studentList[$priceObj->student_id] ?></td>
+        <td><?=$lessonList[$priceObj->instrument_id] ?></td>
         <td class="text-center"><?=$priceObj->target_qnt_lessons ?></td>
         <td class="text-center"><?=$priceObj->getDateFrom() ?></td>
         <td style="font-size: larger;" class="text-center verticalAl">

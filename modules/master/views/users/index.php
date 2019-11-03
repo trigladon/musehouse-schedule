@@ -7,7 +7,7 @@ use app\components\ActivationListWidget;
 use kartik\select2\Select2;
 
 /* @var $this yii\web\View */
-/* @var $model app\modules\master\forms\InviteUserForm */
+/* @var $model app\modules\master\forms\UserForm */
 /* @var $studentAddForm app\modules\master\forms\StudentAddForm */
 /* @var $form ActiveForm */
 
@@ -20,6 +20,8 @@ $this->title = 'User Management';
         <?php
             echo ActivationListWidget::widget([
                 'user_list' => $user_list,
+                'role_user_ids' => $role_user_ids,
+                'role_list' => $role_list,
                 'userUpdate' => $userUpdate,
                 'listUserLessons' => $listUserLessons,
                 'teacherList' => $teacherList,
@@ -69,8 +71,6 @@ $this->title = 'User Management';
                     'options' => ['placeholder' => 'Choose the Role'],
                 ]); ?>
             </div>
-
-
 
             <div class="form-group">
                 <div class="col-lg-11">

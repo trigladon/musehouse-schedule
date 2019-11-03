@@ -2,27 +2,21 @@
 
 namespace app\controllers;
 
-use app\models\RegForm;
-use app\models\User;
-use app\modules\master\models\Instrument;
 use Yii;
 use yii\filters\AccessControl;
-use yii\web\Controller;
 use yii\filters\VerbFilter;
-use app\models\LoginForm;
-//use app\models\ContactForm;
-use app\models\SendRecoveryEmailForm;
-use app\models\ResetPasswordForm;
 use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
-use yii\helpers\Html;
-use yii\helpers\Url;
-//use app\models\AccountActivation;
-use app\models\InviteUserForm;
-use app\models\Calendar;
-use yii\web\Response;
 
-class SiteController extends Controller
+use app\models\User;
+use app\modules\master\models\Instrument;
+use app\models\RegForm;
+use app\models\LoginForm;
+use app\models\SendRecoveryEmailForm;
+use app\models\ResetPasswordForm;
+
+
+class SiteController extends BaseController
 {
     /**
      * @inheritdoc
@@ -83,21 +77,18 @@ class SiteController extends Controller
      */
     public function actionLogin()
     {
-        if (!Yii::$app->user->isGuest) {
+        if (!$this->getUser()->isGuest) {
             return $this->goHome();
         }
 
         $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post())) {
+        if ($model->load($this->getRequest()->post())) {
             if ($model->login()){
-
                 return $this->redirect('calendar');
-
             }else{
-                Yii::$app->session->setFlash('Error', 'Please check Email and Password you have entered and try one more time!');
+                $this->setErrorFlash('Please check Email and Password you have entered and try one more time!');
                 return $this->refresh();
             }
-
         }
 
         return $this->render('login', [
@@ -110,12 +101,12 @@ class SiteController extends Controller
 
         $model = new RegForm();
         $lesson_list = Instrument::lessonListReg();
-        $key = Yii::$app->request->get('key');
+        $key = $this->getRequest()->get('key');
 
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+        if ($model->load($this->getRequest()->post()) && $model->validate()) {
             if ($user = $model->reg($key))
             {
-                if (Yii::$app->getUser()->login($user))
+                if ($this->getUser()->login($user))
                 {
                     Yii::$app->session->setFlash('reg_succ', 'You where successfully registered.');
                     return $this->goHome();

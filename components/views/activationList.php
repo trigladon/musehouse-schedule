@@ -28,10 +28,11 @@ use app\models\User;
     </tr>
     <?php
     $masterNumber = 0;
+
     foreach ($user_list as $user){
         /* @var $user app\models\User */
 
-        if ($user->userRole() == 'Master' && $user->status == User::STATUS_ACTIVE):
+        if (in_array($user->id, $role_user_ids['Master']) && $user->status == User::STATUS_ACTIVE):
             ++$masterNumber;
             $classReg = $user->status==1?'text-danger':'text-success';
             $classLet = $user->letter_status==0||!User::isSecretKeyExpire($user->secret_key)?'text-danger':'text-success';
@@ -74,7 +75,7 @@ use app\models\User;
                     'data-last_name' => $user->last_name,
                     'data-lessons' => $userInstr,
                     'data-teachers' => '',
-                    'data-role' => $user->userRole(),
+                    'data-role' => 'Master',
                     'data-phone' => $user->phone,
                     'id'          => 'editUser',]).' / ';
             echo Yii::$app->user->id == $user->id ? Html::a('<i class="fa fa-trash-o fa-lg text-muted" aria-hidden="true"></i>') :
@@ -126,10 +127,10 @@ use app\models\User;
     <?php
     $teacherNumber = 0;
     foreach ($user_list as $user):
-        if ($user->userRole() == 'Teacher'):
+        if (in_array($user->id, $role_user_ids['Teacher'])):
             ++$teacherNumber;
             $classReg = $user->status==1?'text-danger':'text-success';
-            $classLet = $user->letter_status==0||!User::isSecretKeyExpire($user->secret_key)?'text-danger':'text-success';
+            $classLet = $user->letter_status==0 || !$user->isUserSecretKeyExpire() ? 'text-danger' : 'text-success';
             echo '<tr style="vertical-align: middle">';
             echo '<td class="text-center" style="vertical-align: middle">'.$teacherNumber.'</td>';
             echo '<td style="vertical-align: middle">'.$user->getUsername().'</td>';
@@ -172,7 +173,7 @@ use app\models\User;
                     'data-last_name' => $user->last_name,
                     'data-lessons' => $userInstr,
                     'data-teachers' => '',
-                    'data-role' => $user->userRole(),
+                    'data-role' => 'Teacher',
                     'data-phone' => $user->phone,
                     'id'          => 'editUser',]).' / ';
             echo Html::a('<i class="fa fa-trash-o fa-lg text-danger" aria-hidden="true"></i>', Yii::$app->urlManager->createAbsoluteUrl([
@@ -226,10 +227,10 @@ use app\models\User;
     <?php
     $studentNumber = 0;
     foreach ($user_list as $user):
-        if ($user->userRole() == 'Student'):
+        if (in_array($user->id, $role_user_ids['Student'])):
             ++$studentNumber;
             $classReg = $user->status==1?'text-danger':'text-success';
-            $classLet = $user->letter_status==0||!User::isSecretKeyExpire($user->secret_key)?'text-danger':'text-success';
+            $classLet = $user->letter_status==0 || !$user->isUserSecretKeyExpire() ? 'text-danger' : 'text-success';
             echo '<tr style="vertical-align: middle">';
             echo '<td class="text-center" style="vertical-align: middle">'.$studentNumber.'</td>';
             echo '<td style="vertical-align: middle">'.$user->getUsername().'</td>';
@@ -251,7 +252,7 @@ use app\models\User;
                     'data-last_name' => $user->last_name,
                     'data-lessons' => '',
                     'data-teachers' => $userTeachers,
-                    'data-role' => $user->userRole(),
+                    'data-role' => 'Student',
                     'data-phone' => $user->phone,
                     'id'          => 'editUser',]).' / ';
             echo Html::a('<i class="fa fa-trash-o fa-lg text-danger" aria-hidden="true"></i>', Yii::$app->urlManager->createAbsoluteUrl([

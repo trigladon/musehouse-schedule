@@ -8,20 +8,22 @@
 
 namespace app\modules\master\controllers;
 
+use Yii;
+use yii\web\Response;
+use yii\filters\AccessControl;
+
+use app\models\User;
 use app\models\AuthItem;
+use app\controllers\BaseController;
+use app\modules\master\forms\UserForm;
 use app\modules\master\forms\StudentAddForm;
 use app\modules\master\forms\TeacherBusinessTypeForm;
 use app\modules\master\forms\UserUpdateForm;
 use app\modules\master\models\TeacherBusinessType;
-use yii\web\Controller;
-use app\modules\master\forms\InviteUserForm;
-use app\models\User;
-use Yii;
-use yii\filters\AccessControl;
 use app\modules\master\models\Instrument;
-use yii\web\Response;
 
-class UsersController extends Controller
+
+class UsersController extends BaseController
 {
 
     public function behaviors()
@@ -41,69 +43,88 @@ class UsersController extends Controller
 
     public function actionIndex()
     {
-        $model = new InviteUserForm();
+        $userForm = new UserForm();
         $userUpdate = new UserUpdateForm();
         $studentAddForm = new StudentAddForm();
         $businessTypeForm = new TeacherBusinessTypeForm();
+        $roleUserIds = AuthItem::getGroupRolesAndUserIds();
 
-        if ($model->load(Yii::$app->request->post())) {
-            if ($model->validate()) {
-                $model->sendInvitation();
+        # Save user by role
+        if ($userForm->load($this->getRequest()->post())) {
+            if ($userForm->validate()) {
+                $user = $userForm->save();
+                try{
+                    $userForm->sendInvitation($user);
+                    $this->setSuccessFlash('Email was sent!');
+                } catch (\Swift_TransportException $e) {
+                    $this->setErrorFlash('Email wasn\'t sent. Please try one more time in a few seconds from the table of Users !');
+                    $this->getResponse()->redirect($this->redirect('/master/users'))->send();
+                }
+
                 return $this->refresh();
             }
         }
 
-        if ($studentAddForm->load(Yii::$app->request->post()) && $studentAddForm->validate()){
-
+        # Add new student and add him to teachers
+        if ($studentAddForm->load($this->getRequest()->post()) && $studentAddForm->validate()){
             if ($studentAddForm->reg()){
-                Yii::$app->session->setFlash('Success', 'Student Added');
+                $this->setSuccessFlash('Student Added');
             }else{
-                Yii::$app->session->setFlash('Error', 'Something went wrong!');
+                $this->setErrorFlash($this->getErrorMessage('error'));
             }
             return $this->refresh();
         }
 
-        if ($businessTypeForm->load(Yii::$app->request->post()) && $businessTypeForm->validate()){
+        if ($businessTypeForm->load($this->getRequest()->post()) && $businessTypeForm->validate()){
 
             if ($businessTypeForm->saveBT()){
-                Yii::$app->session->setFlash('Success', 'Business type added.');
+                $this->setSuccessFlash('Business type added.');
             }else{
-                Yii::$app->session->setFlash('Error', 'Something went wrong!');
+                $this->setErrorFlash($this->getErrorMessage('error'));
             }
             return $this->refresh();
         }
 
-        if (null !== Yii::$app->request->get('deleteId')){
+        # Delete user
+        if (null !== $this->getRequest()->get('deleteId')){
             if(User::deleteUserById(Yii::$app->request->get('deleteId'))){
-                Yii::$app->session->setFlash('Success', 'User is Deleted!');
+                $this->setSuccessFlash('User is Deleted!');
             }else{
-                Yii::$app->session->setFlash('Error', 'Something went wrong!');
+                $this->setErrorFlash($this->getErrorMessage('error'));
             }
             return $this->redirect('/master/users');
         }
 
-        if (null !== Yii::$app->request->get('resendUserLetter')){
-            InviteUserForm::resendInvitation(Yii::$app->request->get('resendUserLetter'));
+        # Resend invitation letter
+        if (null !== $this->getRequest()->get('resendUserLetter')){
+            try{
+                $userForm->resendInvitation($this->getRequest()->get('resendUserLetter'));
+                $this->setSuccessFlash('Email was sent!');
+            }catch (\Swift_TransportException $e){
+                $this->setErrorFlash('Email wasn\'t sent. Please try one more time in a few seconds from the table!');
+                return $this->redirect('/master/users');
+            }
             return $this->redirect('/master/users');
         }
 
-        if(Yii::$app->request->isPost && $userUpdate->load(Yii::$app->request->post()) && $userUpdate->validate()){
+        if($this->getRequest()->isPost && $userUpdate->load($this->getRequest()->post()) && $userUpdate->validate()){
             if ($userUpdate->reg()){
-                Yii::$app->session->setFlash('Success', 'The changes were successfully applied!');
+                $this->setSuccessFlash('The changes were successfully applied!');
             }else{
-                Yii::$app->session->setFlash('Error', 'Something went wrong, please, contact you Administrator!');
+                $this->setErrorFlash($this->getErrorMessage('error'));
             }
             return $this->refresh();
         }
 
-        $user_list = User::find()->andWhere(['!=', 'status', User::STATUS_DELETED])->all();
+        $user_list = User::find()->with()->andWhere(['!=', 'status', User::STATUS_DELETED])->all();
         $listUserLessons = Instrument::lessonListProfile();
         $role_list = AuthItem::getRoleList();
         $teacherList = User::teacherList();
-        $businessTypes = \app\modules\master\models\TeacherBusinessType::getBusinessTypeList();
+        $businessTypes = TeacherBusinessType::getBusinessTypeList();
 
         return $this->render('index', [
-            'model' => $model,
+            'model' => $userForm,
+            'role_user_ids' => $roleUserIds,
             'user_list' => $user_list,
             'userUpdate' => $userUpdate,
             'listUserLessons' => $listUserLessons,
@@ -117,32 +138,30 @@ class UsersController extends Controller
 
     public function actionDelBt()
     {
-        if (Yii::$app->request->isAjax) {
-            $request = Yii::$app->getRequest();
-            if ($request->isPost) {
-                $post = Yii::$app->request->post();
-                $result = TeacherBusinessType::findOne($post['btId']);
-                Yii::$app->response->format = Response::FORMAT_JSON;
-                return [
-                    'success' => $result->delete()
-                ];
-            }
+        if ($this->getRequest()->isAjax && $this->getRequest()->isPost) {
+            $post = $this->getRequest()->post();
+            $result = TeacherBusinessType::findOne($post['btId']);
+            $this->getResponse()->format = Response::FORMAT_JSON;
+            return [
+                'success' => $result->delete()
+            ];
         }
+
+        $this->goTo404();
     }
 
     public function actionEditBt()
     {
-        if (Yii::$app->request->isAjax) {
-            $request = Yii::$app->getRequest();
-            if ($request->isPost) {
-                $post = Yii::$app->request->post();
-                $result = TeacherBusinessType::findOne($post['btId']);
-                Yii::$app->response->format = Response::FORMAT_JSON;
-                return [
-                    'result' => $result,
-                    'date_from' => $result->getDateFrom()
-                ];
-            }
+        if ($this->getRequest()->isAjax && $this->getRequest()->isPost) {
+            $post = $this->getRequest()->post();
+            $result = TeacherBusinessType::findOne($post['btId']);
+            $this->getResponse()->format = Response::FORMAT_JSON;
+            return [
+                'result' => $result,
+                'date_from' => $result->getDateFrom()
+            ];
         }
+
+        $this->goTo404();
     }
 }

@@ -9,14 +9,16 @@
 namespace app\modules\teacher\controllers;
 
 
-use app\modules\master\forms\PasswordUpdateForm;
-use app\modules\master\forms\UserUpdateForm;
-use app\modules\master\models\Instrument;
-use yii\web\Controller;
 use Yii;
-use app\models\User;
 
-class ProfileController extends Controller
+use app\models\User;
+use app\controllers\BaseController;
+use app\modules\master\models\Instrument;
+use app\modules\master\forms\UserUpdateForm;
+use app\modules\master\forms\PasswordUpdateForm;
+
+
+class ProfileController extends BaseController
 {
     public function actionIndex()
     {
@@ -28,20 +30,20 @@ class ProfileController extends Controller
         $listUserLessons = Instrument::lessonListProfile();
 
 
-        if(Yii::$app->request->isPost && $userUpdateForm->load(Yii::$app->request->post()) && $userUpdateForm->validate()){
+        if($this->getRequest()->isPost && $userUpdateForm->load($this->getRequest()->post()) && $userUpdateForm->validate()){
             if ($userUpdateForm->reg()){
-                Yii::$app->session->setFlash('Success', 'The changes were successfully applied!');
+                $this->setSuccessFlash('The changes were successfully applied!');
             }else{
-                Yii::$app->session->setFlash('Error', 'Something went wrong, please, contact you Administrator!');
+                $this->setErrorFlash('Something went wrong, please, contact you Administrator!');
             }
             return $this->refresh();
         }
 
-        if(Yii::$app->request->isPost && $passwordUpdateForm->load(Yii::$app->request->post()) && $passwordUpdateForm->validate()){
+        if($this->getRequest()->isPost && $passwordUpdateForm->load($this->getRequest()->post()) && $passwordUpdateForm->validate()){
             if ($passwordUpdateForm->reg()){
-                Yii::$app->session->setFlash('Success', 'Password was successfully changed!');
+                $this->setSuccessFlash('Password was successfully changed!');
             }else{
-                Yii::$app->session->setFlash('Error', 'Something went wrong, please, check the passwords you entered and try one more time!');
+                $this->setErrorFlash('Something went wrong, please, check the passwords you entered and try one more time!');
             }
             return $this->refresh();
         }
